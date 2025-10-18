@@ -2,20 +2,30 @@
 
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../lib/firebase';
+import { auth } from '@/lib/firebase';
 import Auth from './Auth';
-import { GoogleAuthProvider } from 'firebase/auth/web-extension';
+import { GoogleAuthProvider } from 'firebase/auth';
 
 const AuthWrapper = () => {
   const [user] = useAuthState(auth);
 
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    }
+    catch (err) {
+      console.error(err);
+    }
   };
 
   const handleSignOut = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    }
+    catch (err) {
+      console.error(err);
+    }
   };
 
   const authComponentUser = user

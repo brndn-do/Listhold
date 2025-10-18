@@ -1,14 +1,19 @@
 import { render, screen } from '@testing-library/react';
 import RootLayout from './layout';
 
-jest.mock('../components/Auth', () => {
+jest.mock('../components/AuthWrapper', () => {
   return function MockAuth() {
-    return <div data-testid='auth-component' />;
+    return <div data-testid='auth-wrapper' />;
   };
 });
 
 describe('Layout page', () => {
   it('should pass', () => {
-    expect(true).toBe(true);
+    render(
+      <RootLayout>
+        <div></div>
+      </RootLayout>,
+    );
+    expect(screen.getByTestId('auth-wrapper')).toBeInTheDocument();
   });
 });
