@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Sign-Up Platform',
+  title: 'Rosterize',
   description: 'Built with Next.js, Typescript, and Firebase',
 };
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
-        <header className='pt-4 pr-6'>
+        <header className='pt-5 pr-8'>
           <nav className='flex justify-end'>
             <div>
               <AuthWrapper />

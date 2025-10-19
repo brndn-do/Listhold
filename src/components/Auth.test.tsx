@@ -49,7 +49,10 @@ describe('Auth component', () => {
 
     const profilePhoto = screen.getByAltText(/your profile photo/i);
     expect(profilePhoto).toBeInTheDocument();
-    expect(profilePhoto).toHaveAttribute('src', mockUser.photoURL);
+    expect(profilePhoto).toHaveAttribute(
+      'src',
+      expect.stringContaining(encodeURIComponent(mockUser.photoURL)),
+    );
   });
 
   it('should call only onSignIn when clicked while signed out', () => {

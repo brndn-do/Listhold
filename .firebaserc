@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "rosterize-dev",
+    "dev": "rosterize-dev",
+    "prod": "rosterize-prod"
+  }
+}

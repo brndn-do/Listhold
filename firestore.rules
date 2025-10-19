@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Users Collection: Authenticated users can read/write only their own profile
+    match /users/{userId} {
+      allow read, write, create, update: if request.auth.uid == userId;
+    }
+
+    // Events Collection: Anyone can read, no client-side writes
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Questions Subcollection (locked for now)
+    match /events/{eventId}/questions/{questionId} {
+      allow read, write: if false;
+    }
+
+    // Signups Subcollection (locked for now)
+    match /events/{eventId}/signups/{signupId} {
+      allow read, write: if false;
+    }
+
+    // Waitlist Subcollection (locked for now)
+    match /events/{eventId}/waitlist/{waitlistId} {
+      allow read, write: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

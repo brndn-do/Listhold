@@ -1,18 +1,12 @@
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-
-export interface UserData {
-  uid: string;
-  displayName: string | null;
-  email: string | null;
-  photoURL: string | null;
-}
+import { UserData } from '@/types';
 
 /**
  * Creates or updates a user document in Firestore.
  * @param user The Firebase Auth user object.
  */
-export const saveUserDocument = async (userData: UserData) => {
+export const saveUserDocument = async (userData: Omit<UserData, 'lastLogin'>) => {
   try {
     const docRef = doc(db, 'users', userData.uid);
     const dataToSave = {

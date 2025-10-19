@@ -35,28 +35,34 @@ This is the central collection for all events created on the platform.
 - **Document ID:** Auto-generated unique ID.
 - **Fields:**
   - `name`: `string` (e.g., "Friday Practice 8:15 PM")
+  - `description`?: - Description of event.
   - `organizationId`: `string` - A reference to the document ID in the `organizations` collection.
+  - `location`: `string` - The location of the event.
   - `start`: `timestamp` - The start time of the event.
   - `end`: `timestamp` - The end time of the event.
   - `capacity`: `number` - Maximum number of attendees.
-  - `rules`: `map` - A map to hold various event-specific rules.
+  - `rules`?: `map` - A map to hold various event-specific rules.
     - `crossEventRestriction`: `boolean` - If true, users can only sign up for one event at a time within this organization.
     - `waitlistResponseTime`: `map` - Time in seconds users have to respond to a waitlist notification.
       - `day`: `number` (e.g., 3600 for 1 hour)
       - `night`: `number` (e.g., 43200 for 12 hours)
-  - `customQuestions`: `array` - An array of question objects.
-    - **Object Structure:**
-      - `questionId`: `string` (e.g., "q1_new_member")
-      - `text`: `string` (e.g., "Are you new to our club?")
-      - `type`: `string` (e.g., "boolean", "text")
-
----
 
 ## Sub-collections for Real-time Data
 
 To ensure scalability and real-time updates, sign-up and waitlist data are stored in sub-collections within each event document.
 
-### 4. `signups` (Sub-collection of `events`)
+### 4. `questions` (Sub-collection of `events`)
+
+A subcollection containing the custom questions for a specific event.
+
+- **Path:** `events/{eventId}/questions`
+- **Document ID:** Auto-generated unique ID.
+- **Fields:**
+  - `text`: `string` (e.g., "What is your t-shirt size?").
+  - `type`: `string` (e.g., "text", "select", "checkbox").
+  - `options`: `array` of `string`s - [Optional] A list of options for "select" type questions.
+
+### 5. `signups` (Sub-collection of `events`)
 
 Stores the roster of confirmed attendees for an event.
 
@@ -67,7 +73,7 @@ Stores the roster of confirmed attendees for an event.
   - `answers`: `map` - Stores answers to custom questions.
     - **Example:** `{ "q1_new_member": true }`
 
-### 5. `waitlist` (Sub-collection of `events`)
+### 6. `waitlist` (Sub-collection of `events`)
 
 Stores the queue of users waiting for a spot.
 
