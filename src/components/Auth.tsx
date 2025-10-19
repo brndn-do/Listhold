@@ -3,6 +3,7 @@ interface AuthProps {
     uid: string;
     displayName: string;
     email: string;
+    photoURL: string;
   };
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSignIn: (...args: any[]) => unknown | Promise<unknown>;
@@ -12,9 +13,12 @@ interface AuthProps {
 
 const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
   return (
-    <div className='flex items-center gap-4'>
+    <div className='flex items-center gap-4 h-10'>
       {user ? (
-        <h2 className='text-xl text-gray-800 dark:text-gray-100'>`Hi, ${user.displayName}`</h2>
+        <>
+          <img alt="Your profile photo" src={user.photoURL} className="h-11 w-11 rounded-full border-2 border-purple-700 dark:border-purple-600"></img>
+          <h2 className='text-xl text-gray-800 dark:text-gray-100'>{`Hi, ${user.displayName}`}</h2>
+        </>
       ) : (
         <></>
       )}

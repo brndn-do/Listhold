@@ -7,6 +7,7 @@ describe('Auth component', () => {
     uid: '123',
     displayName: 'user',
     email: 'user@mail.com',
+    photoURL: 'http://example.com/photo.jpg',
   };
   const onSignIn = jest.fn();
   const onSignOut = jest.fn();
@@ -26,7 +27,7 @@ describe('Auth component', () => {
     expect(signInButton).toBeInTheDocument();
   });
 
-  it('should render the user name and a "Sign Out" button when a user is provided', () => {
+  it('should render user name and a "Sign Out" button when a user is provided', () => {
     render(<Auth user={mockUser} onSignIn={onSignIn} onSignOut={onSignOut} />);
 
     const elementWithName = screen.getByText(new RegExp(mockUser.displayName, 'i'));
@@ -41,6 +42,14 @@ describe('Auth component', () => {
       name: /sign in with google/i,
     });
     expect(signInButton).not.toBeInTheDocument();
+  });
+
+  it('should render profile photo when a user is provided', () => {
+    render(<Auth user={mockUser} onSignIn={onSignIn} onSignOut={onSignOut} />);
+
+    const profilePhoto = screen.getByAltText(/your profile photo/i);
+    expect(profilePhoto).toBeInTheDocument();
+    expect(profilePhoto).toHaveAttribute('src', mockUser.photoURL);
   });
 
   it('should call only onSignIn when clicked while signed out', () => {

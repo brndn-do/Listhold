@@ -26,11 +26,16 @@ const AuthWrapper = () => {
     }
   };
 
-  const authComponentUser = user
-    ? { uid: user.uid, displayName: user.displayName || 'User', email: user.email || '' }
+  const userData = user
+    ? {
+        uid: user.uid,
+        displayName: user.displayName || 'User',
+        email: user.email || '',
+        photoURL: user.photoURL || '/default-avatar.png',
+      }
     : undefined;
 
-  return <Auth user={authComponentUser} onSignIn={handleSignIn} onSignOut={handleSignOut} />;
+  return <Auth user={userData} onSignIn={handleSignIn} onSignOut={handleSignOut} />;
 };
 
 export default AuthWrapper;
