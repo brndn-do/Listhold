@@ -26,8 +26,8 @@ export default function RootLayout({
 return (
     <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
-        <header>
-          <nav>
+        <header className='pt-4 pr-6'>
+          <nav className='flex justify-end'>
             <div>
               <AuthWrapper />
             </div>

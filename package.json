@@ -13,15 +13,17 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
     "firebase": "^12.4.0",
     "next": "15.5.4",
+    "postcss": "^8.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-firebase-hooks": "^5.1.1"
+    "react-firebase-hooks": "^5.1.1",
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -40,7 +42,6 @@
     "jiti": "^2.6.1",
     "msw": "^2.11.5",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5",
     "typescript-eslint": "^8.46.1",
