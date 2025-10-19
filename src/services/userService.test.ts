@@ -15,18 +15,18 @@ const docMock = doc as jest.Mock;
 const setDocMock = setDoc as jest.Mock;
 
 describe('saveUserdocument', () => {
+  const mockUser = {
+    uid: '123',
+    displayName: 'user',
+    email: 'user@mail.com',
+    photoURL: 'http://example.com/photo.jpg',
+  };
   // clear mock
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should call setDoc with the correct user data and merge option', async () => {
-    const mockUser = {
-      uid: '123',
-      displayName: 'user',
-      email: 'user@mail.com',
-      photoURL: 'http://example.com/photo.jpg',
-    };
     // doc returns a doc reference, mock it
     const mockDocRef = { id: 'mock-ref' };
     docMock.mockReturnValue(mockDocRef);
@@ -45,5 +45,11 @@ describe('saveUserdocument', () => {
       },
       { merge: true },
     );
+  });
+
+  it('should throw if setDoc fails', async () => {
+    const mockError = new Error('Firestore error');
+    setDocMock.mockRejectedValue(mockError);
+    await expect(saveUserDocument(mockUser)).rejects.toThrow('Firestore error');
   });
 });
