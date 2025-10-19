@@ -13,8 +13,7 @@ const AuthWrapper = () => {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
     }
   };
@@ -22,8 +21,7 @@ const AuthWrapper = () => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-    }
-    catch (err) {
+    } catch (err) {
       console.error(err);
     }
   };

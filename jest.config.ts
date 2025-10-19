@@ -9,6 +9,10 @@ const createJestConfig = nextJest({
 const customJestConfig: Config = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
+  moduleNameMapper: {
+    // Handle module aliases (this will be automatically configured for you soon)
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   // (optional) if you use path aliases, add moduleNameMapper here
   // moduleNameMapper: { '^@/components/(.*)$': '<rootDir>/components/$1' },

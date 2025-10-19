@@ -23,7 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-return (
+  return (
     <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
         <header className='pt-4 pr-6'>
