@@ -16,7 +16,11 @@ const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
     <div className='flex items-center gap-4 h-10'>
       {user ? (
         <>
-          <img alt="Your profile photo" src={user.photoURL} className="h-11 w-11 rounded-full border-2 border-purple-700 dark:border-purple-600"></img>
+          <img
+            alt='Your profile photo'
+            src={user.photoURL}
+            className='h-11 w-11 rounded-full border-2 border-purple-700 dark:border-purple-600'
+          ></img>
           <h2 className='text-xl text-gray-800 dark:text-gray-100'>{`Hi, ${user.displayName}`}</h2>
         </>
       ) : (
