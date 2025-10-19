@@ -13,9 +13,11 @@ interface AuthProps {
 const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
   return (
     <div className='flex items-center gap-4'>
-      <h2 className='text-xl text-gray-800 dark:text-gray-100'>
-        {user ? `Hi, ${user.displayName}` : ''}
-      </h2>
+      {user ? (
+        <h2 className='text-xl text-gray-800 dark:text-gray-100'>`Hi, ${user.displayName}`</h2>
+      ) : (
+        <></>
+      )}
       <button
         type='button'
         onClick={user ? onSignOut : onSignIn}

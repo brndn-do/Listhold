@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import AuthWrapper from './AuthWrapper';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { axe } from 'jest-axe';
 
 jest.mock('../lib/firebase', () => ({
   auth: {}, // Provide a simple placeholder object for the auth export
@@ -60,6 +61,14 @@ describe('AuthWrapper component', () => {
         expect(signInWithPopupMock).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('Accessibility', () => {
+      it('should not have accessibility violations', async () => {
+        const { container } = render(<AuthWrapper />);
+        const results = await axe(container);
+        expect(results).toHaveNoViolations();
+      });
+    });
   });
 
   describe('Signed in', () => {
@@ -90,6 +99,13 @@ describe('AuthWrapper component', () => {
         const signOutButton = screen.getByRole('button', { name: /sign out/i });
         fireEvent.click(signOutButton);
         expect(signOutMock).toHaveBeenCalledTimes(1);
+      });
+    });
+    describe('Accessibility', () => {
+      it('should not have accessibility violations', async () => {
+        const { container } = render(<AuthWrapper />);
+        const results = await axe(container);
+        expect(results).toHaveNoViolations();
       });
     });
   });
