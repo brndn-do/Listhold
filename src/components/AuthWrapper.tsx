@@ -1,15 +1,14 @@
 'use client';
 
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '@/lib/firebase';
 import Auth from './Auth';
 import { GoogleAuthProvider } from 'firebase/auth';
 import { saveUserDocument } from '@/services/userService';
+import { useAuth } from '@/context/AuthProvider';
 
 const AuthWrapper = () => {
-  const [user] = useAuthState(auth);
-
+  const { user } = useAuth();
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {

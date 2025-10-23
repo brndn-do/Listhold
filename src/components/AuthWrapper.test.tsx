@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import AuthWrapper from './AuthWrapper';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { axe } from 'jest-axe';
 import { saveUserDocument } from '@/services/userService';
 
@@ -26,9 +25,13 @@ jest.mock('firebase/auth', () => ({
 const signInWithPopupMock = signInWithPopup as jest.Mock;
 const signOutMock = signOut as jest.Mock;
 
-// --- Mock react-firebase-hooks/auth ---
-jest.mock('react-firebase-hooks/auth');
-const useAuthStateMock = useAuthState as jest.Mock;
+// --- Mock useAuth from AuthProvider ---
+jest.mock('@/context/AuthProvider', () => ({
+  ...jest.requireActual('@/context/AuthProvider'),
+  useAuth: jest.fn(),
+}));
+import { useAuth } from '@/context/AuthProvider';
+const useAuthMock = useAuth as jest.Mock;
 
 const mockUser = {
   uid: '123',
@@ -44,7 +47,7 @@ describe('AuthWrapper component', () => {
 
   describe('Signed out', () => {
     beforeEach(() => {
-      useAuthStateMock.mockReturnValue([null, false, undefined]);
+      useAuthMock.mockReturnValue({ user: null, loading: false });
       render(<AuthWrapper />);
     });
 
@@ -108,7 +111,7 @@ describe('AuthWrapper component', () => {
 
   describe('Signed in', () => {
     beforeEach(() => {
-      useAuthStateMock.mockReturnValue([mockUser, false, undefined]);
+      useAuthMock.mockReturnValue({ user: mockUser, loading: false });
       render(<AuthWrapper />);
     });
 
