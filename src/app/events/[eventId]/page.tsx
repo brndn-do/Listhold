@@ -1,4 +1,5 @@
 import EventInfo from '@/components/EventInfo';
+import Roster from '@/components/Roster';
 import { getEventNameAndDescById } from '@/services/server-only/eventNameAndDescService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -8,15 +9,14 @@ interface EventPageProps {
 }
 
 // Dynamic metadata for Next.js App Router
-export async function generateMetadata(
-  { params }: EventPageProps,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
   const { eventId } = await params;
   try {
     const result = await getEventNameAndDescById(eventId);
 
     // check if null
     if (!result) {
+      console.log('event not found');
       return notFound();
     }
 
@@ -39,9 +39,9 @@ export default async function EventPage({ params }: EventPageProps) {
   const { eventId } = await params;
 
   return (
-    <>
+    <div className='flex flex-col items-center p-4 gap-8'>
       <EventInfo eventId={eventId} />
-      {/* <Roster eventId={eventId} /> */}
-    </>
+      <Roster eventId={eventId} />
+    </div>
   );
 }

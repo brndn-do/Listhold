@@ -35,13 +35,13 @@ This is the central collection for all events created on the platform.
 - **Document ID:** Auto-generated unique ID.
 - **Fields:**
   - `name`: `string` (e.g., "Friday Practice 8:15 PM")
-  - `description`?: - Description of event.
+  - `description?`: - Description of event.
   - `organizationId`: `string` - A reference to the document ID in the `organizations` collection.
   - `location`: `string` - The location of the event.
   - `start`: `timestamp` - The start time of the event.
   - `end`: `timestamp` - The end time of the event.
   - `capacity`: `number` - Maximum number of attendees.
-  - `rules`?: `map` - A map to hold various event-specific rules.
+  - `rules?`: `map` - A map to hold various event-specific rules.
     - `crossEventRestriction`: `boolean` - If true, users can only sign up for one event at a time within this organization.
     - `waitlistResponseTime`: `map` - Time in seconds users have to respond to a waitlist notification.
       - `day`: `number` (e.g., 3600 for 1 hour)
@@ -69,8 +69,10 @@ Stores the roster of confirmed attendees for an event.
 - **Path:** `events/{eventId}/signups`
 - **Document ID:** `uid` (The user ID of the attendee)
 - **Fields:**
+  - `displayName`: `string` - The display name of the user **at the time of signup.**
+  - `photoURL`: `string` - The photo URL of the user **at the time of signup.**
   - `signupTime`: `timestamp` - When the user signed up.
-  - `answers`: `map` - Stores answers to custom questions.
+  - `answers?`: `map` - Stores answers to custom questions.
     - **Example:** `{ "q1_new_member": true }`
 
 ### 6. `waitlist` (Sub-collection of `events`)

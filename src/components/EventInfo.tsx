@@ -33,7 +33,7 @@ const EventInfo = ({ eventId }: EventInfoProps) => {
   };
 
   return (
-    <div className='flex flex-col items-center gap-1 p-4'>
+    <div className='flex flex-col items-center gap-1'>
       {loading && <p className='text-2xl text-center font-bold'>Loading...</p>}
       {error && (
         <p className='text-2xl text-center font-bold'>
@@ -46,6 +46,7 @@ const EventInfo = ({ eventId }: EventInfoProps) => {
           <h2 className='text-2xl text-center font-bold'>{snapshot?.data()?.name}</h2>
           <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming()}`}</p>
           <p className='text-[0.8rem] text-center'>{`📍 ${snapshot?.data()?.location}`}</p>
+          <p className='text-[0.8rem] text-center'>{`Total Spots: ${snapshot?.data()?.capacity}`}</p>
         </>
       )}
     </div>
