@@ -10,7 +10,12 @@ export default function Home() {
       <p className='mt-4 text-lg text-center text-slate-600'>
         Manage your event rosters with ease.
       </p>
-      <Link href='/events/nuarchery-10-24' className='mt-4 text-lg text-center text-slate-200 underline'>Friday Practice</Link>
+      <Link
+        href='/events/nuarchery-10-24'
+        className='mt-4 text-lg text-center text-slate-200 underline'
+      >
+        Link to Friday Practice 10/24
+      </Link>
     </main>
   );
 }

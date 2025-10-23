@@ -2,9 +2,7 @@
   "headers": [
     {
       "source": "/(.*)",
-      "headers": [
-        { "key": "Permissions-Policy", "value": "" }
-      ]
+      "headers": [{ "key": "Permissions-Policy", "value": "" }]
     }
   ]
 }

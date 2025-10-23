@@ -1,7 +1,19 @@
 import { Timestamp } from 'firebase/firestore';
 
 /**
- * Represents a Firestore event document including the document ID as a field.
+ * Represents a Firestore signup document, with user's UID.
+ */
+export interface SignupData {
+  uid: string;
+  displayName: string;
+  signupTime: Timestamp;
+
+  // eslint-disable-next-line
+  answers?: Record<string, any>;
+}
+
+/**
+ * Represents a Firestore event document, with document ID.
  */
 export interface EventData {
   id: string;
@@ -21,7 +33,7 @@ export interface EventData {
 }
 
 /**
- * Represents a Firestore user document including the document ID as a field.
+ * Represents a Firestore user document with document ID.
  */
 export interface UserData {
   uid: string;

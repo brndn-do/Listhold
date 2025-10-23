@@ -20,7 +20,8 @@ service cloud.firestore {
 
     // Signups Subcollection (locked for now)
     match /events/{eventId}/signups/{signupId} {
-      allow read, write: if false;
+      allow read: if request.auth != null;
+      allow write: if false;
     }
 
     // Waitlist Subcollection (locked for now)
