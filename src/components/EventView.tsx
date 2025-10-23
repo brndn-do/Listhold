@@ -21,7 +21,7 @@ const EventView = ({ eventId }: { eventId: string }) => {
   const [eventSnapshot, eventLoading, eventError] = useDocument(doc(db, 'events', eventId));
   const eventData = eventSnapshot?.data();
 
-  // listen to the singups subcolection in Firestore
+  // listen to the singups subcollection in Firestore
   const collectionRef = useMemo(
     () =>
       collection(db, 'events', eventId, 'signups').withConverter<SignupData>({
