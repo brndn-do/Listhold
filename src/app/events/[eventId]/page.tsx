@@ -1,5 +1,4 @@
-import EventInfo from '@/components/EventInfo';
-import Roster from '@/components/Roster';
+import EventView from '@/components/EventView';
 import { getEventNameAndDescById } from '@/services/server-only/eventNameAndDescService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -37,11 +36,7 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 
 export default async function EventPage({ params }: EventPageProps) {
   const { eventId } = await params;
-
   return (
-    <div className='flex flex-col items-center p-4 gap-8'>
-      <EventInfo eventId={eventId} />
-      <Roster eventId={eventId} />
-    </div>
+    <EventView eventId={eventId} />
   );
 }
