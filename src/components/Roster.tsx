@@ -1,53 +1,19 @@
 'use client';
 
-import { db } from '@/lib/firebase';
 import { SignupData } from '@/types';
-import {
-  collection,
-  DocumentData,
-  orderBy,
-  query,
-  WithFieldValue,
-  QueryDocumentSnapshot,
-} from 'firebase/firestore';
-import { useMemo } from 'react';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { FirestoreError } from 'firebase/firestore';
 
 interface RosterProps {
-  eventId: string;
+  signups: SignupData[] | undefined;
+  signupsLoading: boolean;
+  signupsError: FirestoreError | undefined;
 }
 
-const Roster = ({ eventId }: RosterProps) => {
-  const collectionRef = useMemo(
-    () =>
-      collection(db, 'events', eventId, 'signups').withConverter<SignupData>({
-        toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
-          return {
-            uid: signupData.uid,
-            displayName: signupData.displayName,
-            signupTime: signupData.signupTime,
-          };
-        },
-        fromFirestore(snapshot: QueryDocumentSnapshot): SignupData {
-          const data = snapshot.data();
-          return {
-            uid: snapshot.id,
-            displayName: data.displayName,
-            signupTime: data.signupTime,
-          };
-        },
-      }),
-    [eventId],
-  );
-
-  const q = query(collectionRef, orderBy('signupTime'));
-
-  const [signups, loading, error] = useCollectionData<SignupData>(q);
-
+const Roster = ({ signups, signupsLoading, signupsError }: RosterProps) => {
   return (
     <div className='w-full h-full flex flex-col items-center gap-2'>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error.message}</p>}
+      {signupsLoading && <p>Loading...</p>}
+      {signupsError && <p>Error: {signupsError.message}</p>}
       <h2 className='text-2xl font-bold'>Roster:</h2>
       <div className='flex flex-col items-center border-1 w-[70%] p-4 min-h-[50vh] rounded-4xl'>
         {signups && (

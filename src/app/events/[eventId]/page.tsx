@@ -36,7 +36,5 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 
 export default async function EventPage({ params }: EventPageProps) {
   const { eventId } = await params;
-  return (
-    <EventView eventId={eventId} />
-  );
+  return <EventView eventId={eventId} />;
 }

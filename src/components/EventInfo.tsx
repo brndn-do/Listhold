@@ -1,20 +1,18 @@
 'use client';
 
-import { db } from '@/lib/firebase';
 import { isSameDay, format } from 'date-fns';
-import { doc } from 'firebase/firestore';
-import { useDocument } from 'react-firebase-hooks/firestore';
+import { DocumentData, FirestoreError } from 'firebase/firestore';
 
 interface EventInfoProps {
-  eventId: string;
+  eventData: DocumentData | undefined;
+  eventLoading: boolean;
+  eventError: FirestoreError | undefined;
 }
 
-const EventInfo = ({ eventId }: EventInfoProps) => {
-  const [snapshot, loading, error] = useDocument(doc(db, 'events', eventId));
-
+const EventInfo = ({ eventData, eventLoading, eventError }: EventInfoProps) => {
   const formatEventTiming = () => {
-    const startDate = snapshot?.data()?.start.toDate();
-    const endDate = snapshot?.data()?.end.toDate();
+    const startDate = eventData?.start.toDate();
+    const endDate = eventData?.end.toDate();
     if (isSameDay(startDate, endDate)) {
       // Format for a single-day event
       // "12/01/2025, 7:00 PM - 9:30 PM"
@@ -34,19 +32,19 @@ const EventInfo = ({ eventId }: EventInfoProps) => {
 
   return (
     <div className='flex flex-col items-center gap-1'>
-      {loading && <p className='text-2xl text-center font-bold'>Loading...</p>}
-      {error && (
+      {eventLoading && <p className='text-2xl text-center font-bold'>Loading...</p>}
+      {eventError && (
         <p className='text-2xl text-center font-bold'>
           {' '}
-          Error: {error?.message || 'unexpected error occurred'}
+          Error: {eventError?.message || 'unexpected error occurred'}
         </p>
       )}
-      {!loading && !error && (
+      {!eventLoading && !eventError && (
         <>
-          <h2 className='text-2xl text-center font-bold'>{snapshot?.data()?.name}</h2>
+          <h2 className='text-2xl text-center font-bold'>{eventData?.name}</h2>
           <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming()}`}</p>
-          <p className='text-[0.8rem] text-center'>{`📍 ${snapshot?.data()?.location}`}</p>
-          <p className='text-[0.8rem] text-center'>{`Total Spots: ${snapshot?.data()?.capacity}`}</p>
+          <p className='text-[0.8rem] text-center'>{`📍 ${eventData?.location}`}</p>
+          <p className='text-[0.8rem] text-center'>{`Total Spots: ${eventData?.capacity}`}</p>
         </>
       )}
     </div>
