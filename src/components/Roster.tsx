@@ -73,6 +73,14 @@ const Roster = ({
             You have already joined the roster.
           </button>
         )}
+        {!spotsOpen && (
+          <button
+            aria-disabled='true'
+            className='opacity-30 self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-not-allowed'
+          >
+            There are no spots left.
+          </button>
+        )}
       </div>
     </div>
   );
