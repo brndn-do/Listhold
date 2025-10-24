@@ -11,6 +11,7 @@ const AuthWrapper = () => {
   const { user } = useAuth();
   const handleSignIn = async () => {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
       const result = await signInWithPopup(auth, provider);
       const userData = {
