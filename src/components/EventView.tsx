@@ -47,9 +47,16 @@ const EventView = ({ eventId }: { eventId: string }) => {
   const [signups, signupsLoading, signupsError] = useCollectionData<SignupData>(q);
 
   return (
-    <div className='flex flex-col items-center p-4 gap-8'>
+    <div className='flex flex-col items-center p-4 gap-4'>
       <EventInfo eventData={eventData} eventLoading={eventLoading} eventError={eventError} />
-      <Roster signups={signups} signupsLoading={signupsLoading} signupsError={signupsError} />
+      <Roster
+        eventData={eventData}
+        eventLoading={eventLoading}
+        eventError={eventError}
+        signups={signups}
+        signupsLoading={signupsLoading}
+        signupsError={signupsError}
+      />
     </div>
   );
 };
