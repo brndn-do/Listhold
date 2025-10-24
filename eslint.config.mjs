@@ -22,6 +22,7 @@ export default defineConfig([
       '**/coverage/**',
       '**/test/**',
       '**/__tests__/**',
+      '**/functions/**',
       '**/*.d.ts',
     ],
   },
