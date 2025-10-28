@@ -97,6 +97,13 @@ export const handleLeave = onCall(async (request: CallableRequest<{ eventId: str
   try {
     logger.log('starting transaction...');
     await adminDb.runTransaction(async (transaction) => {
+      const eventDocRef = adminDb.doc(`events/${eventId}`);
+      const eventDoc = await transaction.get(eventDocRef);
+
+      if (!eventDoc.exists) {
+        throw new HttpsError('not-found', `Error: event with id ${eventId} does not exist`);
+      }
+
       const signupDocRef = adminDb.doc(`events/${eventId}/signups/${uid}`);
       const signupDoc = await transaction.get(signupDocRef);
 
@@ -109,6 +116,10 @@ export const handleLeave = onCall(async (request: CallableRequest<{ eventId: str
 
       // remove signup
       transaction.delete(signupDocRef);
+
+      transaction.update(eventDocRef, {
+        signupsCount: FieldValue.increment(-1),
+      });
     });
   } catch (err) {
     logger.log(`ERROR LEAVING EVENT: ${err}`);
