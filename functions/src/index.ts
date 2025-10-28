@@ -1,5 +1,5 @@
 import { CallableRequest, HttpsError, onCall } from 'firebase-functions/v2/https';
-import { setGlobalOptions } from 'firebase-functions';
+import { setGlobalOptions, logger } from 'firebase-functions';
 import { adminDb } from './firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -7,17 +7,21 @@ import { FieldValue } from 'firebase-admin/firestore';
 setGlobalOptions({ maxInstances: 10 });
 
 export const handleSignup = onCall(async (request: CallableRequest<{ eventId: string }>) => {
+  logger.log('Received request');
   // get event id
   const eventId = request.data.eventId;
   if (!eventId) throw new HttpsError('invalid-argument', 'Error: must use valid event id');
+  logger.log(`Event ID: ${eventId}`)
 
   // get uid from auth context
   const uid = request.auth?.uid;
   if (!uid) throw new HttpsError('unauthenticated', 'Error: must be authenticated');
+  logger.log(`uid: ${uid}`)
 
   // all db reads and writes should be a transaction
   try {
-    adminDb.runTransaction(async (transaction) => {
+    logger.log('starting transaction...')
+    await adminDb.runTransaction(async (transaction) => {
       const eventDocRef = adminDb.doc(`events/${eventId}`);
       const eventDoc = await transaction.get(eventDocRef);
 
@@ -70,7 +74,9 @@ export const handleSignup = onCall(async (request: CallableRequest<{ eventId: st
       });
     });
   } catch (err) {
+    logger.log(`ERROR SIGNING UP: ${err}`)
     throw err as Error;
   }
+  logger.log('Signed up successfully!')
   return { success: true, message: 'Signed up successfully!' };
 });
