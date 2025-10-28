@@ -51,7 +51,7 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
 
   // are there spots open?
   const spotsOpen = useMemo(() => {
-    return signups && signups.length && (eventData?.capacity ?? 0) > signups.length;
+    return (signups && Number.isInteger(signups.length) && ((eventData?.capacity ?? 0) > signups.length));
   }, [eventData, signups]);
 
   const [isLoading, setIsLoading] = useState(false);
