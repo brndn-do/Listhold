@@ -15,7 +15,7 @@ const firebaseConfig = {
 };
 
 // initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 // Initialize App Check
 // Only run this on the client side (in the browser)

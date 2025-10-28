@@ -41,6 +41,7 @@ This is the central collection for all events created on the platform.
   - `start`: `timestamp` - The start time of the event.
   - `end`: `timestamp` - The end time of the event.
   - `capacity`: `number` - Maximum number of attendees.
+  - `signupsCount`: `number` - The current number of signups.
   - `rules?`: `map` - A map to hold various event-specific rules.
     - `crossEventRestriction`: `boolean` - If true, users can only sign up for one event at a time within this organization.
     - `waitlistResponseTime`: `map` - Time in seconds users have to respond to a waitlist notification.

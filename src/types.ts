@@ -24,6 +24,7 @@ export interface EventData {
   start: Timestamp;
   end: Timestamp;
   capacity: number;
+  signupsCount: number;
 
   // Future feat
   // eslint-disable-next-line
