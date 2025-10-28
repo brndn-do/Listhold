@@ -51,11 +51,13 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
 
   // are there spots open?
   const spotsOpen = useMemo(() => {
-    return (signups && Number.isInteger(signups.length) && ((eventData?.capacity ?? 0) > signups.length));
+    return (
+      signups && Number.isInteger(signups.length) && (eventData?.capacity ?? 0) > signups.length
+    );
   }, [eventData, signups]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [joinError, setJoinError] = useState<string | null>(null);
+  const [functionError, setFunctionError] = useState<string | null>(null);
 
   const handleSignup = async () => {
     setIsLoading(true);
@@ -68,12 +70,27 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
       console.error('Firebase functions Error:', firebaseError.message);
       switch (firebaseError.code) {
         case 'resource-exhausted':
-          setJoinError('This event is already full');
+          setFunctionError('This event is already full');
           break;
         default:
-          setJoinError('An unexpected error occured.');
+          setFunctionError('An unexpected error occured.');
           break;
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLeave = async () => {
+    setIsLoading(true);
+    try {
+      const functions = getFunctions(app);
+      const handleLeave = httpsCallable(functions, 'handleLeave');
+      await handleLeave({ eventId });
+    } catch (err) {
+      const firebaseError = err as Error;
+      console.error('Firebase functions Error:', firebaseError.message)
+      setFunctionError('An unexpected error occured');
     } finally {
       setIsLoading(false);
     }
@@ -106,10 +123,11 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
 
         {signups && alreadyJoined && (
           <button
-            aria-disabled='true'
-            className='opacity-30 self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-not-allowed'
+            onClick={handleLeave}
+            disabled={isLoading}
+            className='inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer'
           >
-            You have already joined the list.
+            Leave This Event
           </button>
         )}
 
@@ -133,7 +151,7 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
           </button>
         )}
 
-        {joinError && <p className='mt-2 text-sm text-red-600 self-end'>{joinError}</p>}
+        {functionError && <p className='mt-2 text-sm text-red-600 self-end'>{functionError}</p>}
       </div>
     </div>
   );
