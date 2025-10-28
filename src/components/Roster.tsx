@@ -89,7 +89,7 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
       await handleLeave({ eventId });
     } catch (err) {
       const firebaseError = err as Error;
-      console.error('Firebase functions Error:', firebaseError.message)
+      console.error('Firebase functions Error:', firebaseError.message);
       setFunctionError('An unexpected error occured');
     } finally {
       setIsLoading(false);
