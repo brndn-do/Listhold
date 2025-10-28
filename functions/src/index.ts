@@ -1,14 +1,76 @@
-
-import { onRequest } from 'firebase-functions/https';
-import { onCall } from 'firebase-functions/v2/https';
+import { CallableRequest, HttpsError, onCall } from 'firebase-functions/v2/https';
 import { setGlobalOptions } from 'firebase-functions';
-import * as logger from 'firebase-functions/logger';
-import {onDocumentWritten} from "firebase-functions/v2/firestore";
+import { adminDb } from './firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Only up to 10 instances at a time, rest are queued
 setGlobalOptions({ maxInstances: 10 });
 
-export const helloWorld = onRequest((request, response) => {
-  logger.info('Hello logs!', { structuredData: true });
-  response.send('Hello from Firebase!');
+export const handleSignup = onCall(async (request: CallableRequest<{ eventId: string }>) => {
+  // get event id
+  const eventId = request.data.eventId;
+  if (!eventId) throw new HttpsError('invalid-argument', 'Error: must use valid event id');
+
+  // get uid from auth context
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Error: must be authenticated');
+
+  // all db reads and writes should be a transaction
+  try {
+    adminDb.runTransaction(async (transaction) => {
+      const eventDocRef = adminDb.doc(`events/${eventId}`);
+      const eventDoc = await transaction.get(eventDocRef);
+
+      if (!eventDoc.exists) {
+        throw new HttpsError('not-found', `Error: event with id ${eventId} does not exist`);
+      }
+
+      // get current event capacity and sign up count
+      const eventCapacity = eventDoc.data()?.capacity || 0;
+      const eventSignupsCount = eventDoc.data()?.signupsCount || 0;
+
+      if (eventSignupsCount >= eventCapacity) {
+        throw new HttpsError(
+          'resource-exhausted',
+          `Error: event with id ${eventId} is at full capacity`,
+        );
+      }
+
+      const userDocRef = adminDb.doc(`users/${uid}`);
+      const userDoc = await transaction.get(userDocRef);
+
+      if (!userDoc.exists) {
+        throw new HttpsError('not-found', `Error: user with id ${uid} does not exist`);
+      }
+
+      const userDisplayName = userDoc.data()?.displayName;
+      if (!userDisplayName) {
+        throw new HttpsError(
+          'failed-precondition',
+          `Error: user with id ${uid} does not have a display name`,
+        );
+      }
+
+      const signupDocRef = adminDb.doc(`events/${eventId}/signups/${uid}`);
+      const signupDoc = await transaction.get(signupDocRef);
+
+      if (signupDoc.exists) {
+        throw new HttpsError(
+          'already-exists',
+          `Error: user with id ${uid} is already signed up for event with id ${eventId}`,
+        );
+      }
+
+      transaction.create(signupDocRef, {
+        displayName: userDisplayName,
+        signupTime: FieldValue.serverTimestamp(),
+      });
+      transaction.update(eventDocRef, {
+        signupsCount: FieldValue.increment(1),
+      });
+    });
+  } catch (err) {
+    throw err as Error;
+  }
+  return { success: true, message: 'Signed up successfully!' };
 });

@@ -50,6 +50,7 @@ const EventView = ({ eventId }: { eventId: string }) => {
     <div className='flex flex-col items-center p-4 mb-8 gap-4'>
       <EventInfo eventData={eventData} eventLoading={eventLoading} eventError={eventError} />
       <Roster
+        eventId={eventId}
         eventData={eventData}
         eventLoading={eventLoading}
         eventError={eventError}
