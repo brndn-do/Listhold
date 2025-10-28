@@ -11,10 +11,10 @@ export default function Home() {
         Manage your event rosters with ease.
       </p>
       <Link
-        href='/events/nuarchery-10-24'
+        href='/events/nuarchery-example'
         className='mt-4 text-lg text-center text-slate-200 underline'
       >
-        Link to Friday Practice 10/24
+        Link to Example Practice
       </Link>
     </main>
   );
