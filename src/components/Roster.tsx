@@ -56,11 +56,15 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
     );
   }, [eventData, signups]);
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
+  const BUTTON_TIMEOUT = 2000;
 
   const handleSignup = async () => {
     setIsLoading(true);
+    setIsButtonDisabled(true);
+    setFunctionError(null);
     try {
       const functions = getFunctions(app);
       const handleSignup = httpsCallable(functions, 'handleSignup');
@@ -68,21 +72,25 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
     } catch (err) {
       const firebaseError = err as FunctionsError;
       console.error('Firebase functions Error:', firebaseError.message);
-      switch (firebaseError.code) {
-        case 'resource-exhausted':
-          setFunctionError('This event is already full');
-          break;
-        default:
-          setFunctionError('An unexpected error occured.');
-          break;
+      console.log(firebaseError.code);
+
+      if (firebaseError.code.includes('resource-exhausted')) {
+        setFunctionError('This event is already full');
+      } else {
+        setFunctionError('An unexpected error occured');
       }
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, BUTTON_TIMEOUT);
     }
   };
 
   const handleLeave = async () => {
     setIsLoading(true);
+    setIsButtonDisabled(true);
+    setFunctionError(null);
     try {
       const functions = getFunctions(app);
       const handleLeave = httpsCallable(functions, 'handleLeave');
@@ -93,6 +101,9 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
       setFunctionError('An unexpected error occured');
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        setIsButtonDisabled(false);
+      }, BUTTON_TIMEOUT);
     }
   };
 
@@ -124,11 +135,11 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
         {signups && alreadyJoined && (
           <button
             onClick={handleLeave}
-            disabled={isLoading}
-            
-            className='inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer'
+            disabled={isButtonDisabled}
+            aria-disabled={isButtonDisabled}
+            className={`${isButtonDisabled ? 'opacity-30 ' : ''} inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer`}
           >
-            {isLoading && <Spinner />}
+            {(isLoading || isButtonDisabled) && <Spinner />}
             {isLoading ? 'Leaving...' : 'Leave This Event'}
           </button>
         )}
@@ -145,10 +156,11 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
         {signups && user && !alreadyJoined && spotsOpen && (
           <button
             onClick={handleSignup}
-            disabled={isLoading}
-            className='inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer'
+            disabled={isButtonDisabled}
+            aria-disabled={isButtonDisabled}
+            className={`${isButtonDisabled ? 'opacity-30 ' : ''} inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer`}
           >
-            {isLoading && <Spinner />}
+            {(isLoading || isButtonDisabled) && <Spinner />}
             {isLoading ? 'Joining...' : 'Join the List'}
           </button>
         )}
