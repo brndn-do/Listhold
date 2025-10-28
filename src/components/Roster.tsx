@@ -58,6 +58,7 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
   const [joinError, setJoinError] = useState<string | null>(null);
 
   const handleSignup = async () => {
+    setIsLoading(true);
     try {
       const functions = getFunctions(app);
       const handleSignup = httpsCallable(functions, 'handleSignup');
