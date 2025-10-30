@@ -19,7 +19,11 @@ jest.mock('firebase/auth', () => ({
   ...jest.requireActual('firebase/auth'),
   signInWithPopup: jest.fn(),
   signOut: jest.fn(),
-  GoogleAuthProvider: jest.fn(),
+  GoogleAuthProvider: jest.fn().mockImplementation(() => {
+    return {
+      setCustomParameters: jest.fn(),
+    };
+  }),
 }));
 // Cast mocks for TypeScript support
 const signInWithPopupMock = signInWithPopup as jest.Mock;
