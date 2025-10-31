@@ -25,9 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <body>
-        <AuthProvider>
+    <html
+      lang='en'
+      className={`h-[100dvh] ${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
+      <AuthProvider>
+        {/* body should always take at least the entire viewport height */}
+        <body className='h-[100dvh] m-0 flex flex-col'>
           <header className='pt-5 pr-8'>
             <nav className='flex justify-end'>
               <div>
@@ -35,9 +39,12 @@ export default function RootLayout({
               </div>
             </nav>
           </header>
-          <main>{children}</main>
-        </AuthProvider>
-      </body>
+          <main className='flex-1 flex flex-col items-center'>{children}</main>
+          <footer className='p-2 flex flex-col text-xs'>
+            <p className='opacity-70 ml-4'>&copy; 2025 Rosterize</p>
+          </footer>
+        </body>
+      </AuthProvider>
     </html>
   );
 }

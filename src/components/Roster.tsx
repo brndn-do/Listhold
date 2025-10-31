@@ -6,30 +6,8 @@ import { SignupData } from '@/types';
 import { DocumentData, FirestoreError } from 'firebase/firestore';
 import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
 import { useMemo, useState } from 'react';
-
-const Spinner = () => (
-  <svg
-    className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
-    xmlns='http://www.w3.org/2000/svg'
-    fill='none'
-    viewBox='0 0 24 24'
-  >
-    <circle
-      className='opacity-25'
-      cx='12'
-      cy='12'
-      r='10'
-      stroke='currentColor'
-      strokeWidth='4'
-    ></circle>
-    <path
-      className='opacity-75'
-      fill='currentColor'
-      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2
-      5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-    ></path>
-  </svg>
-);
+import RosterButton from './RosterButton';
+import Spinner from './Spinner';
 
 interface RosterProps {
   eventId: string;
@@ -56,116 +34,110 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
     );
   }, [eventData, signups]);
 
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [cooldown, setCooldown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
-  const BUTTON_TIMEOUT = 2000;
+  const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
+  const ERROR_TIME = 7500; // how long to display error before allowing retries
 
   const handleSignup = async () => {
     setIsLoading(true);
-    setIsButtonDisabled(true);
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
       const handleSignup = httpsCallable(functions, 'handleSignup');
       await handleSignup({ eventId });
+      setIsLoading(false);
+      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT miliseconds
+      setTimeout(() => {
+        setCooldown(false);
+      }, COOLDOWN_TIME);
     } catch (err) {
+      setIsLoading(false);
       const firebaseError = err as FunctionsError;
       console.error('Firebase functions Error:', firebaseError.message);
       console.log(firebaseError.code);
-
       if (firebaseError.code.includes('resource-exhausted')) {
         setFunctionError('This event is already full');
       } else {
-        setFunctionError('An unexpected error occured');
+        setFunctionError('An unexpected error occured. Try again in a bit.');
       }
-    } finally {
-      setIsLoading(false);
       setTimeout(() => {
-        setIsButtonDisabled(false);
-      }, BUTTON_TIMEOUT);
+        setFunctionError(null);
+      }, ERROR_TIME);
     }
   };
 
   const handleLeave = async () => {
     setIsLoading(true);
-    setIsButtonDisabled(true);
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
       const handleLeave = httpsCallable(functions, 'handleLeave');
       await handleLeave({ eventId });
+      setIsLoading(false);
+      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT miliseconds
+      setTimeout(() => {
+        setCooldown(false);
+      }, COOLDOWN_TIME);
     } catch (err) {
+      setIsLoading(false);
       const firebaseError = err as Error;
       console.error('Firebase functions Error:', firebaseError.message);
-      setFunctionError('An unexpected error occured');
-    } finally {
-      setIsLoading(false);
+      setFunctionError('An unexpected error occured. Try again in a bit.');
       setTimeout(() => {
-        setIsButtonDisabled(false);
-      }, BUTTON_TIMEOUT);
+        setFunctionError(null);
+      }, ERROR_TIME);
     }
   };
 
   return (
-    <div className='w-full h-full flex flex-col items-center gap-2'>
-      <h2 className='text-2xl font-bold'>Roster:</h2>
+    <div className='w-full h-full flex flex-col items-center gap-1'>
+      <h2 className='text-lg font-bold'>Roster:</h2>
 
-      <div className='flex flex-col items-center border-1 w-[100%] md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%] p-4 min-h-[50vh] rounded-2xl'>
-        {signupsLoading && <p>Loading...</p>}
+      <div className='relative flex flex-col items-center border h-[52dvh] w-full py-2 px-1 rounded-2xl'>
+
+        {signupsLoading && <div>{<Spinner />}</div>}
         {signupsError && <p>Error: {signupsError.message}</p>}
 
         {signups && (
-          <ul className='flex flex-col items-center w-full'>
-            {signups.map((signup, i) => (
-              <li key={signup.uid}>{`${i + 1}. ${signup.displayName}`}</li>
-            ))}
-          </ul>
+          <div className='flex flex-col items-center w-full h-full'>
+            <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
+              {signups.map((signup) => (
+                <li
+                  className={user?.uid === signup.uid ? 'text-purple-700 dark:text-purple-600' : ''}
+                  key={signup.uid}
+                >{`${signup.displayName}`}</li>
+              ))}
+              {[
+                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+                24, 25, 26, 27, 28, 29, 30,
+              ].map((num) => (
+                <li key={num}>{`Salvador Lance Lopez`}</li>
+              ))}
+              {Array.from({ length: 15 }, (_, i) => `Hidden ${i + 1}`).map((str) => (
+                <li aria-hidden='true' className='opacity-0' key={str}></li>
+              ))}
+            </ol>
+            {/* gradient fade hint */}
+            <div className='pointer-events-none absolute top-0 p-2 w-full h-[5%] bg-gradient-to-b from-[#f6f6f6ff] dark:from-[#191919] to-transparent rounded-t-2xl' />
+            {/* gradient fade hint */}
+            <div className='pointer-events-none absolute bottom-0 p-2 w-full h-[30%] bg-gradient-to-t from-[#f6f6f6ff] dark:from-[#191919] to-transparent rounded-b-2xl' />
+          </div>
         )}
+      </div>
 
-        {signups && !user && (
-          <button
-            aria-disabled='true'
-            className='opacity-30 self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-not-allowed'
-          >
-            Sign in to join the list.
-          </button>
-        )}
-
-        {signups && alreadyJoined && (
-          <button
-            onClick={handleLeave}
-            disabled={isButtonDisabled}
-            aria-disabled={isButtonDisabled}
-            className={`${isButtonDisabled ? 'opacity-30 ' : ''} inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer`}
-          >
-            {(isLoading || isButtonDisabled) && <Spinner />}
-            {isLoading ? 'Leaving...' : 'Leave This Event'}
-          </button>
-        )}
-
-        {signups && user && !alreadyJoined && !spotsOpen && (
-          <button
-            aria-disabled='true'
-            className='opacity-30 self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-not-allowed'
-          >
-            There are no spots left.
-          </button>
-        )}
-
-        {signups && user && !alreadyJoined && spotsOpen && (
-          <button
-            onClick={handleSignup}
-            disabled={isButtonDisabled}
-            aria-disabled={isButtonDisabled}
-            className={`${isButtonDisabled ? 'opacity-30 ' : ''} inline-flex self-end mt-auto focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer`}
-          >
-            {(isLoading || isButtonDisabled) && <Spinner />}
-            {isLoading ? 'Joining...' : 'Join the List'}
-          </button>
-        )}
-
-        {functionError && <p className='mt-2 text-sm text-red-600 self-end'>{functionError}</p>}
+      <div className='flex flex-col items-end pt-1 px-2 w-full'>
+        <RosterButton
+          alreadyJoined={!!alreadyJoined}
+          spotsOpen={!!spotsOpen}
+          cooldown={cooldown}
+          isLoading={isLoading}
+          functionError={functionError}
+          signups={signups}
+          handleSignup={handleSignup}
+          handleLeave={handleLeave}
+        />
       </div>
     </div>
   );
