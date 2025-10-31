@@ -1,5 +1,5 @@
-import { format, isSameDay } from "date-fns";
-import { Timestamp } from "firebase/firestore";
+import { format, isSameDay } from 'date-fns';
+import { Timestamp } from 'firebase/firestore';
 
 const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
   const startDate = start.toDate();

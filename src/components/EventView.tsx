@@ -21,7 +21,7 @@ const EventView = ({ eventId }: { eventId: string }) => {
   const [eventSnapshot, eventLoading, eventError] = useDocument(doc(db, 'events', eventId));
   const eventData = eventSnapshot?.data();
 
-  // listen to the singups subcollection in Firestore
+  // listen to the signups subcollection in Firestore
   const collectionRef = useMemo(
     () =>
       collection(db, 'events', eventId, 'signups').withConverter<SignupData>({
@@ -47,8 +47,9 @@ const EventView = ({ eventId }: { eventId: string }) => {
   const [signups, signupsLoading, signupsError] = useCollectionData<SignupData>(q);
 
   return (
-    <div className='flex flex-col items-center p-4 mb-8 gap-4'>
+    <div className='flex flex-col items-center p-4 gap-2 h-full w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%]'>
       <EventInfo eventData={eventData} eventLoading={eventLoading} eventError={eventError} />
+      <div className='border-b-1 border-dashed w-[90%]'></div> {/* separator */}
       <Roster
         eventId={eventId}
         eventData={eventData}

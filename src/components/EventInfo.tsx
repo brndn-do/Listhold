@@ -2,6 +2,7 @@
 
 import formatEventTiming from '@/utils/formatEventTiming';
 import { DocumentData, FirestoreError } from 'firebase/firestore';
+import Spinner from './Spinner';
 
 interface EventInfoProps {
   eventData: DocumentData | undefined;
@@ -12,7 +13,13 @@ interface EventInfoProps {
 const EventInfo = ({ eventData, eventLoading, eventError }: EventInfoProps) => {
   return (
     <div className='flex flex-col items-center gap-1'>
-      {eventLoading && <p className='text-2xl text-center font-bold'>Loading...</p>}
+      {eventLoading && (
+        <div className='flex items-center'>
+          <span>
+            <Spinner />
+          </span>
+        </div>
+      )}
       {eventError && (
         <p className='text-2xl text-center font-bold'>
           {' '}
