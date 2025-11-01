@@ -7,6 +7,13 @@ interface EventListProps {
 
 const EventList = ({ signups }: EventListProps) => {
   const { user } = useAuth();
+  if (signups.length === 0) {
+    return (
+      <div className='flex flex-col items-center justify-center w-full h-full'>
+        <p className='text-lg font-bold'>It&apos;s empty...</p>
+      </div>
+    );
+  }
   return (
     <div className='flex flex-col items-center w-full h-full'>
       <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
