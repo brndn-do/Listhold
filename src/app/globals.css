@@ -15,7 +15,7 @@
 
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #000000ff #f6f6f6; /* thumb | track */
+  scrollbar-color: gray #f6f6f6; /* thumb | track */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -25,7 +25,7 @@
   }
 
   .scrollbar-thin {
-    scrollbar-color: #f0f0f0ff #191919;
+    scrollbar-color: gray #191919;
   }
 }
 
