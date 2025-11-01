@@ -32,7 +32,7 @@ export default function RootLayout({
       <AuthProvider>
         {/* body should always take at least the entire viewport height */}
         <body className='h-[100dvh] m-0 flex flex-col'>
-          <header className='pt-5 pr-8'>
+          <header className='pt-4 pr-4'>
             <nav className='flex justify-end'>
               <div>
                 <AuthWrapper />
