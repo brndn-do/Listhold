@@ -6,10 +6,11 @@ import { SignupData } from '@/types';
 import { DocumentData, FirestoreError } from 'firebase/firestore';
 import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
 import { useMemo, useState } from 'react';
-import RosterButton from './RosterButton';
+import EventButton from './EventButton';
 import Spinner from './Spinner';
+import EventList from './EventList';
 
-interface RosterProps {
+interface EventListWrapperProps {
   eventId: string;
   eventData: DocumentData | undefined;
   eventLoading: boolean;
@@ -19,7 +20,13 @@ interface RosterProps {
   signupsError: FirestoreError | undefined;
 }
 
-const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: RosterProps) => {
+const EventListWrapper = ({
+  eventId,
+  eventData,
+  signups,
+  signupsLoading,
+  signupsError,
+}: EventListWrapperProps) => {
   const { user } = useAuth();
 
   // has the user already joined the list? (must be signed in first, if this is true, user is true)
@@ -93,42 +100,19 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
 
   return (
     <div className='w-full h-full flex flex-col items-center gap-1'>
-      <h2 className='text-lg font-bold'>Roster:</h2>
+      <div className='flex gap-24 text-lg font-[400]'>
+        <button className='text-purple-700 dark:text-purple-500 underline hover:cursor-pointer'>Signups</button>
+        <button className='underline hover:cursor-pointer'>Waitlist</button>
+      </div>
 
       <div className='relative flex flex-col items-center border h-[52dvh] w-full py-2 px-1 rounded-2xl'>
-
         {signupsLoading && <div>{<Spinner />}</div>}
         {signupsError && <p>Error: {signupsError.message}</p>}
-
-        {signups && (
-          <div className='flex flex-col items-center w-full h-full'>
-            <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
-              {signups.map((signup) => (
-                <li
-                  className={user?.uid === signup.uid ? 'text-purple-700 dark:text-purple-600' : ''}
-                  key={signup.uid}
-                >{`${signup.displayName}`}</li>
-              ))}
-              {[
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-                24, 25, 26, 27, 28, 29, 30,
-              ].map((num) => (
-                <li key={num}>{`Salvador Lance Lopez`}</li>
-              ))}
-              {Array.from({ length: 15 }, (_, i) => `Hidden ${i + 1}`).map((str) => (
-                <li aria-hidden='true' className='opacity-0' key={str}></li>
-              ))}
-            </ol>
-            {/* gradient fade hint */}
-            <div className='pointer-events-none absolute top-0 p-2 w-full h-[5%] bg-gradient-to-b from-[#f6f6f6ff] dark:from-[#191919] to-transparent rounded-t-2xl' />
-            {/* gradient fade hint */}
-            <div className='pointer-events-none absolute bottom-0 p-2 w-full h-[30%] bg-gradient-to-t from-[#f6f6f6ff] dark:from-[#191919] to-transparent rounded-b-2xl' />
-          </div>
-        )}
+        {signups && <EventList signups={signups} />}
       </div>
 
       <div className='flex flex-col items-end pt-1 px-2 w-full'>
-        <RosterButton
+        <EventButton
           alreadyJoined={!!alreadyJoined}
           spotsOpen={!!spotsOpen}
           cooldown={cooldown}
@@ -143,4 +127,4 @@ const Roster = ({ eventId, eventData, signups, signupsLoading, signupsError }: R
   );
 };
 
-export default Roster;
+export default EventListWrapper;

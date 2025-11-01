@@ -2,7 +2,6 @@
 
 import { db } from '@/lib/firebase';
 import EventInfo from './EventInfo';
-import Roster from './Roster';
 import { useCollectionData, useDocument } from 'react-firebase-hooks/firestore';
 import {
   collection,
@@ -15,6 +14,7 @@ import {
 } from 'firebase/firestore';
 import { useMemo } from 'react';
 import { SignupData } from '@/types';
+import EventListWrapper from './EventListWrapper';
 
 const EventView = ({ eventId }: { eventId: string }) => {
   // listen to the event document in Firestore
@@ -50,7 +50,7 @@ const EventView = ({ eventId }: { eventId: string }) => {
     <div className='flex flex-col items-center p-4 gap-2 h-full w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%]'>
       <EventInfo eventData={eventData} eventLoading={eventLoading} eventError={eventError} />
       <div className='border-b-1 border-dashed w-[90%]'></div> {/* separator */}
-      <Roster
+      <EventListWrapper
         eventId={eventId}
         eventData={eventData}
         eventLoading={eventLoading}

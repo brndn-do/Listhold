@@ -2,7 +2,7 @@ import { useAuth } from '@/context/AuthProvider';
 import { SignupData } from '@/types';
 import Spinner from './Spinner';
 
-interface RosterButtonProps {
+interface EventButtonProps {
   alreadyJoined: boolean;
   spotsOpen: boolean;
   cooldown: boolean;
@@ -13,7 +13,7 @@ interface RosterButtonProps {
   handleLeave: () => unknown;
 }
 
-const RosterButton = ({
+const EventButton = ({
   alreadyJoined,
   spotsOpen,
   cooldown,
@@ -21,7 +21,7 @@ const RosterButton = ({
   functionError,
   handleSignup,
   handleLeave,
-}: RosterButtonProps) => {
+}: EventButtonProps) => {
   const { user } = useAuth();
 
   // if there's an error display the error instead of a button
@@ -79,4 +79,4 @@ const RosterButton = ({
   );
 };
 
-export default RosterButton;
+export default EventButton;
