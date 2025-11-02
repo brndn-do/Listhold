@@ -18,15 +18,16 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Signups Subcollection (locked for now)
+    // Signups Subcollection
     match /events/{eventId}/signups/{signupId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Waitlist Subcollection (locked for now)
+    // Waitlist Subcollection
     match /events/{eventId}/waitlist/{waitlistId} {
-      allow read, write: if false;
+      allow read: if true; 
+      allow write: if false;
     }
 
     // Default deny

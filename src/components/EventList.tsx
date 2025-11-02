@@ -3,11 +3,16 @@ import { SignupData } from '@/types';
 
 interface EventListProps {
   signups: SignupData[];
+  waitlist: SignupData[];
+  viewWaitlist: boolean;
 }
 
-const EventList = ({ signups }: EventListProps) => {
+const EventList = ({ signups, waitlist, viewWaitlist }: EventListProps) => {
   const { user } = useAuth();
-  if (signups.length === 0) {
+  // does the user want to view the waitlist?
+  const selection = viewWaitlist ? waitlist : signups;
+  
+  if (selection.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center w-full h-full'>
         <p className='text-lg font-bold'>It&apos;s empty...</p>
@@ -17,7 +22,7 @@ const EventList = ({ signups }: EventListProps) => {
   return (
     <div className='flex flex-col items-center w-full h-full'>
       <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
-        {signups.map((signup) => (
+        {selection.map((signup) => (
           <li
             className={user?.uid === signup.uid ? 'text-purple-700 dark:text-purple-500' : ''}
             key={signup.uid}

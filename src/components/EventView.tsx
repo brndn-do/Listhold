@@ -22,7 +22,7 @@ const EventView = ({ eventId }: { eventId: string }) => {
   const eventData = eventSnapshot?.data();
 
   // listen to the signups subcollection in Firestore
-  const collectionRef = useMemo(
+  const signupsRef = useMemo(
     () =>
       collection(db, 'events', eventId, 'signups').withConverter<SignupData>({
         toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
@@ -43,8 +43,31 @@ const EventView = ({ eventId }: { eventId: string }) => {
       }),
     [eventId],
   );
-  const q = query(collectionRef, orderBy('signupTime'));
-  const [signups, signupsLoading, signupsError] = useCollectionData<SignupData>(q);
+  const [signups, signupsLoading, signupsError] = useCollectionData<SignupData>(query(signupsRef, orderBy('signupTime')));
+
+  // listen to the waitlist subcollection in Firestore
+  const waitlistRef = useMemo(
+    () =>
+      collection(db, 'events', eventId, 'waitlist').withConverter<SignupData>({
+        toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
+          return {
+            uid: signupData.uid,
+            displayName: signupData.displayName,
+            signupTime: signupData.signupTime,
+          };
+        },
+        fromFirestore(snapshot: QueryDocumentSnapshot): SignupData {
+          const data = snapshot.data();
+          return {
+            uid: snapshot.id,
+            displayName: data.displayName,
+            signupTime: data.signupTime,
+          };
+        },
+      }),
+    [eventId],
+  );
+  const [waitlist, waitlistLoading, waitlistError] = useCollectionData<SignupData>(query(waitlistRef, orderBy('signupTime')));
 
   return (
     <div className='flex flex-col items-center p-4 gap-2 h-full w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%]'>
@@ -58,6 +81,9 @@ const EventView = ({ eventId }: { eventId: string }) => {
         signups={signups}
         signupsLoading={signupsLoading}
         signupsError={signupsError}
+        waitlist={waitlist}
+        waitlistLoading={waitlistLoading}
+        waitlistError={waitlistError}
       />
     </div>
   );

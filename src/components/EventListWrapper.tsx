@@ -18,6 +18,9 @@ interface EventListWrapperProps {
   signups: SignupData[] | undefined;
   signupsLoading: boolean;
   signupsError: FirestoreError | undefined;
+  waitlist: SignupData[] | undefined;
+  waitlistLoading: boolean;
+  waitlistError: FirestoreError | undefined;
 }
 
 const EventListWrapper = ({
@@ -26,6 +29,9 @@ const EventListWrapper = ({
   signups,
   signupsLoading,
   signupsError,
+  waitlist,
+  waitlistLoading,
+  waitlistError,
 }: EventListWrapperProps) => {
   const { user } = useAuth();
 
@@ -44,7 +50,7 @@ const EventListWrapper = ({
   const [cooldown, setCooldown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
-  const [ viewWaitlist, setViewWaitlist ] = useState(false); // is the user viewing waitlist or the main list?
+  const [viewWaitlist, setViewWaitlist] = useState(false); // is the user viewing waitlist or the main list?
   const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
   const ERROR_TIME = 7500; // how long to display error before allowing retries
 
@@ -100,17 +106,26 @@ const EventListWrapper = ({
   };
 
   return (
-
     <div className='w-full h-full flex flex-col items-center gap-1'>
       <div className='flex gap-24 text-lg pb-1'>
-        <button onClick={() => setViewWaitlist(false)} className={`${!viewWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}>Signups</button>
-        <button onClick={() => setViewWaitlist(true)} className={`${viewWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}>Waitlist</button>
+        <button
+          onClick={() => setViewWaitlist(false)}
+          className={`${!viewWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
+        >
+          Signups
+        </button>
+        <button
+          onClick={() => setViewWaitlist(true)}
+          className={`${viewWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
+        >
+          Waitlist
+        </button>
       </div>
 
       <div className='relative flex flex-col items-center border h-[52dvh] w-full py-2 px-1 rounded-2xl'>
-        {signupsLoading && <div>{<Spinner />}</div>}
-        {signupsError && <p>Error: {signupsError.message}</p>}
-        {signups && <EventList signups={signups} />}
+        {(signupsLoading || waitlistLoading) && <div>{<Spinner />}</div>}
+        {(signupsError || waitlistError) && <p>Error: {signupsError?.message || waitlistError?.message}</p>}
+        {signups && waitlist && <EventList signups={signups} waitlist={waitlist} viewWaitlist={viewWaitlist}/>}
       </div>
 
       <div className='flex flex-col items-end pt-1 px-2 w-full'>
