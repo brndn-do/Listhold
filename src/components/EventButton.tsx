@@ -32,9 +32,7 @@ const EventButton = ({
 
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
-    return !!(
-      (eventData?.capacity ?? 0) > (eventData?.signupsCount ?? 0)
-    );
+    return !!((eventData?.capacity ?? 0) > (eventData?.signupsCount ?? 0));
   }, [eventData]);
 
   // if there's an error display the error instead of a button
