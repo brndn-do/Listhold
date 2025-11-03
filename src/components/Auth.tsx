@@ -25,7 +25,7 @@ const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
             height={32}
             className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
           ></Image>
-          <h2 className='text-lg'>{`Hi, ${user.displayName}`}</h2>
+          <h2 className='text-lg'>{user.displayName}</h2>
         </>
       ) : (
         <></>

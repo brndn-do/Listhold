@@ -1,16 +1,11 @@
 'use client';
 
 import formatEventTiming from '@/utils/formatEventTiming';
-import { DocumentData, FirestoreError } from 'firebase/firestore';
 import Spinner from './Spinner';
+import { useEvent } from '@/context/EventProvider';
 
-interface EventInfoProps {
-  eventData: DocumentData | undefined;
-  eventLoading: boolean;
-  eventError: FirestoreError | undefined;
-}
-
-const EventInfo = ({ eventData, eventLoading, eventError }: EventInfoProps) => {
+const EventInfo = () => {
+  const { eventData, eventLoading, eventError } = useEvent();
   return (
     <div className='flex flex-col items-center gap-1'>
       {eventLoading && (
@@ -23,7 +18,7 @@ const EventInfo = ({ eventData, eventLoading, eventError }: EventInfoProps) => {
       {eventError && (
         <p className='text-2xl text-center font-bold'>
           {' '}
-          Error: {eventError.message || 'unexpected error occurred'}
+          Error fetching event details: {eventError.message || 'unexpected error'}
         </p>
       )}
       {eventData && (
