@@ -1,3 +1,5 @@
+'use client';
+
 import { useAuth } from '@/context/AuthProvider';
 import Spinner from './Spinner';
 import { useEvent } from '@/context/EventProvider';
@@ -6,23 +8,34 @@ import { useMemo } from 'react';
 interface EventButtonProps {
   functionError: string | null;
   cooldown: boolean;
-  isLoading : boolean;
+  isLoading: boolean;
   handleSignup: () => void;
   handleLeave: () => void;
 }
 
-const EventButton = ({ functionError, cooldown, isLoading, handleSignup, handleLeave }: EventButtonProps) => {
+const EventButton = ({
+  functionError,
+  cooldown,
+  isLoading,
+  handleSignup,
+  handleLeave,
+}: EventButtonProps) => {
   const { user } = useAuth();
-  const { eventData, signups } = useEvent();
+  const { eventData, signups, waitlist } = useEvent();
 
-  const alreadyJoined = useMemo(() => {
-    return !!(user && signups && signups?.some((s) => s.uid === user?.uid));
-  }, [user, signups]);
-
-  // are there spots open?
-  const spotsOpen = useMemo(() => {
+  // did the user already join either the signups list or the waitlist)
+  const alreadyJoined: boolean = useMemo(() => {
     return !!(
-      signups && Number.isInteger(signups.length) && (eventData?.capacity ?? 0) > signups.length
+      user && signups?.some((s) => s.uid === user?.uid || waitlist?.some((s) => s.uid === user.uid))
+    );
+  }, [user, signups, waitlist]);
+
+  // are there spots open on the main list?
+  const spotsOpen: boolean = useMemo(() => {
+    return !!(
+      signups &&
+      Number.isInteger(signups.length) &&
+      (eventData?.capacity ?? 0) > signups.length
     );
   }, [eventData, signups]);
 
@@ -42,7 +55,8 @@ const EventButton = ({ functionError, cooldown, isLoading, handleSignup, handleL
       </button>
     );
   }
-  // already joined, allow leaving the event
+
+  // already joined the selection (main list or waitlist), allow leaving it
   if (alreadyJoined) {
     return (
       <button
@@ -57,8 +71,9 @@ const EventButton = ({ functionError, cooldown, isLoading, handleSignup, handleL
       </button>
     );
   }
-  // no spots, disable
-  if (!spotsOpen) {
+
+  // if not already joined and no spots, allow joining the waitlist
+  if (!alreadyJoined && !spotsOpen) {
     return (
       <button
         onClick={handleSignup}
@@ -72,6 +87,7 @@ const EventButton = ({ functionError, cooldown, isLoading, handleSignup, handleL
       </button>
     );
   }
+
   // default (can join)
   return (
     <button

@@ -1,5 +1,3 @@
-'use client';
-
 import EventInfo from './EventInfo';
 import EventListWrapper from './EventListWrapper';
 

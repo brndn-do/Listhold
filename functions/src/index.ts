@@ -10,12 +10,12 @@ export const handleSignup = onCall(async (request: CallableRequest<{ eventId: st
   logger.log('Received signup request');
   // get event id
   const eventId = request.data.eventId;
-  if (!eventId) throw new HttpsError('invalid-argument', 'Error: must use valid event id');
+  if (!eventId) throw new HttpsError('invalid-argument', 'Must use valid event id');
   logger.log(`Event ID: ${eventId}`);
 
   // get uid from auth context
   const uid = request.auth?.uid;
-  if (!uid) throw new HttpsError('unauthenticated', 'Error: must be authenticated');
+  if (!uid) throw new HttpsError('unauthenticated', 'Must be authenticated');
   logger.log(`uid: ${uid}`);
 
   // all db reads and writes should be a transaction
@@ -26,55 +26,65 @@ export const handleSignup = onCall(async (request: CallableRequest<{ eventId: st
       const eventDoc = await transaction.get(eventDocRef);
 
       if (!eventDoc.exists) {
-        throw new HttpsError('not-found', `Error: event with id ${eventId} does not exist`);
-      }
-
-      // get current event capacity and sign up count
-      const eventCapacity = eventDoc.data()?.capacity || 0;
-      const eventSignupsCount = eventDoc.data()?.signupsCount || 0;
-
-      if (eventSignupsCount >= eventCapacity) {
-        throw new HttpsError(
-          'resource-exhausted',
-          `Error: event with id ${eventId} is at full capacity`,
-        );
+        throw new HttpsError('not-found', `Event with id ${eventId} does not exist`);
       }
 
       const userDocRef = adminDb.doc(`users/${uid}`);
       const userDoc = await transaction.get(userDocRef);
 
       if (!userDoc.exists) {
-        throw new HttpsError('not-found', `Error: user with id ${uid} does not exist`);
+        throw new HttpsError('not-found', `User with id ${uid} does not exist`);
       }
 
       const userDisplayName = userDoc.data()?.displayName;
       if (!userDisplayName) {
         throw new HttpsError(
           'failed-precondition',
-          `Error: user with id ${uid} does not have a display name`,
+          `User with id ${uid} does not have a display name`,
         );
       }
 
+      // check if user is on list/waitlist already
       const signupDocRef = adminDb.doc(`events/${eventId}/signups/${uid}`);
       const signupDoc = await transaction.get(signupDocRef);
-
       if (signupDoc.exists) {
         throw new HttpsError(
           'already-exists',
-          `Error: user with id ${uid} is already signed up for event with id ${eventId}`,
+          `User with id ${uid} is already signed up for event with id ${eventId}`,
+        );
+      }
+      const waitlistDocRef = adminDb.doc(`events/${eventId}/waitlist/${uid}`);
+      const waitlistDoc = await transaction.get(waitlistDocRef);
+      if (waitlistDoc.exists) {
+        throw new HttpsError(
+          'already-exists',
+          `User with id ${uid} is already on the waitlist for event with id ${eventId}`,
         );
       }
 
-      transaction.create(signupDocRef, {
-        displayName: userDisplayName,
-        signupTime: FieldValue.serverTimestamp(),
-      });
-      transaction.update(eventDocRef, {
-        signupsCount: FieldValue.increment(1),
-      });
+      // get current event capacity and sign up count
+      const eventCapacity = eventDoc.data()?.capacity || 0;
+      const eventSignupsCount = eventDoc.data()?.signupsCount || 0;
+
+      if (eventSignupsCount < eventCapacity) {
+        // add to main list
+        transaction.create(signupDocRef, {
+          displayName: userDisplayName,
+          signupTime: FieldValue.serverTimestamp(),
+        });
+        transaction.update(eventDocRef, {
+          signupsCount: FieldValue.increment(1),
+        });
+      } else {
+        // add to wait list
+        transaction.create(waitlistDocRef, {
+          displayName: userDisplayName,
+          signupTime: FieldValue.serverTimestamp(),
+        });
+      }
     });
   } catch (err) {
-    logger.log(`ERROR SIGNING UP: ${err}`);
+    logger.log(`ERROR ADDING USER TO EVENT: ${err}`);
     throw err as Error;
   }
   logger.log('Signed up successfully!');
@@ -85,12 +95,12 @@ export const handleLeave = onCall(async (request: CallableRequest<{ eventId: str
   logger.log('Receieved request to leave event');
   // get event id
   const eventId = request.data.eventId;
-  if (!eventId) throw new HttpsError('invalid-argument', 'Error: must use valid event id');
+  if (!eventId) throw new HttpsError('invalid-argument', 'Must use valid event id');
   logger.log(`Event ID: ${eventId}`);
 
   // get uid from auth context
   const uid = request.auth?.uid;
-  if (!uid) throw new HttpsError('unauthenticated', 'Error: must be authenticated');
+  if (!uid) throw new HttpsError('unauthenticated', 'Must be authenticated');
   logger.log(`uid: ${uid}`);
 
   // all db operations should be a transaction
@@ -101,25 +111,30 @@ export const handleLeave = onCall(async (request: CallableRequest<{ eventId: str
       const eventDoc = await transaction.get(eventDocRef);
 
       if (!eventDoc.exists) {
-        throw new HttpsError('not-found', `Error: event with id ${eventId} does not exist`);
+        throw new HttpsError('not-found', `Event with id ${eventId} does not exist`);
       }
 
       const signupDocRef = adminDb.doc(`events/${eventId}/signups/${uid}`);
       const signupDoc = await transaction.get(signupDocRef);
+      const waitlistDocRef = adminDb.doc(`events/${eventId}/waitlist/${uid}`);
+      const waitlistDoc = await transaction.get(waitlistDocRef);
 
-      if (!signupDoc.exists) {
+      // remove signup if exist
+      if (signupDoc.exists) {
+        transaction.delete(signupDocRef);
+        transaction.update(eventDocRef, {
+          signupsCount: FieldValue.increment(-1),
+        });
+      } else if (waitlistDoc.exists) {
+        transaction.delete(waitlistDocRef);
+      } else {
         throw new HttpsError(
           'not-found',
-          `Error: user with id ${uid} was not found for event with id ${eventId}`,
+          `User with id ${uid} was not found for event with id ${eventId}`,
         );
       }
 
-      // remove signup
-      transaction.delete(signupDocRef);
-
-      transaction.update(eventDocRef, {
-        signupsCount: FieldValue.increment(-1),
-      });
+      // TODO: add next in line
     });
   } catch (err) {
     logger.log(`ERROR LEAVING EVENT: ${err}`);

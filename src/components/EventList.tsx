@@ -1,15 +1,18 @@
+'use client';
+
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
 import Spinner from './Spinner';
 
-const EventList = ({ viewWaitlist }: { viewWaitlist: boolean }) => {
+const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
   const { user } = useAuth();
   const { signups, signupsLoading, signupsError, waitlist, waitlistLoading, waitlistError } =
     useEvent();
+
   // does the user want to view the waitlist?
-  const selection = viewWaitlist ? waitlist : signups;
-  const selectionLoading = viewWaitlist ? waitlistLoading : signupsLoading;
-  const selectionError = viewWaitlist ? waitlistError : signupsError;
+  const selection = viewingWaitlist ? waitlist : signups;
+  const selectionLoading = viewingWaitlist ? waitlistLoading : signupsLoading;
+  const selectionError = viewingWaitlist ? waitlistError : signupsError;
 
   if (selectionLoading) {
     return <div>{<Spinner />}</div>;
