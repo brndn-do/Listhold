@@ -87,7 +87,7 @@ export const handleSignup = onCall(async (request: CallableRequest<{ eventId: st
     logger.log(`ERROR ADDING USER TO EVENT: ${err}`);
     throw err as Error;
   }
-  logger.log('Signed up successfully!');
+  logger.log('Added user successfully!');
   return { success: true, message: 'Signed up successfully!' };
 });
 
@@ -119,27 +119,51 @@ export const handleLeave = onCall(async (request: CallableRequest<{ eventId: str
       const waitlistDocRef = adminDb.doc(`events/${eventId}/waitlist/${uid}`);
       const waitlistDoc = await transaction.get(waitlistDocRef);
 
-      // remove signup if exist
-      if (signupDoc.exists) {
-        transaction.delete(signupDocRef);
-        transaction.update(eventDocRef, {
-          signupsCount: FieldValue.increment(-1),
-        });
-      } else if (waitlistDoc.exists) {
-        transaction.delete(waitlistDocRef);
-      } else {
+      // snapshot of top spot on waitlist, if exist
+      const waitlistQuery = adminDb
+        .collection(`events/${eventId}/waitlist`)
+        .orderBy('signupTime', 'asc')
+        .limit(1);
+      const waitlistSnapshot = await transaction.get(waitlistQuery);
+
+      if (!signupDoc.exists && !waitlistDoc.exists) {
         throw new HttpsError(
           'not-found',
           `User with id ${uid} was not found for event with id ${eventId}`,
         );
       }
 
-      // TODO: add next in line
+      if (waitlistDoc.exists) {
+        transaction.delete(waitlistDocRef);
+        return;
+      }
+
+      transaction.delete(signupDocRef);
+      transaction.update(eventDocRef, {
+        signupsCount: FieldValue.increment(-1),
+      });
+
+      // if no one found on waitlist, return early
+      if (waitlistSnapshot.empty) {
+        return;
+      }
+      // get next on waitlist to promote
+      const nextDoc = waitlistSnapshot.docs[0];
+      // place to write
+      const newSignupDocRef = adminDb.doc(`events/${eventId}/signups/${nextDoc.id}`);
+      // place to delete
+      const oldWaitlistDocRef = adminDb.doc(`events/${eventId}/waitlist/${nextDoc.id}`);
+
+      transaction.create(newSignupDocRef, nextDoc.data());
+      transaction.update(eventDocRef, {
+        signupsCount: FieldValue.increment(1),
+      });
+      transaction.delete(oldWaitlistDocRef);
     });
   } catch (err) {
-    logger.log(`ERROR LEAVING EVENT: ${err}`);
+    logger.log(`ERROR REMOVING USER FROM EVENT: ${err}`);
     throw err as Error;
   }
-  logger.log('Left event successfully!');
+  logger.log('Removed user successfully!');
   return { success: true, message: 'Left event successfully!' };
 });
