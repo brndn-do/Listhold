@@ -33,11 +33,9 @@ const EventButton = ({
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
     return !!(
-      signups &&
-      Number.isInteger(signups.length) &&
-      (eventData?.capacity ?? 0) > signups.length
+      (eventData?.capacity ?? 0) > (eventData?.signupsCount ?? 0)
     );
-  }, [eventData, signups]);
+  }, [eventData]);
 
   // if there's an error display the error instead of a button
   if (functionError) {
@@ -73,7 +71,7 @@ const EventButton = ({
   }
 
   // if not already joined and no spots, allow joining the waitlist
-  if (!alreadyJoined && !spotsOpen) {
+  if (!spotsOpen) {
     return (
       <button
         onClick={handleSignup}
