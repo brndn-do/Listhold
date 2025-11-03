@@ -6,12 +6,15 @@ import { useState } from 'react';
 import EventButton from './EventButton';
 import EventList from './EventList';
 import { useEvent } from '@/context/EventProvider';
+import { useAuth } from '@/context/AuthProvider';
 
 const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventListWrapper = () => {
+  const { user } = useAuth();
   const { eventData } = useEvent();
+  const userId = user?.uid
   const eventId = eventData?.id;
 
   const [cooldown, setCooldown] = useState(false);
@@ -25,10 +28,10 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleSignup = httpsCallable(functions, 'handleSignup');
-      await handleSignup({ eventId });
+      const handleSignup = httpsCallable(functions, 'addUserToEvent');
+      await handleSignup({ eventId, userId });
       setIsLoading(false);
-      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT miliseconds
+      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
       setTimeout(() => {
         setCooldown(false);
       }, COOLDOWN_TIME);
@@ -53,10 +56,10 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleLeave = httpsCallable(functions, 'handleLeave');
-      await handleLeave({ eventId });
+      const handleLeave = httpsCallable(functions, 'removeUserFromEvent');
+      await handleLeave({ eventId, userId });
       setIsLoading(false);
-      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT miliseconds
+      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
       setTimeout(() => {
         setCooldown(false);
       }, COOLDOWN_TIME);
