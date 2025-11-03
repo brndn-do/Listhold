@@ -1,28 +1,36 @@
 import { useAuth } from '@/context/AuthProvider';
-import { SignupData } from '@/types';
+import { useEvent } from '@/context/EventProvider';
+import Spinner from './Spinner';
 
-interface EventListProps {
-  signups: SignupData[];
-  waitlist: SignupData[];
-  viewWaitlist: boolean;
-}
-
-const EventList = ({ signups, waitlist, viewWaitlist }: EventListProps) => {
+const EventList = ({ viewWaitlist }: { viewWaitlist: boolean }) => {
   const { user } = useAuth();
+  const { signups, signupsLoading, signupsError, waitlist, waitlistLoading, waitlistError } =
+    useEvent();
   // does the user want to view the waitlist?
   const selection = viewWaitlist ? waitlist : signups;
-  
-  if (selection.length === 0) {
+  const selectionLoading = viewWaitlist ? waitlistLoading : signupsLoading;
+  const selectionError = viewWaitlist ? waitlistError : signupsError;
+
+  if (selectionLoading) {
+    return <div>{<Spinner />}</div>;
+  }
+
+  if (selectionError) {
+    return <p>Error: {selectionError.message}</p>;
+  }
+
+  if (selection?.length === 0) {
     return (
       <div className='flex flex-col items-center justify-center w-full h-full'>
         <p className='text-lg font-bold'>It&apos;s empty...</p>
       </div>
     );
   }
+
   return (
     <div className='flex flex-col items-center w-full h-full'>
       <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
-        {selection.map((signup) => (
+        {selection?.map((signup) => (
           <li
             className={user?.uid === signup.uid ? 'text-purple-700 dark:text-purple-500' : ''}
             key={signup.uid}

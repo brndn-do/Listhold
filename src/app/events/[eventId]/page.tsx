@@ -1,4 +1,5 @@
 import EventView from '@/components/EventView';
+import { EventProvider } from '@/context/EventProvider';
 import { getEventNameAndDescById } from '@/services/server-only/eventNameAndDescService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -36,5 +37,9 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 
 export default async function EventPage({ params }: EventPageProps) {
   const { eventId } = await params;
-  return <EventView eventId={eventId} />;
+  return (
+    <EventProvider eventId={eventId}>
+      <EventView />
+    </EventProvider>
+  );
 }

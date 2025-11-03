@@ -1,28 +1,30 @@
 import { useAuth } from '@/context/AuthProvider';
-import { SignupData } from '@/types';
 import Spinner from './Spinner';
+import { useEvent } from '@/context/EventProvider';
+import { useMemo } from 'react';
 
 interface EventButtonProps {
-  alreadyJoined: boolean;
-  spotsOpen: boolean;
-  cooldown: boolean;
-  isLoading: boolean;
   functionError: string | null;
-  signups: SignupData[] | undefined;
-  handleSignup: () => unknown;
-  handleLeave: () => unknown;
+  cooldown: boolean;
+  isLoading : boolean;
+  handleSignup: () => void;
+  handleLeave: () => void;
 }
 
-const EventButton = ({
-  alreadyJoined,
-  spotsOpen,
-  cooldown,
-  isLoading,
-  functionError,
-  handleSignup,
-  handleLeave,
-}: EventButtonProps) => {
+const EventButton = ({ functionError, cooldown, isLoading, handleSignup, handleLeave }: EventButtonProps) => {
   const { user } = useAuth();
+  const { eventData, signups } = useEvent();
+
+  const alreadyJoined = useMemo(() => {
+    return !!(user && signups && signups?.some((s) => s.uid === user?.uid));
+  }, [user, signups]);
+
+  // are there spots open?
+  const spotsOpen = useMemo(() => {
+    return !!(
+      signups && Number.isInteger(signups.length) && (eventData?.capacity ?? 0) > signups.length
+    );
+  }, [eventData, signups]);
 
   // if there's an error display the error instead of a button
   if (functionError) {
@@ -57,12 +59,18 @@ const EventButton = ({
   }
   // no spots, disable
   if (!spotsOpen) {
-    <button
-      disabled={true}
-      className='focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-700 dark:focus:ring-purple-900'
-    >
-      There are no spots left.
-    </button>;
+    return (
+      <button
+        onClick={handleSignup}
+        disabled={isLoading || cooldown}
+        className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
+      >
+        {isLoading && <Spinner />}
+        {isLoading && 'Joining...'}
+        {!isLoading && cooldown && 'You left the list.'}
+        {!isLoading && !cooldown && 'Event is full - join the waitlist'}
+      </button>
+    );
   }
   // default (can join)
   return (

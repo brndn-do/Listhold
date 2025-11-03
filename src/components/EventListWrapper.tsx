@@ -1,58 +1,23 @@
 'use client';
 
-import { useAuth } from '@/context/AuthProvider';
 import { app } from '@/lib/firebase';
-import { SignupData } from '@/types';
-import { DocumentData, FirestoreError } from 'firebase/firestore';
 import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import EventButton from './EventButton';
-import Spinner from './Spinner';
 import EventList from './EventList';
+import { useEvent } from '@/context/EventProvider';
 
-interface EventListWrapperProps {
-  eventId: string;
-  eventData: DocumentData | undefined;
-  eventLoading: boolean;
-  eventError: FirestoreError | undefined;
-  signups: SignupData[] | undefined;
-  signupsLoading: boolean;
-  signupsError: FirestoreError | undefined;
-  waitlist: SignupData[] | undefined;
-  waitlistLoading: boolean;
-  waitlistError: FirestoreError | undefined;
-}
+const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
+const ERROR_TIME = 5000; // how long to display error before allowing retries
 
-const EventListWrapper = ({
-  eventId,
-  eventData,
-  signups,
-  signupsLoading,
-  signupsError,
-  waitlist,
-  waitlistLoading,
-  waitlistError,
-}: EventListWrapperProps) => {
-  const { user } = useAuth();
-
-  // has the user already joined the list? (must be signed in first, if this is true, user is true)
-  const alreadyJoined = useMemo(() => {
-    return user && signups && signups?.some((s) => s.uid === user?.uid);
-  }, [user, signups]);
-
-  // are there spots open?
-  const spotsOpen = useMemo(() => {
-    return (
-      signups && Number.isInteger(signups.length) && (eventData?.capacity ?? 0) > signups.length
-    );
-  }, [eventData, signups]);
+const EventListWrapper = () => {
+  const { eventData } = useEvent();
+  const eventId = eventData?.id;
 
   const [cooldown, setCooldown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [viewWaitlist, setViewWaitlist] = useState(false); // is the user viewing waitlist or the main list?
-  const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
-  const ERROR_TIME = 7500; // how long to display error before allowing retries
 
   const handleSignup = async () => {
     setIsLoading(true);
@@ -123,19 +88,14 @@ const EventListWrapper = ({
       </div>
 
       <div className='relative flex flex-col items-center border h-[52dvh] w-full py-2 px-1 rounded-2xl'>
-        {(signupsLoading || waitlistLoading) && <div>{<Spinner />}</div>}
-        {(signupsError || waitlistError) && <p>Error: {signupsError?.message || waitlistError?.message}</p>}
-        {signups && waitlist && <EventList signups={signups} waitlist={waitlist} viewWaitlist={viewWaitlist}/>}
+        <EventList viewWaitlist={viewWaitlist} />
       </div>
 
       <div className='flex flex-col items-end pt-1 px-2 w-full'>
         <EventButton
-          alreadyJoined={!!alreadyJoined}
-          spotsOpen={!!spotsOpen}
           cooldown={cooldown}
           isLoading={isLoading}
           functionError={functionError}
-          signups={signups}
           handleSignup={handleSignup}
           handleLeave={handleLeave}
         />
