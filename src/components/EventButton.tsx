@@ -45,7 +45,7 @@ const EventButton = ({
     return (
       <button
         disabled={true}
-        className='opacity-35 focus:outline-none text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:focus:ring-purple-900'
+        className='opacity-35 text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:focus:ring-purple-900'
       >
         Sign in to join the list.
       </button>
@@ -58,7 +58,7 @@ const EventButton = ({
       <button
         onClick={handleLeave}
         disabled={isLoading || cooldown}
-        className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
+        className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
       >
         {isLoading && <Spinner />}
         {isLoading && 'Leaving...'}
@@ -74,7 +74,7 @@ const EventButton = ({
       <button
         onClick={handleSignup}
         disabled={isLoading || cooldown}
-        className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
+        className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
       >
         {isLoading && <Spinner />}
         {isLoading && 'Joining...'}
@@ -89,7 +89,7 @@ const EventButton = ({
     <button
       onClick={handleSignup}
       disabled={isLoading || cooldown}
-      className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex focus:outline-none text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
+      className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
     >
       {isLoading && <Spinner />}
       {isLoading && 'Joining...'}
