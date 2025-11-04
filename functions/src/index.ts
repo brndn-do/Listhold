@@ -9,11 +9,21 @@ setGlobalOptions({ maxInstances: 10 });
 
 const authClient = new OAuth2Client();
 
-const handleAdd = async (eventId: string, userId: string) => {
+interface AddUserResult {
+  status: 'signedUp' | 'waitlisted';
+  message: string;
+}
+
+interface RemoveUserResult {
+  status: 'leftEvent' | 'leftWaitlist';
+  message: string;
+}
+
+const handleAdd = async (eventId: string, userId: string): Promise<AddUserResult> => {
   // all db reads and writes should be a transaction
   try {
     logger.log('starting transaction...');
-    await adminDb.runTransaction(async (transaction) => {
+    const result: AddUserResult = await adminDb.runTransaction(async (transaction) => {
       const eventDocRef = adminDb.doc(`events/${eventId}`);
       const eventDoc = await transaction.get(eventDocRef);
 
@@ -67,27 +77,28 @@ const handleAdd = async (eventId: string, userId: string) => {
         transaction.update(eventDocRef, {
           signupsCount: FieldValue.increment(1),
         });
-      } else {
-        // add to wait list
-        transaction.create(waitlistDocRef, {
-          displayName: userDisplayName,
-          signupTime: FieldValue.serverTimestamp(),
-        });
+        return { status: 'signedUp', message: 'Signed up successfully!' };
       }
+
+      // add to wait list
+      transaction.create(waitlistDocRef, {
+        displayName: userDisplayName,
+        signupTime: FieldValue.serverTimestamp(),
+      });
+      return { status: 'waitlisted', message: 'Added to waitlist' };
     });
+    return result;
   } catch (err) {
     logger.log(`ERROR ADDING USER TO EVENT: ${err}`);
     throw err as Error;
   }
-  logger.log('Added user successfully!');
-  return { success: true, message: 'Signed up successfully!' };
 };
 
-const handleRemove = async (eventId: string, userId: string) => {
+const handleRemove = async (eventId: string, userId: string): Promise<RemoveUserResult> => {
   // all db operations should be a transaction
   try {
     logger.log('starting transaction...');
-    await adminDb.runTransaction(async (transaction) => {
+    const result: RemoveUserResult = await adminDb.runTransaction(async (transaction) => {
       const eventDocRef = adminDb.doc(`events/${eventId}`);
       const eventDoc = await transaction.get(eventDocRef);
 
@@ -116,7 +127,7 @@ const handleRemove = async (eventId: string, userId: string) => {
 
       if (waitlistDoc.exists) {
         transaction.delete(waitlistDocRef);
-        return;
+        return { status: 'leftWaitlist', message: 'Left waitlist successfully.' };
       }
 
       transaction.delete(signupDocRef);
@@ -126,7 +137,7 @@ const handleRemove = async (eventId: string, userId: string) => {
 
       // if no one found on waitlist, return early
       if (waitlistSnapshot.empty) {
-        return;
+        return { status: 'leftEvent', message: 'Left event successfully.' };
       }
       // get next on waitlist to promote
       const nextDoc = waitlistSnapshot.docs[0];
@@ -140,13 +151,13 @@ const handleRemove = async (eventId: string, userId: string) => {
         signupsCount: FieldValue.increment(1),
       });
       transaction.delete(oldWaitlistDocRef);
+      return { status: 'leftEvent', message: 'Left event successfully.' };
     });
+    return result;
   } catch (err) {
     logger.log(`ERROR REMOVING USER FROM EVENT: ${err}`);
     throw err as Error;
   }
-  logger.log('Removed user successfully!');
-  return { success: true, message: 'Left event successfully!' };
 };
 
 export const addUserToEvent = onCall(
@@ -319,8 +330,7 @@ export const serviceRemoveUserFromEvent = onRequest(
     }
 
     const idToken = authHeader.split('Bearer ')[1];
-    const functionURL =
-      `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/serviceRemoveUserFromEvent`;
+    const functionURL = `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/serviceRemoveUserFromEvent`;
     let authorized = false;
 
     try {

@@ -48,7 +48,6 @@ export default tseslint.config(
       quotes: ['error', 'single'],
       indent: ['error', 2],
 
-      'max-len': ['error', { code: 120 }],
       'object-curly-spacing': ['error', 'always'],
     },
   },

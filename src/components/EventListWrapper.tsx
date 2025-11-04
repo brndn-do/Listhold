@@ -17,23 +17,45 @@ const EventListWrapper = () => {
   const userId = user?.uid;
   const eventId = eventData?.id;
 
-  const [cooldown, setCooldown] = useState(false);
+  const [cooldown, setCooldown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
   // is the user viewing waitlist or the main list?
   const [viewingWaitlist, setviewingWaitlist] = useState(false);
 
+  interface AddUserResult {
+    status: 'signedUp' | 'waitlisted';
+    message: string;
+  }
+
+  interface RemoveUserResult {
+    status: 'leftEvent' | 'leftWaitlist';
+    message: string;
+  }
+
   const handleSignup = async () => {
+    if (!eventId || !userId) {
+      return;
+    }
     setIsLoading(true);
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleSignup = httpsCallable(functions, 'addUserToEvent');
-      await handleSignup({ eventId, userId });
+      const handleSignup = httpsCallable<{ eventId: string; userId: string }, AddUserResult>(
+        functions,
+        'addUserToEvent',
+      );
+      const res = await handleSignup({ eventId, userId });
       setIsLoading(false);
-      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
+      setCooldown(
+        res.data.status === 'signedUp'
+          ? 'You joined the list!'
+          : res.data.status === 'waitlisted'
+            ? 'You joined the waitlist!'
+            : 'Success',
+      ); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
       setTimeout(() => {
-        setCooldown(false);
+        setCooldown(null);
       }, COOLDOWN_TIME);
     } catch (err) {
       setIsLoading(false);
@@ -52,16 +74,28 @@ const EventListWrapper = () => {
   };
 
   const handleLeave = async () => {
+    if (!eventId || !userId) {
+      return;
+    }
     setIsLoading(true);
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleLeave = httpsCallable(functions, 'removeUserFromEvent');
-      await handleLeave({ eventId, userId });
+      const handleLeave = httpsCallable<{ eventId: string; userId: string }, RemoveUserResult>(
+        functions,
+        'removeUserFromEvent',
+      );
+      const res = await handleLeave({ eventId, userId });
       setIsLoading(false);
-      setCooldown(true); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
+      setCooldown(
+        res.data.status === 'leftEvent'
+          ? 'You left the list.'
+          : res.data.status === 'leftWaitlist'
+            ? 'You left the waitlist.'
+            : 'Success',
+      ); // set a cooldown to make sure users can't spam for BUTTON_TIMEOUT ms
       setTimeout(() => {
-        setCooldown(false);
+        setCooldown(null);
       }, COOLDOWN_TIME);
     } catch (err) {
       setIsLoading(false);

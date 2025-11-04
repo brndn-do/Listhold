@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 interface EventButtonProps {
   functionError: string | null;
-  cooldown: boolean;
+  cooldown: string | null;
   isLoading: boolean;
   handleSignup: () => void;
   handleLeave: () => void;
@@ -57,12 +57,12 @@ const EventButton = ({
     return (
       <button
         onClick={handleLeave}
-        disabled={isLoading || cooldown}
+        disabled={isLoading || !!cooldown}
         className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
       >
         {isLoading && <Spinner />}
         {isLoading && 'Leaving...'}
-        {!isLoading && cooldown && 'You joined the list!'}
+        {!isLoading && cooldown}
         {!isLoading && !cooldown && 'Leave this event'}
       </button>
     );
@@ -73,12 +73,12 @@ const EventButton = ({
     return (
       <button
         onClick={handleSignup}
-        disabled={isLoading || cooldown}
+        disabled={isLoading || !!cooldown}
         className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
       >
         {isLoading && <Spinner />}
         {isLoading && 'Joining...'}
-        {!isLoading && cooldown && 'You left the list.'}
+        {!isLoading && cooldown}
         {!isLoading && !cooldown && 'Event is full - join the waitlist'}
       </button>
     );
@@ -88,12 +88,12 @@ const EventButton = ({
   return (
     <button
       onClick={handleSignup}
-      disabled={isLoading || cooldown}
+      disabled={isLoading || !!cooldown}
       className={`${isLoading || cooldown ? 'opacity-35' : 'hover:cursor-pointer'} inline-flex text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900`}
     >
       {isLoading && <Spinner />}
       {isLoading && 'Joining...'}
-      {!isLoading && cooldown && 'You left the list.'}
+      {!isLoading && cooldown}
       {!isLoading && !cooldown && 'Join the List'}
     </button>
   );
