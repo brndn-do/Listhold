@@ -17,9 +17,44 @@ interface AddUserResult {
 interface RemoveUserResult {
   status: 'leftEvent' | 'leftWaitlist';
   message: string;
+  promotedUserId?: string;
 }
 
-const handleAdd = async (eventId: string, userId: string): Promise<AddUserResult> => {
+const handleEmail = async (userId: string, eventId: string) => {
+  const userDocRef = adminDb.doc(`users/${userId}`);
+  const userDoc = await userDocRef.get();
+  const userData = userDoc.data();
+
+  if (!userData) {
+    return;
+  }
+
+  const eventDocRef = adminDb.doc(`events/${eventId}`);
+  const eventDoc = await eventDocRef.get();
+  const eventData = eventDoc.data();
+
+  if (!eventData) {
+    return;
+  }
+
+  const appDomain = process.env.APP_DOMAIN;
+
+  adminDb.collection('mail').add({
+    to: userData.email,
+    message: {
+      subject: `You're off the waitlist for ${eventData.name}`,
+      html: `
+        <h1>You've got a spot!</h1>
+        <p>Hi ${userData.displayName},</p>
+        <p>A spot has opened up for the event: <strong>${eventData.name}</strong>. You have been automatically moved to the main list.</p>
+        <p>No further action is needed.</p>
+        <p>You can view the event details <a href="${appDomain}/events/${eventId}">here</a>.</p>
+      `
+    },
+  });
+};
+
+const handleAddUserToEvent = async (eventId: string, userId: string): Promise<AddUserResult> => {
   // all db reads and writes should be a transaction
   try {
     logger.log('starting transaction...');
@@ -94,7 +129,10 @@ const handleAdd = async (eventId: string, userId: string): Promise<AddUserResult
   }
 };
 
-const handleRemove = async (eventId: string, userId: string): Promise<RemoveUserResult> => {
+const handleRemoveUserFromEvent = async (
+  eventId: string,
+  userId: string,
+): Promise<RemoveUserResult> => {
   // all db operations should be a transaction
   try {
     logger.log('starting transaction...');
@@ -151,8 +189,16 @@ const handleRemove = async (eventId: string, userId: string): Promise<RemoveUser
         signupsCount: FieldValue.increment(1),
       });
       transaction.delete(oldWaitlistDocRef);
-      return { status: 'leftEvent', message: 'Left event successfully.' };
+      return {
+        status: 'leftEvent',
+        message: 'Left event successfully.',
+        promotedUserId: nextDoc.id,
+      };
     });
+    if (!result.promotedUserId) {
+      return result;
+    }
+    handleEmail(result.promotedUserId, eventId);
     return result;
   } catch (err) {
     logger.log(`ERROR REMOVING USER FROM EVENT: ${err}`);
@@ -197,7 +243,7 @@ export const addUserToEvent = onCall(
     logger.log('Authorized!');
 
     try {
-      return await handleAdd(eventId, userId);
+      return await handleAddUserToEvent(eventId, userId);
     } catch (err) {
       throw err as Error;
     }
@@ -241,7 +287,7 @@ export const removeUserFromEvent = onCall(
     logger.log('Authorized!');
 
     try {
-      return await handleRemove(eventId, userId);
+      return await handleRemoveUserFromEvent(eventId, userId);
     } catch (err) {
       throw err as Error;
     }
@@ -306,7 +352,7 @@ export const serviceAddUserToEvent = onRequest(
     }
 
     try {
-      const result = await handleAdd(eventId, userId);
+      const result = await handleAddUserToEvent(eventId, userId);
       res.status(201).send({ data: result });
     } catch (err) {
       if (err instanceof HttpsError) {
@@ -354,7 +400,7 @@ export const serviceRemoveUserFromEvent = onRequest(
     }
 
     try {
-      await handleRemove(eventId, userId);
+      await handleRemoveUserFromEvent(eventId, userId);
       res.status(204).send();
     } catch (err) {
       if (err instanceof HttpsError) {

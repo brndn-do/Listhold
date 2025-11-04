@@ -31,6 +31,7 @@ const EventListWrapper = () => {
   interface RemoveUserResult {
     status: 'leftEvent' | 'leftWaitlist';
     message: string;
+    promotedUserId?: string;
   }
 
   const handleSignup = async () => {
