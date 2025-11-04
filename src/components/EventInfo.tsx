@@ -26,7 +26,7 @@ const EventInfo = () => {
           <h2 className='text-2xl text-center font-bold'>{eventData.name}</h2>
           <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming(eventData.start, eventData.end)}`}</p>
           <p className='text-[0.8rem] text-center'>{`📍 ${eventData.location}`}</p>
-          <p className='text-[0.8rem] text-center'>{`Total Spots: ${eventData.capacity}`}</p>
+          <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${eventData.capacity - eventData.signupsCount}/${eventData.capacity}`}</p>
         </>
       )}
     </div>
