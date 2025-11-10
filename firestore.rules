@@ -13,18 +13,19 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Questions Subcollection (locked for now)
-    match /events/{eventId}/questions/{questionId} {
-      allow read, write: if false;
+    // Prompts Subcollection: Anyone can read, no client-side writes
+    match /events/{eventId}/prompts/{promptId} {
+      allow read: if true;
+      allow write: if false;
     }
 
-    // Signups Subcollection
+    // Signups Subcollection: Anyone can read, no client-side writes
     match /events/{eventId}/signups/{signupId} {
       allow read: if true;
       allow write: if false;
     }
 
-    // Waitlist Subcollection
+    // Waitlist Subcollection: Anyone can read, no client-side writes
     match /events/{eventId}/waitlist/{waitlistId} {
       allow read: if true; 
       allow write: if false;
