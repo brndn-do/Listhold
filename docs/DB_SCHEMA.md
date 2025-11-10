@@ -19,7 +19,7 @@ This collection stores information about each user who has authenticated with th
 
 ### 2. `organizations`
 
-Represents a club or group that hosts events. This allows for future expansion where multiple clubs can use the platform.
+Represents an organization that hosts events.
 
 - **Collection:** `organizations`
 - **Document ID:** A unique slug (e.g., `northwestern-archery-club`)
@@ -52,16 +52,29 @@ This is the central collection for all events created on the platform.
 
 To ensure scalability and real-time updates, sign-up and waitlist data are stored in sub-collections within each event document.
 
-### 4. `questions` (Sub-collection of `events`)
+### 4. `prompts` (Sub-collection of `events`)
 
-A subcollection containing the custom questions for a specific event.
+A subcollection containing the custom prompts (a question or notice) for a specific event. These are displayed to the user in order during the sign-up flow.
 
-- **Path:** `events/{eventId}/questions`
+- **Path:** `events/{eventId}/prompts`
 - **Document ID:** Auto-generated unique ID.
 - **Fields:**
-  - `text`: `string` (e.g., "What is your t-shirt size?").
-  - `type`: `string` (e.g., "text", "select", "checkbox").
-  - `options`: `array` of `string`s - [Optional] A list of options for "select" type questions.
+  - `order`: `number` - The sequence in which the prompt is displayed (e.g., 1, 2, 3...).
+  - `text`: `string` - The main text of the prompt or question.
+  - `type`: `string` - Defines how the prompt is rendered and validated.
+    - `yes/no`: A boolean question.
+    - `text`: A free-form text input.
+    - `select`: A single-choice dropdown from `options`.
+    - `checkbox`: Multiple choices from `options`.
+    - `notice`: Informational text requiring user acknowledgment (e.g., "I understand").
+  - `options?`: `array` of `string`s - [Optional] A list of choices for `select` or `checkbox` type prompts.
+  - `validation?`: `map` - [Optional] Defines rules for validating user input for questions.
+    - `valid`: `boolean | string | string[] | string[][]` - The expected correct answer(s).
+      - `boolean`: For `yes/no` questions (e.g., `true`).
+      - `string`: For `select` questions (e.g., `"Option A"`) or exact text matches.
+      - `string[]`: For `checkbox` questions, a single combination of selected options that is correct (e.g., `["Option A", "Option B"]`).
+      - `string[][]`: For `checkbox` questions, multiple combinations of selected options that are correct (e.g., `[["Option A", "Option B"], ["Option B", "Option C"]]`).
+    - `errorMessage?`: `string` - [Optional] A custom message displayed to the user if validation fails.
 
 ### 5. `signups` (Sub-collection of `events`)
 
@@ -73,8 +86,8 @@ Stores the roster of confirmed attendees for an event.
   - `displayName`: `string` - The display name of the user **at the time of signup.**
   - `photoURL`: `string` - The photo URL of the user **at the time of signup.**
   - `signupTime`: `timestamp` - When the user signed up.
-  - `answers?`: `map` - Stores answers to custom questions.
-    - **Example:** `{ "q1_new_member": true }`
+  - `answers?`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
+    - **Example:** `{ "q1_new_member": true, "q2_tshirt_size": "M" }`
 
 ### 6. `waitlist` (Sub-collection of `events`)
 
@@ -86,13 +99,14 @@ Stores the queue of users waiting for a spot.
   - `joinTime`: `timestamp` - Used to determine the user's position in the queue (first-in, first-out).
   - `status`: `string` - The user's current waitlist status (e.g., "pending", "notified").
   - `notifiedAt`: `timestamp` - (Optional) Set when a notification is sent, to track response time limits.
-  - `answers`: `map` - Pre-collects answers to custom questions so they don't have to be asked again if a spot opens up.
+  - `answers?`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
+    - **Example:** `{ "q1_new_member": true, "q2_tshirt_size": "M" }`
 
 ---
 
 ## Rationale
 
-- **Scalability:** Keeping `signups` and `waitlist` as sub-collections prevents the main `event` documents from becoming bloated and hitting Firestore document size limits.
+- **Scalability:** Keeping `signups` and `waitlist` as sub-collections prevents the main `event` documents from becoming bloated.
 - **Real-time Functionality:** This structure is ideal for live updates. A client application can listen directly to the `signups` and `waitlist` sub-collections of a specific event and update the UI in real-time as documents are added or removed.
 - **Query Efficiency:** Queries are straightforward. Getting an event roster is a collection read, not a complex array filter. For example, to get the waitlist ordered by time: `db.collection('events').doc(eventId).collection('waitlist').orderBy('joinTime').get()`.
 - **Security:** Firestore Security Rules can be applied granularly. For example, we can write a rule that only allows a user to create a document in a `signups` sub-collection if the collection size is less than the `spotLimit` in the parent event document.
