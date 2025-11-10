@@ -1,7 +1,7 @@
 'use client';
 
 import { db } from '@/lib/firebase';
-import { EventData, SignupData } from '@/types';
+import { EventData, PromptData, SignupData } from '@/types';
 import { DocumentData } from 'firebase-admin/firestore';
 import {
   collection,
@@ -11,8 +11,9 @@ import {
   query,
   WithFieldValue,
   QueryDocumentSnapshot,
+  getDocs,
 } from 'firebase/firestore';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useCollectionData, useDocument } from 'react-firebase-hooks/firestore';
 
 interface EventContextType {
@@ -25,6 +26,9 @@ interface EventContextType {
   waitlist: SignupData[] | undefined;
   waitlistLoading: boolean;
   waitlistError: FirestoreError | undefined;
+  promptsData: PromptData[] | undefined;
+  promptsLoading: boolean;
+  promptsError: Error | undefined;
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
@@ -88,6 +92,37 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
     query(waitlistRef, orderBy('signupTime')),
   );
 
+  // fetch prompts subcollection from Firestore
+  const [promptsData, setPromptsData] = useState<PromptData[] | undefined>(undefined);
+  const [promptsLoading, setPromptsLoading] = useState(true);
+  const [promptsError, setPromptsError] = useState<Error | undefined>(undefined);
+  useEffect(() => {
+    const fetchPrompts = async () => {
+      setPromptsLoading(true);
+      setPromptsError(undefined);
+      try {
+        const promptsCollectionRef = collection(db, 'events', eventId, 'prompts');
+        const promptsQuery = query(promptsCollectionRef, orderBy('order'));
+        const querySnapshot = await getDocs(promptsQuery);
+
+        const prompts: PromptData[] = querySnapshot.docs.map(
+          (doc) =>
+            ({
+              id: doc.id,
+              ...doc.data(),
+            }) as PromptData,
+        );
+
+        setPromptsData(prompts);
+      } catch (err) {
+        setPromptsError(err as Error);
+      } finally {
+        setPromptsLoading(false);
+      }
+    };
+    fetchPrompts();
+  }, [eventId]);
+
   const value = {
     eventData,
     eventLoading,
@@ -98,6 +133,9 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
     waitlist,
     waitlistLoading,
     waitlistError,
+    promptsData,
+    promptsLoading,
+    promptsError,
   };
   return <EventContext.Provider value={value}>{children}</EventContext.Provider>;
 };
