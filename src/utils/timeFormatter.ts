@@ -1,7 +1,7 @@
 import { format, isSameDay } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 
-const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
+export const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
   const startDate = start.toDate();
   const endDate = end.toDate();
   if (isSameDay(startDate, endDate)) {
@@ -21,4 +21,9 @@ const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
   }
 };
 
-export default formatEventTiming;
+export const formatTimestamp = (timestamp: Timestamp): { formattedDate: string; formattedTime: string } => {
+  const date = timestamp.toDate();
+  const formattedDate = format(date, 'MM/dd/yyyy');
+  const formattedTime = format(date, 'HH:mm:ss.SSS');
+  return { formattedDate, formattedTime }
+};

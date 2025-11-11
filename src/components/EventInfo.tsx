@@ -1,6 +1,6 @@
 'use client';
 
-import formatEventTiming from '@/utils/formatEventTiming';
+import { formatEventTiming } from '@/utils/timeFormatter';
 import Spinner from './Spinner';
 import { useEvent } from '@/context/EventProvider';
 
@@ -22,12 +22,12 @@ const EventInfo = () => {
         </p>
       )}
       {eventData && (
-        <>
-          <h2 className='text-2xl text-center font-bold'>{eventData.name}</h2>
+        <div className='flex flex-col gap-[1px]'>
+          <h2 className='text-[1.3rem] text-center font-bold'>{eventData.name}</h2>
           <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming(eventData.start, eventData.end)}`}</p>
           <p className='text-[0.8rem] text-center'>{`📍 ${eventData.location}`}</p>
           <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${eventData.capacity - eventData.signupsCount}/${eventData.capacity}`}</p>
-        </>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import formatEventTiming from './formatEventTiming';
+import { formatEventTiming } from './timeFormatter';
 import { format } from 'date-fns';
 
 jest.mock('date-fns', () => ({

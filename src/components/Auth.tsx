@@ -15,12 +15,12 @@ interface AuthProps {
 
 const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
   return (
-    <div className='flex items-center gap-3 h-10'>
+    <div className='flex items-center gap-3 h-8'>
       {user ? (
         <>
           <Image
             alt='Your profile photo'
-            src={user.photoURL}
+            src={user.photoURL || '/default-avatar.jpg'}
             width={32}
             height={32}
             className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'

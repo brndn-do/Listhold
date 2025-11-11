@@ -32,7 +32,7 @@ const SignupFlow = ({ handleFlowClose }: SignupFlowProps) => {
   };
 
   return (
-    <div role='dialog' className='fixed inset-0 bg-black/90 flex items-center justify-center z-50'>
+    <div role='dialog' className='fixed inset-0 bg-black/90 flex items-center justify-center z-50 text-gray-100'>
       {promptsLoading && <Spinner />}
       {promptsError && <p>{promptsError.message}</p>}
       {prompts && (

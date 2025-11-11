@@ -47,9 +47,9 @@ export interface SignupData {
   id: string;
   displayName: string;
   signupTime: Timestamp;
-
-  // eslint-disable-next-line
-  answers?: Record<string, any>;
+  photoURL: string | null;
+  email: string;
+  answers: Record<string, boolean | null>;
 }
 
 /**
