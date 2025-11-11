@@ -44,7 +44,7 @@ export interface PromptData {
  * Represents a Firestore signup document, with user's UID.
  */
 export interface SignupData {
-  uid: string;
+  id: string;
   displayName: string;
   signupTime: Timestamp;
 

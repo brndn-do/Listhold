@@ -41,7 +41,7 @@ const EventButton = ({
   // did the user already join either the signups list or the waitlist)
   const alreadyJoined: boolean = useMemo(() => {
     return !!(
-      user && signups?.some((s) => s.uid === user?.uid || waitlist?.some((s) => s.uid === user.uid))
+      user && signups?.some((s) => s.id === user?.uid || waitlist?.some((s) => s.id === user.uid))
     );
   }, [user, signups, waitlist]);
 

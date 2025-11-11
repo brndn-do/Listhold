@@ -35,8 +35,8 @@ const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
       <ol className='flex-1 flex flex-col w-full overflow-y-auto scrollbar scrollbar-thin items-center list-decimal list-inside'>
         {selection?.map((signup) => (
           <li
-            className={user?.uid === signup.uid ? 'text-purple-700 dark:text-purple-500' : ''}
-            key={signup.uid}
+            className={user?.uid === signup.id ? 'text-purple-700 dark:text-purple-500' : ''}
+            key={signup.id}
           >{`${signup.displayName}`}</li>
         ))}
       </ol>

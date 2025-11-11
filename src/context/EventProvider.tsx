@@ -43,23 +43,25 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
   // listen to the signups subcollection in Firestore
   const signupsRef = useMemo(
     () =>
-      collection(db, 'events', eventId, 'signups').withConverter<SignupData>({
-        toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
-          return {
-            uid: signupData.uid,
-            displayName: signupData.displayName,
-            signupTime: signupData.signupTime,
-          };
-        },
-        fromFirestore(snapshot: QueryDocumentSnapshot): SignupData {
-          const data = snapshot.data();
-          return {
-            uid: snapshot.id,
-            displayName: data.displayName,
-            signupTime: data.signupTime,
-          };
-        },
-      }),
+      collection(db, 'events', eventId, 'signups').withConverter<SignupData>(
+        {
+          toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
+            return {
+              id: signupData.id,
+              displayName: signupData.displayName,
+              signupTime: signupData.signupTime,
+            };
+          },
+          fromFirestore(snapshot: QueryDocumentSnapshot): SignupData {
+            const data = snapshot.data();
+            return {
+              id: snapshot.id,
+              displayName: data.displayName,
+              signupTime: data.signupTime,
+            };
+          },
+        }
+      ),
     [eventId],
   );
   const [signups, signupsLoading, signupsError] = useCollectionData<SignupData>(
@@ -72,7 +74,7 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
       collection(db, 'events', eventId, 'waitlist').withConverter<SignupData>({
         toFirestore(signupData: WithFieldValue<SignupData>): DocumentData {
           return {
-            uid: signupData.uid,
+            id: signupData.id,
             displayName: signupData.displayName,
             signupTime: signupData.signupTime,
           };
@@ -80,7 +82,7 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
         fromFirestore(snapshot: QueryDocumentSnapshot): SignupData {
           const data = snapshot.data();
           return {
-            uid: snapshot.id,
+            id: snapshot.id,
             displayName: data.displayName,
             signupTime: data.signupTime,
           };
