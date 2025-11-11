@@ -26,7 +26,7 @@ interface EventContextType {
   waitlist: SignupData[] | undefined;
   waitlistLoading: boolean;
   waitlistError: FirestoreError | undefined;
-  promptsData: PromptData[] | undefined;
+  prompts: PromptData[] | undefined;
   promptsLoading: boolean;
   promptsError: Error | undefined;
 }
@@ -93,7 +93,7 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
   );
 
   // fetch prompts subcollection from Firestore
-  const [promptsData, setPromptsData] = useState<PromptData[] | undefined>(undefined);
+  const [prompts, setprompts] = useState<PromptData[] | undefined>(undefined);
   const [promptsLoading, setPromptsLoading] = useState(true);
   const [promptsError, setPromptsError] = useState<Error | undefined>(undefined);
   useEffect(() => {
@@ -113,7 +113,7 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
             }) as PromptData,
         );
 
-        setPromptsData(prompts);
+        setprompts(prompts);
       } catch (err) {
         setPromptsError(err as Error);
       } finally {
@@ -133,7 +133,7 @@ export const EventProvider = ({ eventId, children }: { eventId: string; children
     waitlist,
     waitlistLoading,
     waitlistError,
-    promptsData,
+    prompts,
     promptsLoading,
     promptsError,
   };

@@ -7,6 +7,18 @@ import EventButton from './EventButton';
 import EventList from './EventList';
 import { useEvent } from '@/context/EventProvider';
 import { useAuth } from '@/context/AuthProvider';
+import SignupFlow from './SignupFlow';
+
+interface AddUserResult {
+  status: 'signedUp' | 'waitlisted';
+  message: string;
+}
+
+interface RemoveUserResult {
+  status: 'leftEvent' | 'leftWaitlist';
+  message: string;
+  promotedUserId?: string;
+}
 
 const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
@@ -20,19 +32,17 @@ const EventListWrapper = () => {
   const [cooldown, setCooldown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
-  // is the user viewing waitlist or the main list?
-  const [viewingWaitlist, setviewingWaitlist] = useState(false);
+  const [viewingWaitlist, setviewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
+  const [showFlow, setShowFlow] = useState(false);
 
-  interface AddUserResult {
-    status: 'signedUp' | 'waitlisted';
-    message: string;
-  }
+  const handleFlowOpen = () => {
+    setShowFlow(true);
+  };
 
-  interface RemoveUserResult {
-    status: 'leftEvent' | 'leftWaitlist';
-    message: string;
-    promotedUserId?: string;
-  }
+  const handleFlowClose = () => {
+    setShowFlow(false);
+    handleSignup();
+  };
 
   const handleSignup = async () => {
     if (!eventId || !userId) {
@@ -110,36 +120,40 @@ const EventListWrapper = () => {
   };
 
   return (
-    <div className='w-full h-full flex flex-col items-center gap-1'>
-      <div className='flex gap-24 text-lg pb-1'>
-        <button
-          onClick={() => setviewingWaitlist(false)}
-          className={`${!viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
-        >
-          Signups
-        </button>
-        <button
-          onClick={() => setviewingWaitlist(true)}
-          className={`${viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
-        >
-          Waitlist
-        </button>
-      </div>
+    <>
+      <div className='w-full h-full flex flex-col items-center gap-1'>
+        <div className='flex gap-24 text-lg pb-1'>
+          <button
+            onClick={() => setviewingWaitlist(false)}
+            className={`${!viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
+          >
+            Signups
+          </button>
+          <button
+            onClick={() => setviewingWaitlist(true)}
+            className={`${viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
+          >
+            Waitlist
+          </button>
+        </div>
 
-      <div className='relative flex flex-col items-center border h-86 w-full py-2 px-1 rounded-2xl'>
-        <EventList viewingWaitlist={viewingWaitlist} />
-      </div>
+        <div className='relative flex flex-col items-center border h-86 w-full py-2 px-1 rounded-2xl'>
+          <EventList viewingWaitlist={viewingWaitlist} />
+        </div>
 
-      <div className='flex flex-col items-end pt-1 px-2 w-full'>
-        <EventButton
-          cooldown={cooldown}
-          isLoading={isLoading}
-          functionError={functionError}
-          handleSignup={handleSignup}
-          handleLeave={handleLeave}
-        />
+        <div className='flex flex-col items-end pt-1 px-2 w-full'>
+          <EventButton
+            cooldown={cooldown}
+            isLoading={isLoading}
+            functionError={functionError}
+            handleFlowOpen={handleFlowOpen}
+            handleSignup={handleSignup}
+            handleLeave={handleLeave}
+          />
+        </div>
       </div>
-    </div>
+      {showFlow && <SignupFlow handleFlowClose={handleFlowClose} />}
+    </>
   );
 };
 
