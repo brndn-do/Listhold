@@ -53,7 +53,7 @@ const ListItem = ({ signup }: ListItemProps) => {
         </p>
         {publicAnswers.length > 0 && (
           <button
-            className='opacity-50 cursor-pointer underline text-[.65rem] pt-[1px]'
+            className='opacity-65 cursor-pointer underline text-[.65rem] pt-[1px]'
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? 'close info' : 'show more info'}
@@ -69,7 +69,7 @@ const ListItem = ({ signup }: ListItemProps) => {
       {/* Expanded */}
       {isExpanded && (
         <div className='w-full'>
-          <ul className='flex flex-col gap-1 mt-1'>
+          <ul className='flex flex-col gap-1 my-1'>
             {publicAnswers.length > 0 &&
               publicAnswers.map(({ promptId, text, answer }) => (
                 <li key={promptId} className='text-xs'>
