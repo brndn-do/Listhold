@@ -77,7 +77,9 @@ const handleAddUserToEvent = async (
         throw new HttpsError('not-found', `User with id ${userId} does not exist`);
       }
 
-      const userDisplayName = userDoc.data()?.displayName;
+      const userData = userDoc.data();
+
+      const userDisplayName = userData?.displayName;
       if (!userDisplayName) {
         throw new HttpsError(
           'failed-precondition',
@@ -111,6 +113,8 @@ const handleAddUserToEvent = async (
         // add to main list
         transaction.create(signupDocRef, {
           displayName: userDisplayName,
+          photoURL: userData?.photoURL,
+          email: userData?.email,
           signupTime: FieldValue.serverTimestamp(),
           answers: answers,
         });
@@ -123,6 +127,8 @@ const handleAddUserToEvent = async (
       // add to wait list
       transaction.create(waitlistDocRef, {
         displayName: userDisplayName,
+        photoURL: userData?.photoURL,
+        email: userData?.email,
         signupTime: FieldValue.serverTimestamp(),
         answers: answers,
       });
