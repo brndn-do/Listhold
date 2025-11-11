@@ -4,7 +4,7 @@ import { PromptData } from '@/types';
 
 interface PromptViewProps {
   promptData: PromptData;
-  handleNext: () => void;
+  handleNext: (answer: boolean | null) => void;
 }
 
 const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
@@ -17,13 +17,13 @@ const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
 
       {promptData.type === 'notice' && (
         <div>
-          <button onClick={handleNext} className='hover:cursor-pointer text-purple-500 underline'>I understand</button>
+          <button onClick={(() => handleNext(null))} className='hover:cursor-pointer text-purple-500 underline'>I understand</button>
         </div>
       )}
       {promptData.type === 'yes/no' && (
         <div className='flex gap-16'>
-          <button onClick={handleNext} className='hover:cursor-pointer text-purple-500 underline'>Yes</button>
-          <button onClick={handleNext} className='hover:cursor-pointer text-purple-500 underline'>No</button>
+          <button onClick={(() => handleNext(true))} className='hover:cursor-pointer text-purple-500 underline'>Yes</button>
+          <button onClick={(() => handleNext(false))} className='hover:cursor-pointer text-purple-500 underline'>No</button>
         </div>
       )}
     </div>

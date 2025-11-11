@@ -7,9 +7,7 @@ export interface SignupData {
   uid: string;
   displayName: string;
   signupTime: Timestamp;
-
-  // eslint-disable-next-line
-  answers?: Record<string, any>;
+  answers?: Record<string, boolean | null>;
 }
 
 /**

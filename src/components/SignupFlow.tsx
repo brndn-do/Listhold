@@ -6,21 +6,28 @@ import PromptView from './PromptView';
 import { useState } from 'react';
 
 interface SignupFlowProps {
-  handleFlowClose: () => unknown;
+  handleFlowClose: (answers: Record<string, boolean | null>) => void;
 }
 
 const SignupFlow = ({ handleFlowClose }: SignupFlowProps) => {
   const { prompts, promptsLoading, promptsError } = useEvent();
   const [curIndex, setCurIndex] = useState(0);
 
-  const handleNext = () => {
+  // Right now, we only support yes/no (bool) and "I understand" (null) as responses.
+  const [answers, setAnswers] = useState<Record<string, boolean | null>>({});
+
+  const handleNext = (answer: boolean | null) => {
     if (promptsLoading || promptsError || !prompts) return;
-    // get user's answer and store it somewhere
+
+    // store user's answers
+    const curPromptId = prompts[curIndex].id;
+    setAnswers({ ...answers, [curPromptId]: answer });
+
     if (curIndex + 1 < prompts.length) {
       setCurIndex(curIndex + 1);
     } else {
-      // submit
-      handleFlowClose();
+      // submit user's answers
+      handleFlowClose(answers);
     }
   };
 

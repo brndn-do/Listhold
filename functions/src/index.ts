@@ -49,12 +49,16 @@ const handleEmail = async (userId: string, eventId: string) => {
         <p>A spot has opened up for the event: <strong>${eventData.name}</strong>. You have been automatically moved to the main list.</p>
         <p>No further action is needed.</p>
         <p>You can view the event details <a href="${appDomain}/events/${eventId}">here</a>.</p>
-      `
+      `,
     },
   });
 };
 
-const handleAddUserToEvent = async (eventId: string, userId: string): Promise<AddUserResult> => {
+const handleAddUserToEvent = async (
+  eventId: string,
+  userId: string,
+  answers: Record<string, boolean | null>,
+): Promise<AddUserResult> => {
   // all db reads and writes should be a transaction
   try {
     logger.log('starting transaction...');
@@ -108,6 +112,7 @@ const handleAddUserToEvent = async (eventId: string, userId: string): Promise<Ad
         transaction.create(signupDocRef, {
           displayName: userDisplayName,
           signupTime: FieldValue.serverTimestamp(),
+          answers: answers,
         });
         transaction.update(eventDocRef, {
           signupsCount: FieldValue.increment(1),
@@ -119,6 +124,7 @@ const handleAddUserToEvent = async (eventId: string, userId: string): Promise<Ad
       transaction.create(waitlistDocRef, {
         displayName: userDisplayName,
         signupTime: FieldValue.serverTimestamp(),
+        answers: answers,
       });
       return { status: 'waitlisted', message: 'Added to waitlist' };
     });
@@ -207,14 +213,28 @@ const handleRemoveUserFromEvent = async (
 };
 
 export const addUserToEvent = onCall(
-  async (request: CallableRequest<{ eventId: string; userId: string }>) => {
+  async (
+    request: CallableRequest<{
+      eventId: string;
+      userId: string;
+      answers: Record<string, boolean | null>;
+    }>,
+  ) => {
     // get event id
     const eventId = request.data.eventId;
-    if (!eventId) throw new HttpsError('invalid-argument', 'Must use valid event id');
+    if (!eventId) throw new HttpsError('invalid-argument', 'Must provide valid event id');
 
     // get user id
     const userId = request.data.userId;
-    if (!userId) throw new HttpsError('invalid-argument', 'Must use valid user id');
+    if (!userId) throw new HttpsError('invalid-argument', 'Must provide valid user id');
+
+    // get answers
+    const answers = request.data.answers;
+    if (!answers)
+      throw new HttpsError(
+        'invalid-argument',
+        'Must provide valid answers map (empty map is fine)',
+      );
 
     logger.log(`Received request to add user with id ${userId} to event with id ${eventId}`);
 
@@ -243,7 +263,7 @@ export const addUserToEvent = onCall(
     logger.log('Authorized!');
 
     try {
-      return await handleAddUserToEvent(eventId, userId);
+      return await handleAddUserToEvent(eventId, userId, answers);
     } catch (err) {
       throw err as Error;
     }
@@ -345,14 +365,14 @@ export const serviceAddUserToEvent = onRequest(
 
     logger.log('Authorized!');
 
-    const { eventId, userId } = req.body.data;
-    if (!eventId || !userId) {
+    const { eventId, userId, answers } = req.body.data;
+    if (!eventId || !userId || !answers) {
       res.status(400).send({ error: { message: 'Bad Request: Missing eventId or userId' } });
       return;
     }
 
     try {
-      const result = await handleAddUserToEvent(eventId, userId);
+      const result = await handleAddUserToEvent(eventId, userId, answers);
       res.status(201).send({ data: result });
     } catch (err) {
       if (err instanceof HttpsError) {

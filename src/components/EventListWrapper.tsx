@@ -32,19 +32,19 @@ const EventListWrapper = () => {
   const [cooldown, setCooldown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [functionError, setFunctionError] = useState<string | null>(null);
-  const [viewingWaitlist, setviewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
+  const [viewingWaitlist, setViewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
   const [showFlow, setShowFlow] = useState(false);
 
   const handleFlowOpen = () => {
     setShowFlow(true);
   };
 
-  const handleFlowClose = () => {
+  const handleFlowClose = (answers: Record<string, boolean | null>) => {
     setShowFlow(false);
-    handleSignup();
+    handleSignup(answers);
   };
 
-  const handleSignup = async () => {
+  const handleSignup = async (answers: Record<string, boolean | null>) => {
     if (!eventId || !userId) {
       return;
     }
@@ -52,11 +52,11 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleSignup = httpsCallable<{ eventId: string; userId: string }, AddUserResult>(
+      const addUserToEvent = httpsCallable<{ eventId: string; userId: string, answers: Record<string, boolean | null> }, AddUserResult>(
         functions,
         'addUserToEvent',
       );
-      const res = await handleSignup({ eventId, userId });
+      const res = await addUserToEvent({ eventId, userId, answers });
       setIsLoading(false);
       setCooldown(
         res.data.status === 'signedUp'
@@ -92,11 +92,11 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const handleLeave = httpsCallable<{ eventId: string; userId: string }, RemoveUserResult>(
+      const removeUserFromEvent = httpsCallable<{ eventId: string; userId: string }, RemoveUserResult>(
         functions,
         'removeUserFromEvent',
       );
-      const res = await handleLeave({ eventId, userId });
+      const res = await removeUserFromEvent({ eventId, userId });
       setIsLoading(false);
       setCooldown(
         res.data.status === 'leftEvent'
@@ -124,13 +124,13 @@ const EventListWrapper = () => {
       <div className='w-full h-full flex flex-col items-center gap-1'>
         <div className='flex gap-24 text-lg pb-1'>
           <button
-            onClick={() => setviewingWaitlist(false)}
+            onClick={() => setViewingWaitlist(false)}
             className={`${!viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
           >
             Signups
           </button>
           <button
-            onClick={() => setviewingWaitlist(true)}
+            onClick={() => setViewingWaitlist(true)}
             className={`${viewingWaitlist ? 'text-purple-700 dark:text-purple-500 ' : ''}underline hover:cursor-pointer`}
           >
             Waitlist
