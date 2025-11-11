@@ -15,10 +15,11 @@ const SignupFlow = ({ handleFlowClose }: SignupFlowProps) => {
 
   const handleNext = () => {
     if (promptsLoading || promptsError || !prompts) return;
-    // submit or store answer somewhere
+    // get user's answer and store it somewhere
     if (curIndex + 1 < prompts.length) {
       setCurIndex(curIndex + 1);
     } else {
+      // submit
       handleFlowClose();
     }
   };
