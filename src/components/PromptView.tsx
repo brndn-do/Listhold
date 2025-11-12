@@ -19,7 +19,7 @@ const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
       {promptData.visibility && (
         <p className='text-sm opacity-65'>
           {promptData.visibility === 'public'
-            ? 'Your answer to this may be displayed to others'
+            ? 'Your answer may be displayed to others'
             : 'Your answer will not be publicly displayed, but will be visible to event organizers.'}
         </p>
       )}
