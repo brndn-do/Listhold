@@ -1,7 +1,7 @@
 'use client';
 
 import { useEvent } from '@/context/EventProvider';
-import Spinner from './Spinner';
+import Spinner from '../../ui/Spinner';
 import ListItem from './ListItem';
 
 const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {

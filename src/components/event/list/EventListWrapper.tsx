@@ -7,7 +7,7 @@ import EventButton from './EventButton';
 import EventList from './EventList';
 import { useEvent } from '@/context/EventProvider';
 import { useAuth } from '@/context/AuthProvider';
-import SignupFlow from './SignupFlow';
+import SignupFlow from '../signup/SignupFlow';
 
 interface AddUserResult {
   status: 'signedUp' | 'waitlisted';

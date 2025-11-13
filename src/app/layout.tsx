@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthProvider';
-import Auth from '@/components/Auth';
+import Auth from '@/components/auth/Auth';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,7 +30,7 @@ export default function RootLayout({
       className={`h-[100dvh] ${geistSans.variable} ${geistMono.variable} antialiased`}
     >
       <AuthProvider>
-        {/* body should always take at least the entire viewport height */}
+        {/* body should always take the entire viewport height */}
         <body className='h-[100dvh] m-0 flex flex-col'>
           <header className='pt-4 pr-4'>
             <nav className='flex justify-end'>
