@@ -1,7 +1,8 @@
-'use client'
+'use client';
 
 import { handleSignIn, handleSignOut, useAuth } from '@/context/AuthProvider';
 import Image from 'next/image';
+import Button from '../ui/Button';
 
 const Auth = () => {
   const { user } = useAuth();
@@ -21,13 +22,10 @@ const Auth = () => {
       ) : (
         <></>
       )}
-      <button
-        type='button'
+      <Button
         onClick={user ? handleSignOut : handleSignIn}
-        className='text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer'
-      >
-        {user ? 'Sign out' : 'Sign in with Google'}
-      </button>
+        content={user ? 'Sign out' : 'Sign in with Google'}
+      />
     </div>
   );
 };
