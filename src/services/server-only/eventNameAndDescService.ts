@@ -1,3 +1,4 @@
+// Ensure this file only runs on the server side.
 import 'server-only';
 import { adminDb } from '@/lib/firebase-admin';
 
