@@ -1,19 +1,10 @@
+'use client'
+
+import { handleSignIn, handleSignOut, useAuth } from '@/context/AuthProvider';
 import Image from 'next/image';
 
-interface AuthProps {
-  user?: {
-    uid: string;
-    displayName: string;
-    email: string;
-    photoURL: string;
-  };
-  // eslint-disable-next-line
-  onSignIn: (...args: any[]) => unknown | Promise<unknown>;
-  // eslint-disable-next-line
-  onSignOut: (...args: any[]) => unknown | Promise<unknown>;
-}
-
-const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
+const Auth = () => {
+  const { user } = useAuth();
   return (
     <div className='flex items-center gap-3 h-8'>
       {user ? (
@@ -32,7 +23,7 @@ const Auth = ({ user, onSignIn, onSignOut }: AuthProps) => {
       )}
       <button
         type='button'
-        onClick={user ? onSignOut : onSignIn}
+        onClick={user ? handleSignOut : handleSignIn}
         className='text-sm text-white bg-purple-700 hover:bg-purple-800 font-medium rounded-lg text-sm px-3.5 py-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900 hover:cursor-pointer'
       >
         {user ? 'Sign out' : 'Sign in with Google'}

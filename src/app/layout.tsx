@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import AuthWrapper from '@/components/AuthWrapper';
 import { AuthProvider } from '@/context/AuthProvider';
+import Auth from '@/components/Auth';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,9 +34,7 @@ export default function RootLayout({
         <body className='h-[100dvh] m-0 flex flex-col'>
           <header className='pt-4 pr-4'>
             <nav className='flex justify-end'>
-              <div>
-                <AuthWrapper />
-              </div>
+              <Auth />
             </nav>
           </header>
           <main className='flex-1 flex flex-col items-center'>{children}</main>

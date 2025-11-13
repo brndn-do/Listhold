@@ -75,7 +75,7 @@ export interface EventData {
  * Represents a Firestore user document with document ID.
  */
 export interface UserData {
-  uid: string;
+  id: string;
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
