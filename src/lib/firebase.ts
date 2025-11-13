@@ -4,6 +4,7 @@ import { getFirestore } from 'firebase/firestore';
 import { initializeAppCheck } from 'firebase/app-check';
 import { ReCaptchaV3Provider } from 'firebase/app-check';
 
+// Firebase configuration object
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -14,11 +15,19 @@ const firebaseConfig = {
   reCAPTCHASiteKey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
 };
 
-// initialize Firebase
+// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 
-// Initialize App Check
-// Only run this on the client side (in the browser)
+/**
+ * Initializes Firebase App Check for client-side environments.
+ *
+ * Uses the ReCAPTCHA v3 provider to protect Firebase resources
+ * from abuse and unauthorized access.
+ *
+ * This block should only run in the browser
+ *
+ * @see https://firebase.google.com/docs/app-check
+ */
 if (typeof window !== 'undefined') {
   initializeAppCheck(app, {
     // Use the reCAPTCHASiteKey from your firebaseConfig
@@ -27,8 +36,8 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// get reference to auth
+// Export the Firebase Authentication Instance
 export const auth = getAuth(app);
 
-// get reference to db
+// Export the Firestore instance
 export const db = getFirestore(app);
