@@ -1,5 +1,6 @@
 import { doc, setDoc } from 'firebase/firestore';
 import { saveUserDocument } from './userService';
+import { User, UserCredential } from 'firebase/auth';
 
 jest.mock('@/lib/firebase', () => ({ db: 'mockdb' })); // Mock our internal db export
 
@@ -14,13 +15,23 @@ jest.mock('firebase/firestore', () => ({
 const docMock = doc as jest.Mock;
 const setDocMock = setDoc as jest.Mock;
 
-describe('saveUserdocument', () => {
-  const mockUser = {
+// saveUserDocument expects a full UserCredential object
+// define partial types and use type assertion
+type PartialUser = Pick<User, 'uid' | 'displayName' | 'email' | 'photoURL'>; // saveUserDocument should only ever use these
+type PartialUserCredential = { user: PartialUser }; // saveUserDocument should only ever access the user field
+
+const mockPartialUserCredential: PartialUserCredential = {
+  user: {
     uid: '123',
     displayName: 'user',
     email: 'user@mail.com',
     photoURL: 'http://example.com/photo.jpg',
-  };
+  },
+};
+
+const mockUserCredential = mockPartialUserCredential as UserCredential;
+
+describe('saveUserdocument', () => {
   // clear mock
   beforeEach(() => {
     jest.clearAllMocks();
@@ -31,7 +42,7 @@ describe('saveUserdocument', () => {
     const mockDocRef = { id: 'mock-ref' };
     docMock.mockReturnValue(mockDocRef);
 
-    await saveUserDocument(mockUser);
+    await saveUserDocument(mockUserCredential);
 
     expect(docMock).toHaveBeenCalledWith('mockdb', 'users', '123');
 
@@ -50,6 +61,6 @@ describe('saveUserdocument', () => {
   it('should throw if setDoc fails', async () => {
     const mockError = new Error('Firestore error');
     setDocMock.mockRejectedValue(mockError);
-    await expect(saveUserDocument(mockUser)).rejects.toThrow('Firestore error');
+    await expect(saveUserDocument(mockUserCredential)).rejects.toThrow('Firestore error');
   });
 });
