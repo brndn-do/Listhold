@@ -29,12 +29,14 @@ const ListItem = ({ signup }: ListItemProps) => {
         // Return an object with all info needed for rendering
         return {
           promptId,
+          order: prompt?.order,
           answer,
           text: prompt?.text,
           visibility: prompt?.visibility,
         };
       })
-      .filter((p) => p.visibility === 'public' && p.answer !== null);
+      .filter((p) => p.visibility === 'public' && p.answer !== null)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)); // sort by prompt order
   }, [signup.answers, prompts]);
 
   return (
