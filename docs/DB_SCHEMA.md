@@ -25,6 +25,11 @@ Represents an organization that hosts events.
 - **Document ID:** A unique slug (e.g., `northwestern-archery-club`)
 - **Fields:**
   - `name`: `string` (e.g., "Northwestern Archery Club")
+  - `description`: `string`
+  - `contactEmail?`: `string`
+  - `logoURL?`: `string` - A URL to the organization's logo
+  - `websiteURL?`: `string` - A URL to the organization's website
+  - `visibility?`: `string` - public or private
   - `admins`: `array` of `uid`s - List of users who can manage the organization and its events.
 
 ### 3. `events`
@@ -48,9 +53,7 @@ This is the central collection for all events created on the platform.
       - `day`: `number` (e.g., 3600 for 1 hour)
       - `night`: `number` (e.g., 43200 for 12 hours)
 
-## Sub-collections for Real-time Data
-
-To ensure scalability and real-time updates, sign-up and waitlist data are stored in sub-collections within each event document.
+## Sub-collections
 
 ### 4. `prompts` (Sub-collection of `events`)
 
