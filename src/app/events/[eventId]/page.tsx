@@ -16,7 +16,6 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
 
     // check if null
     if (!result) {
-      console.log('event not found');
       return notFound();
     }
 
