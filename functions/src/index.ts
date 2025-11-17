@@ -334,9 +334,10 @@ interface CreateOrganizationResult {
 const handleCreateOrganization = async (
   organization: CreateOrganizationRequest,
   callerId: string,
-): Promise<{organizationId: string; message: string}> => {
+): Promise<{ organizationId: string; message: string }> => {
+  const { id, ...rest } = organization;
 
-  let organizationId = organization.id;
+  let organizationId = id;
   if (!organizationId) {
     // if id is falsy, generate a random unique id
     organizationId = shortUUID().new();
@@ -358,9 +359,9 @@ const handleCreateOrganization = async (
 
       // create
       transaction.create(orgDocRef, {
-        ...organization,
+        ...rest,
         ownerId: callerId, // set the owner of org to be the caller by default
-      })
+      });
 
       return {
         organizationId,
@@ -386,11 +387,7 @@ export const createOrganization = onCall(
 
     // get uid from auth context
     const callerId = request.auth?.uid;
-    if (!callerId)
-      throw new HttpsError(
-        'unauthenticated',
-        'You are not authenticated'
-      );
+    if (!callerId) throw new HttpsError('unauthenticated', 'You are not authenticated');
 
     logger.log('Authorized!');
 
