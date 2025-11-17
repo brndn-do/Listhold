@@ -324,8 +324,6 @@ export const removeUserFromEvent = onCall(
 interface CreateOrganizationRequest {
   id?: string;
   name: string;
-  description?: string;
-  contactEmail?: string;
 }
 
 interface CreateOrganizationResult {
@@ -336,7 +334,7 @@ interface CreateOrganizationResult {
 const handleCreateOrganization = async (
   organization: CreateOrganizationRequest,
   callerId: string,
-): Promise<CreateOrganizationResult> => {
+): Promise<{organizationId: string; message: string}> => {
 
   let organizationId = organization.id;
   if (!organizationId) {

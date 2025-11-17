@@ -8,11 +8,15 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 
+interface FormData {
+  id: string;
+  name: string;
+  description: string;
+}
+
 interface CreateOrganizationRequest {
   id?: string;
   name: string;
-  description?: string;
-  contactEmail?: string;
 }
 
 interface CreateOrganizationResult {
@@ -24,7 +28,7 @@ const Form = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [valid, setValid] = useState(true); // are the inputs valid?
-  const [formData, setFormData] = useState<CreateOrganizationRequest>({
+  const [formData, setFormData] = useState<FormData>({
     id: '',
     name: '',
     description: '',
@@ -51,6 +55,7 @@ const Form = () => {
         functions,
         'createOrganization',
       );
+      // TODO make sure empty strings become omitted
       const result = await createOrganization(formData);
       router.push(`/organizations/${result.data.organizationId}`);
     } catch (err) {
@@ -59,8 +64,8 @@ const Form = () => {
   };
 
   return (
-    <form className='max-w-md mx-auto'>
-      <div className='grid md:grid-cols-2 md:gap-6'>
+    <form className='w-full'>
+      <div>
         <FormInput
           id='id'
           required={false}
@@ -77,16 +82,14 @@ const Form = () => {
         />
       </div>
       <div>
-        <FormInput
-          id='description'
-          required={false}
-          text='Description (optional)'
-          value={formData.description}
-          onChange={handleChange}
-        ></FormInput>
+        <Button
+          onClick={submitForm}
+          disabled={!user || !valid}
+          content={
+            !user ? 'Sign In to Create Organization' : !valid ? 'Please enter a name' : 'Submit'
+          }
+        />
       </div>
-      <Button onClick={submitForm} disabled={!user || !valid} content={ !user ? 'Sign In to Create Organization' : !valid ? 'Please enter a name' : 'Submit'
-      } />
     </form>
   );
 };

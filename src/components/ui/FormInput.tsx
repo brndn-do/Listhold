@@ -5,12 +5,14 @@ interface FormInputProps {
   name?: string;
   required: boolean;
   text: string;
-  value: string | undefined;
+  value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
+  spellCheck?: boolean;
+  autoComplete?: boolean;
 }
 
-const FormInput = ({ id, name, required, text, value, onChange, placeholder }: FormInputProps) => {
+const FormInput = ({ id, name, required, text, value, onChange, placeholder = ' ', spellCheck = false, autoComplete = false }: FormInputProps) => {
   return (
     <div className='relative z-0 w-full mb-5 group'>
       <input
@@ -20,8 +22,10 @@ const FormInput = ({ id, name, required, text, value, onChange, placeholder }: F
         required={required}
         value={value}
         onChange={onChange}
-        placeholder={placeholder || ' '}
+        placeholder={placeholder}
         className='block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer'
+        spellCheck={spellCheck}
+        autoComplete={autoComplete ? 'on' : 'off'}
       />
       <label
         htmlFor={id}

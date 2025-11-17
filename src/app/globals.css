@@ -1,26 +1,35 @@
 @import 'tailwindcss';
 @plugin 'tailwind-scrollbar';
 
-@theme {
-  --color-background: #f6f6f6;
-  --color-foreground: #1e1e1e;
-}
-
+/* Define base variables for light mode */
 :root {
   --background: #f6f6f6; /* Light mode background */
   --foreground: #1e1e1e; /* Light mode foreground */
 }
 
+/* Dark mode variables when preferred */
 @media (prefers-color-scheme: dark) {
-  @theme {
-    --color-background: #191919;
-    --color-foreground: #f0f0f0;
-  }
-
   :root {
     --background: #191919; /* Dark mode background */
     --foreground: #f0f0f0; /* Dark mode foreground */
   }
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+/* For autofilled inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground) !important;
+  border-color: var(--foreground) !important;
+  caret-color: var(--foreground) !important;
+  /* Long transition to prevent browser's default background from flashing*/
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 body {
