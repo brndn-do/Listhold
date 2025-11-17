@@ -54,8 +54,17 @@ const Form = () => {
     }));
   };
 
+  const formatFormData = (): CreateOrganizationRequest => {
+    const res: CreateOrganizationRequest = { name: formData.name };
+    if (formData.id) {
+      // if custom id provided, include it.
+      res.id = formData.id;
+    }
+    return res;
+  };
+
   const submitForm = async () => {
-    // TODO make sure empty strings become omitted
+    const validatedData = formatFormData();
     setIsLoading(true);
     setFunctionError(null);
     try {
@@ -64,7 +73,7 @@ const Form = () => {
         functions,
         'createOrganization',
       );
-      const result = await createOrganization(formData);
+      const result = await createOrganization(validatedData);
       router.push(`/organizations/${result.data.organizationId}`);
     } catch (err) {
       setIsLoading(false);
