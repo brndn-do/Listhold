@@ -4,7 +4,7 @@ import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions'
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import { app } from '@/lib/firebase';
-import React, { useEffect, useState } from 'react';
+import React, { FormEventHandler, useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Spinner from '../ui/Spinner';
@@ -63,7 +63,8 @@ const Form = () => {
     return res;
   };
 
-  const submitForm = async () => {
+  const submitForm: FormEventHandler = async (e) => {
+    e.preventDefault();
     const validatedData = formatFormData();
     setIsLoading(true);
     setFunctionError(null);
@@ -92,7 +93,7 @@ const Form = () => {
   };
 
   return (
-    <form className='w-[80%] md:w-[40%] lg:w-[30%] xl:w-[25%] 2xl:w-[20%]'>
+    <form onSubmit={submitForm} className='w-[80%] md:w-[40%] lg:w-[30%] xl:w-[25%] 2xl:w-[20%]'>
       <div>
         <FormInput
           id='id'
@@ -113,7 +114,7 @@ const Form = () => {
         {functionError && <p className='max-w-full text-sm text-red-600'>{functionError}</p>}
         {!functionError && (
           <Button
-            onClick={submitForm}
+            type='submit'
             disabled={!user || !valid || isLoading}
             content={
               !user ? (
