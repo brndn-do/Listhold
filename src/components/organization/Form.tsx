@@ -1,12 +1,13 @@
 'use client';
 
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import { app } from '@/lib/firebase';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
+import Spinner from '../ui/Spinner';
 
 interface FormData {
   id: string;
@@ -24,6 +25,8 @@ interface CreateOrganizationResult {
   message: string;
 }
 
+const ERROR_TIME = 5000; // how long to display error before allowing retries
+
 const Form = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -33,6 +36,9 @@ const Form = () => {
     name: '',
     description: '',
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [functionError, setFunctionError] = useState<string | null>(null);
 
   useEffect(() => {
     if (formData.name) setValid(true);
@@ -49,22 +55,35 @@ const Form = () => {
   };
 
   const submitForm = async () => {
+    // TODO make sure empty strings become omitted
+    setIsLoading(true);
+    setFunctionError(null);
     try {
       const functions = getFunctions(app);
       const createOrganization = httpsCallable<CreateOrganizationRequest, CreateOrganizationResult>(
         functions,
         'createOrganization',
       );
-      // TODO make sure empty strings become omitted
       const result = await createOrganization(formData);
       router.push(`/organizations/${result.data.organizationId}`);
     } catch (err) {
-      console.log(err);
+      setIsLoading(false);
+      const firebaseError = err as FunctionsError;
+      console.error('Firebase functions Error:', firebaseError.message);
+      console.log(firebaseError.code);
+      if (firebaseError.code.includes('already-exists')) {
+        setFunctionError('An organization with that id already exists. Try again in a bit.');
+      } else {
+        setFunctionError('An unexpected error occured. Try again in a bit.');
+      }
+      setTimeout(() => {
+        setFunctionError(null);
+      }, ERROR_TIME);
     }
   };
 
   return (
-    <form className='w-full'>
+    <form className='w-[80%] md:w-[40%] lg:w-[30%] xl:w-[25%] 2xl:w-[20%]'>
       <div>
         <FormInput
           id='id'
@@ -81,14 +100,28 @@ const Form = () => {
           onChange={handleChange}
         />
       </div>
-      <div>
-        <Button
-          onClick={submitForm}
-          disabled={!user || !valid}
-          content={
-            !user ? 'Sign In to Create Organization' : !valid ? 'Please enter a name' : 'Submit'
-          }
-        />
+      <div className='max-w-full'>
+        {functionError && <p className='max-w-full text-sm text-red-600'>{functionError}</p>}
+        {!functionError && (
+          <Button
+            onClick={submitForm}
+            disabled={!user || !valid || isLoading}
+            content={
+              !user ? (
+                'Sign In to Create Organization'
+              ) : !valid ? (
+                'Please enter a name'
+              ) : isLoading ? (
+                <>
+                  <Spinner />
+                  Loading...
+                </>
+              ) : (
+                'Create Organization'
+              )
+            }
+          />
+        )}
       </div>
     </form>
   );
