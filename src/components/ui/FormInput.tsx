@@ -1,18 +1,27 @@
+import React from 'react';
+
 interface FormInputProps {
   id: string;
+  name?: string;
   required: boolean;
   text: string;
+  value: string | undefined;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
 }
 
-const FormInput = ({ id, text, required }: FormInputProps) => {
+const FormInput = ({ id, name, required, text, value, onChange, placeholder }: FormInputProps) => {
   return (
     <div className='relative z-0 w-full mb-5 group'>
       <input
         type='text'
         id={id}
+        name={name || id}
+        required={required}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder || ' '}
         className='block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer'
-        placeholder=' '
-        required={!!required}
       />
       <label
         htmlFor={id}

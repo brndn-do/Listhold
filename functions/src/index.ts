@@ -3,6 +3,7 @@ import { setGlobalOptions, logger } from 'firebase-functions';
 import { adminDb } from './firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { OAuth2Client } from 'google-auth-library';
+import shortUUID from 'short-uuid';
 
 // Only up to 10 instances at a time, rest are queued
 setGlobalOptions({ maxInstances: 10 });
@@ -314,6 +315,89 @@ export const removeUserFromEvent = onCall(
 
     try {
       return await handleRemoveUserFromEvent(eventId, userId);
+    } catch (err) {
+      throw err as Error;
+    }
+  },
+);
+
+interface CreateOrganizationRequest {
+  id?: string;
+  name: string;
+  description?: string;
+  contactEmail?: string;
+}
+
+interface CreateOrganizationResult {
+  organizationId: string;
+  message: string;
+}
+
+const handleCreateOrganization = async (
+  organization: CreateOrganizationRequest,
+  callerId: string,
+): Promise<CreateOrganizationResult> => {
+
+  let organizationId = organization.id;
+  if (!organizationId) {
+    // if id is falsy, generate a random unique id
+    organizationId = shortUUID().new();
+  }
+
+  try {
+    logger.log('starting transaction...');
+    const result: CreateOrganizationResult = await adminDb.runTransaction(async (transaction) => {
+      const orgDocRef = adminDb.doc(`organizations/${organizationId}`);
+      const orgDoc = await transaction.get(orgDocRef);
+
+      // check for existance
+      if (orgDoc.exists) {
+        throw new HttpsError(
+          'already-exists',
+          `Organization with id ${organizationId} already exists`,
+        );
+      }
+
+      // create
+      transaction.create(orgDocRef, {
+        ...organization,
+        ownerId: callerId, // set the owner of org to be the caller by default
+      })
+
+      return {
+        organizationId,
+        message: `Created new organization ${organization.name} with id ${organizationId}`,
+      };
+    });
+    return result;
+  } catch (err) {
+    logger.log(`ERROR CREATING ORGANIZATION: ${err}`);
+    throw err as Error;
+  }
+};
+
+export const createOrganization = onCall(
+  async (
+    request: CallableRequest<CreateOrganizationRequest>,
+  ): Promise<CreateOrganizationResult> => {
+    const name = request.data.name;
+    if (!name)
+      throw new HttpsError('invalid-argument', 'Must provide a non-empty organization name');
+
+    logger.log(`Received request to create organization with name ${name}`);
+
+    // get uid from auth context
+    const callerId = request.auth?.uid;
+    if (!callerId)
+      throw new HttpsError(
+        'unauthenticated',
+        'You are not authenticated'
+      );
+
+    logger.log('Authorized!');
+
+    try {
+      return await handleCreateOrganization(request.data, callerId);
     } catch (err) {
       throw err as Error;
     }

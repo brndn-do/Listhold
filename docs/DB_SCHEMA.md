@@ -26,11 +26,12 @@ Represents an organization that hosts events.
 - **Fields:**
   - `name`: `string` (e.g., "Northwestern Archery Club")
   - `description`: `string`
+  - `ownerId`: `string` the user id of the owner
   - `contactEmail?`: `string`
   - `logoURL?`: `string` - A URL to the organization's logo
   - `websiteURL?`: `string` - A URL to the organization's website
   - `visibility?`: `string` - public or private
-  - `admins`: `array` of `uid`s - List of users who can manage the organization and its events.
+  - `admins`: `map` of `uid`s - Map of users who can manage the organization and its events.
 
 ### 3. `events`
 

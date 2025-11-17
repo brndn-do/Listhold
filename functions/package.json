@@ -18,7 +18,8 @@
   "dependencies": {
     "firebase-admin": "^12.6.0",
     "firebase-functions": "^6.0.1",
-    "google-auth-library": "^10.5.0"
+    "google-auth-library": "^10.5.0",
+    "short-uuid": "^5.2.0"
   },
   "devDependencies": {
     "eslint": "^9.38.0",

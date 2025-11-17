@@ -7,6 +7,12 @@ service cloud.firestore {
       allow read, write, create, update: if request.auth.uid == userId;
     }
 
+    // Organizations Collection: Anyone can read, no client-side writes
+    match /organizations/{organizationId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // Events Collection: Anyone can read, no client-side writes
     match /events/{eventId} {
       allow read: if true;
