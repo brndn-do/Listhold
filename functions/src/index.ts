@@ -322,8 +322,8 @@ export const removeUserFromEvent = onCall(
 );
 
 interface CreateOrganizationRequest {
-  id?: string;
-  name: string;
+  id?: string; // Optional
+  name: string; // Required, trimmed
 }
 
 interface CreateOrganizationResult {
@@ -379,20 +379,65 @@ export const createOrganization = onCall(
   async (
     request: CallableRequest<CreateOrganizationRequest>,
   ): Promise<CreateOrganizationResult> => {
-    const name = request.data.name;
-    if (!name)
-      throw new HttpsError('invalid-argument', 'Must provide a non-empty organization name');
+    const { name, id } = request.data;
 
-    logger.log(`Received request to create organization with name ${name}`);
+    // validate 'name'
+    if (typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100) {
+      throw new HttpsError(
+        'invalid-argument',
+        'Organization name must be a string between 2 and 100 characters, and not just whitespace.',
+      );
+    }
+    const trimmedName = name.trim(); // Use the trimmed name going forward
+
+    // 2. Validate 'id' if provided
+    if (id !== undefined && id !== null) {
+      // Check if id is explicitly provided (not undefined/null)
+      if (typeof id !== 'string') {
+        throw new HttpsError('invalid-argument', 'ID must be a string if provided.');
+      }
+      const trimmedId = id.trim(); // Trim ID for validation
+
+      if (trimmedId.length < 4 || trimmedId.length > 50) {
+        throw new HttpsError(
+          'invalid-argument',
+          'ID must be between 4 and 50 characters if provided.',
+        );
+      }
+
+      // Regex for URL-safe characters: alphanumeric, hyphens, underscores
+      if (!/^[a-zA-Z0-9_-]+$/.test(trimmedId)) {
+        throw new HttpsError(
+          'invalid-argument',
+          'ID can only contain letters, numbers, hyphens (-), and underscores (_).',
+        );
+      }
+
+      // If id is an empty string after trimming, treat it as if it wasn't provided
+      if (trimmedId === '') {
+        request.data.id = undefined;
+      } else {
+        request.data.id = trimmedId; // Update request.data.id with the trimmed version
+      }
+    } else {
+      request.data.id = undefined; // Ensure id is explicitly undefined if not provided or empty after trim
+    }
+
+    logger.log(`Received request to create organization with name ${trimmedName}`);
 
     // get uid from auth context
     const callerId = request.auth?.uid;
-    if (!callerId) throw new HttpsError('unauthenticated', 'You are not authenticated');
+    if (!callerId)
+      throw new HttpsError(
+        'unauthenticated',
+
+        'You are not authenticated',
+      );
 
     logger.log('Authorized!');
 
     try {
-      return await handleCreateOrganization(request.data, callerId);
+      return await handleCreateOrganization({ name: trimmedName, id: request.data.id }, callerId);
     } catch (err) {
       throw err as Error;
     }
