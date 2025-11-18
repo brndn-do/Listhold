@@ -52,10 +52,10 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const addUserToEvent = httpsCallable<{ eventId: string; userId: string, answers: Record<string, boolean | null> }, AddUserResult>(
-        functions,
-        'addUserToEvent',
-      );
+      const addUserToEvent = httpsCallable<
+        { eventId: string; userId: string; answers: Record<string, boolean | null> },
+        AddUserResult
+      >(functions, 'addUserToEvent');
       const res = await addUserToEvent({ eventId, userId, answers });
       setIsLoading(false);
       setCooldown(
@@ -92,10 +92,10 @@ const EventListWrapper = () => {
     setFunctionError(null);
     try {
       const functions = getFunctions(app);
-      const removeUserFromEvent = httpsCallable<{ eventId: string; userId: string }, RemoveUserResult>(
-        functions,
-        'removeUserFromEvent',
-      );
+      const removeUserFromEvent = httpsCallable<
+        { eventId: string; userId: string },
+        RemoveUserResult
+      >(functions, 'removeUserFromEvent');
       const res = await removeUserFromEvent({ eventId, userId });
       setIsLoading(false);
       setCooldown(

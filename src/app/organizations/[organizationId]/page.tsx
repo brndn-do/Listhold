@@ -43,7 +43,7 @@ export default async function OrganizationPage({ params }: OrganizationPageProps
     }
 
     // extract name and desc
-    const { name, description, ownerId} = org;
+    const { name, description, ownerId } = org;
 
     const ownerName = await getOwnerNameById(ownerId);
 
@@ -52,7 +52,6 @@ export default async function OrganizationPage({ params }: OrganizationPageProps
         <h1 className='text-2xl font-bold'>{name}</h1>
         <p>Owner: {ownerName}</p>
         {description && <p>{description}</p>}
-        
       </div>
     );
   } catch (err) {

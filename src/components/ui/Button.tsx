@@ -1,13 +1,13 @@
 import { JSX } from 'react';
 
 interface ButtonProps {
-  type?: 'button' | 'submit'
+  type?: 'button' | 'submit';
   onClick?: () => void;
   disabled?: boolean;
   content: JSX.Element | string;
 }
 
-const Button = ({ type='button', onClick, content, disabled }: ButtonProps) => {
+const Button = ({ type = 'button', onClick, content, disabled }: ButtonProps) => {
   return (
     <button
       type={type}

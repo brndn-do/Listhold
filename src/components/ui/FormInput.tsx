@@ -12,7 +12,17 @@ interface FormInputProps {
   autoComplete?: boolean;
 }
 
-const FormInput = ({ id, name, required, text, value, onChange, placeholder = ' ', spellCheck = false, autoComplete = false }: FormInputProps) => {
+const FormInput = ({
+  id,
+  name,
+  required,
+  text,
+  value,
+  onChange,
+  placeholder = ' ',
+  spellCheck = false,
+  autoComplete = false,
+}: FormInputProps) => {
   return (
     <div className='relative z-0 w-full mb-5 group'>
       <input

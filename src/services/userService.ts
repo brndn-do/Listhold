@@ -13,7 +13,7 @@ export const saveUserDocument = async (userCredential: UserCredential) => {
     email: user.email,
     photoURL: user.photoURL,
     lastLogin: serverTimestamp(),
-  }
+  };
   try {
     const docRef = doc(db, 'users', user.uid);
     await setDoc(docRef, userData, { merge: true });

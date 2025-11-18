@@ -63,7 +63,7 @@ export const handleSignIn = async () => {
 
 /**
  * Handles user sign-out.
- * 
+ *
  * Signs the user out from Firebase Authentication.
  */
 export const handleSignOut = async () => {

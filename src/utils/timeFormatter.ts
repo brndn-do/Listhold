@@ -21,9 +21,11 @@ export const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
   }
 };
 
-export const formatTimestamp = (timestamp: Timestamp): { formattedDate: string; formattedTime: string } => {
+export const formatTimestamp = (
+  timestamp: Timestamp,
+): { formattedDate: string; formattedTime: string } => {
   const date = timestamp.toDate();
   const formattedDate = format(date, 'MM/dd/yyyy');
   const formattedTime = format(date, 'HH:mm:ss.SSS');
-  return { formattedDate, formattedTime }
+  return { formattedDate, formattedTime };
 };

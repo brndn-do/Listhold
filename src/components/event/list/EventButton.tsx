@@ -42,7 +42,8 @@ const EventButton = ({
   // did the user already join either the signups list or the waitlist)
   const alreadyJoined: boolean = useMemo(() => {
     return !!(
-      user && (signups?.some((s) => s.id === user.uid) || waitlist?.some((s) => s.id === user.uid))
+      user &&
+      (signups?.some((s) => s.id === user.uid) || waitlist?.some((s) => s.id === user.uid))
     );
   }, [user, signups, waitlist]);
 
@@ -72,12 +73,7 @@ const EventButton = ({
 
   // must sign in first to do anything
   if (!user) {
-    return (
-      <Button
-        disabled={true}
-        content='Sign in to join the list.'
-      />
-    );
+    return <Button disabled={true} content='Sign in to join the list.' />;
   }
 
   // already joined the selection (main list or waitlist), allow leaving it
