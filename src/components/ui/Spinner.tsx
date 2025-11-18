@@ -1,3 +1,8 @@
+/**
+ * A reusable spinner component.
+ * 
+ * Used to indicate loading states.
+ */
 const Spinner = () => (
   <svg
     className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'

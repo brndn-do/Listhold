@@ -1,10 +1,8 @@
-import React from 'react';
-
 interface FormInputProps {
   id: string;
   name?: string;
   required: boolean;
-  text: string;
+  label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
@@ -12,11 +10,20 @@ interface FormInputProps {
   autoComplete?: boolean;
 }
 
+/**
+ * A reusable component that contains a text input and a floating label.
+ *
+ * - Supports custom `id`, `name`, label text, and placeholder text.
+ * - Accepts controlled input via `value` and `onChange`.
+ * - Displays a floating label that animates based on focus and input state.
+ * - Respects `required`, `spellCheck`, and `autoComplete` settings.
+ * - if not provided, spellCheck and autoComplete are set to false.
+ */
 const FormInput = ({
   id,
   name,
   required,
-  text,
+  label,
   value,
   onChange,
   placeholder = ' ',
@@ -41,7 +48,7 @@ const FormInput = ({
         htmlFor={id}
         className='absolute text-sm text-body duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto'
       >
-        {text}
+        {label}
       </label>
     </div>
   );

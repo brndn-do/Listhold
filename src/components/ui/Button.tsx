@@ -7,6 +7,14 @@ interface ButtonProps {
   content: JSX.Element | string;
 }
 
+/**
+ * A reusable button component.
+ *
+ * - Supports `button` and `submit` types.
+ * - Invokes the optional `onClick` callback when pressed.
+ * - When `disabled` is true, the button is non-interactive and styled with reduced opacity.
+ * - Accepts either a string or JSX element as its content.
+ */
 const Button = ({ type = 'button', onClick, content, disabled }: ButtonProps) => {
   return (
     <button
