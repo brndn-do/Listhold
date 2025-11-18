@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CreateOrganizationPage() {
   return (
     <div className='w-full flex flex-col justify-center items-center gap-8 px-2 py-8'>
-      <h1 className='text-3xl text-center'>Create New Organization</h1>
+      <h1 className='text-2xl font-bold text-center'>Create New Organization</h1>
       <Form />
     </div>
   );

@@ -19,8 +19,8 @@ const organizationSchema = z.object({
     .transform((s) => s.trim()),
   id: z
     .string()
-    .min(4, { message: 'ID must be at least 4 characters'})
-    .max(50, { message: 'ID cannot exceed 50 characters'})
+    .min(4, { message: 'ID must be at least 4 characters' })
+    .max(50, { message: 'ID cannot exceed 50 characters' })
     .regex(/^[a-zA-Z0-9_-]+$/, {
       message: 'ID can only contain letters, numbers, hyphens (-), and underscores (_).',
     })
@@ -109,6 +109,7 @@ const Form = () => {
       const result = await createOrganization(validatedData);
       router.push(`/organizations/${encodeURIComponent(result.data.organizationId)}`);
     } catch (err) {
+      setIsLoading(false);
       const firebaseError = err as FunctionsError;
       console.error('Firebase functions Error:', firebaseError.message);
       console.log(firebaseError.code);
@@ -120,8 +121,6 @@ const Form = () => {
       setTimeout(() => {
         setFunctionError(null);
       }, ERROR_TIME);
-    } finally {
-      setIsLoading(false);
     }
   };
 
