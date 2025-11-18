@@ -1,4 +1,4 @@
-import EventView from '@/components/event/list/EventView';
+import EventView from '@/components/event/EventView';
 import { EventProvider } from '@/context/EventProvider';
 import { getEventNameAndDescById } from '@/services/server-only/eventNameAndDescService';
 import { Metadata } from 'next';

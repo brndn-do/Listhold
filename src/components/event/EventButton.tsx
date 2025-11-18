@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthProvider';
-import Spinner from '../../ui/Spinner';
+import Spinner from '../ui/Spinner';
 import { useEvent } from '@/context/EventProvider';
 import { useMemo } from 'react';
 import Button from '@/components/ui/Button';

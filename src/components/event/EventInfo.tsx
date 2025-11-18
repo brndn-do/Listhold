@@ -1,7 +1,7 @@
 'use client';
 
 import { formatEventTiming } from '@/utils/timeFormatter';
-import Spinner from '../../ui/Spinner';
+import Spinner from '../ui/Spinner';
 import { useEvent } from '@/context/EventProvider';
 
 const EventInfo = () => {

@@ -3,7 +3,7 @@ import 'server-only';
 import { adminDb } from '@/lib/firebase-admin';
 
 /**
- * Given an organization ID, gets the organization name and description from Firestore.
+ * Given an organization ID, gets the organization name, description, and ownerID from Firestore.
  * Server-side only.
  * @param id The organization document ID in Firestore.
  * @returns A promise that resolves to an object containing the organization name, description, and owner ID.

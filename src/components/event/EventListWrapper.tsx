@@ -4,10 +4,10 @@ import { app } from '@/lib/firebase';
 import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
 import { useState } from 'react';
 import EventButton from './EventButton';
-import EventList from './EventList';
+import EventList from './list/EventList';
 import { useEvent } from '@/context/EventProvider';
 import { useAuth } from '@/context/AuthProvider';
-import SignupFlow from '../signup/SignupFlow';
+import SignupFlow from './signup/SignupFlow';
 
 interface AddUserResult {
   status: 'signedUp' | 'waitlisted';

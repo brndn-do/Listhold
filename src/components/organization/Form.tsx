@@ -130,14 +130,14 @@ const Form = () => {
         <FormInput
           id='name'
           required={true}
-          text='Name'
+          label='Name'
           value={formData.name}
           onChange={handleChange}
         />
         <FormInput
           id='id'
           required={false}
-          text='A unique ID (optional)'
+          label='A unique ID (optional)'
           value={formData.id}
           onChange={handleChange}
         />
