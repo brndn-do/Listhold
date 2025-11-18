@@ -9,8 +9,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "TZ=UTC jest",
+    "test:watch": "TZ=UTC jest --watch"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

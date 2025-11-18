@@ -1,48 +1,43 @@
 import { Timestamp } from 'firebase/firestore';
-import { formatEventTiming } from './timeFormatter';
-import { format } from 'date-fns';
+import { formatEventTiming, formatTimestamp } from './timeFormatter';
 
-jest.mock('date-fns', () => ({
-  ...jest.requireActual('date-fns'),
-  format: jest.fn(),
-}));
-
-const mockFormat = format as jest.Mock;
-
+/**
+ * Use `TZ=UTC jest` when running this test, as it expects UTC timezone.
+ */
 describe('formatEventTiming', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it('should format a single-day event correctly', () => {
+    const startDate = new Date('2025-10-30T09:00:00Z');
+    const endDate = new Date('2025-10-30T17:30:00Z');
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
+
+    const result = formatEventTiming(startTimestamp, endTimestamp);
+
+    expect(result).toBe('10/30/2025, 9:00 AM - 5:30 PM');
   });
 
-  it('should format same day correctly', () => {
-    mockFormat.mockReturnValueOnce('1');
-    mockFormat.mockReturnValueOnce('2');
-    mockFormat.mockReturnValueOnce('3');
+  it('should format a multi-day event correctly', () => {
+    const startDate = new Date('2025-11-15T22:00:00Z');
+    const endDate = new Date('2025-11-16T10:30:00Z');
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
 
-    const mockStartDate = new Date(2025, 9, 30, 9, 0, 0, 0);
-    const mockEndDate = new Date(2025, 9, 30, 10, 0, 0, 0);
-    const mockStartTimeStamp = Timestamp.fromDate(mockStartDate);
-    const mockEndTimeStamp = Timestamp.fromDate(mockEndDate);
-    const result = formatEventTiming(mockStartTimeStamp, mockEndTimeStamp);
+    const result = formatEventTiming(startTimestamp, endTimestamp);
 
-    expect(result).toBe('1, 2 - 3');
-    expect(mockFormat).toHaveBeenCalledWith(mockStartDate, 'MM/dd/yyyy');
-    expect(mockFormat).toHaveBeenCalledWith(mockStartDate, 'h:mm a');
-    expect(mockFormat).toHaveBeenCalledWith(mockEndDate, 'h:mm a');
+    expect(result).toBe('11/15/2025 10:00 PM to 11/16/2025 10:30 AM');
   });
+});
 
-  it('should format multi-day correctly', () => {
-    mockFormat.mockReturnValueOnce('1');
-    mockFormat.mockReturnValueOnce('2');
+describe('formatTimestamp', () => {
+  it('should return formatted date and time strings', () => {
+    const date = new Date('2025-09-25T14:05:01.123Z');
+    const timestamp = Timestamp.fromDate(date);
 
-    const mockStartDate = new Date(2025, 9, 30, 9, 0, 0, 0);
-    const mockEndDate = new Date(2025, 10, 30, 10, 0, 0, 0);
-    const mockStartTimeStamp = Timestamp.fromDate(mockStartDate);
-    const mockEndTimeStamp = Timestamp.fromDate(mockEndDate);
-    const result = formatEventTiming(mockStartTimeStamp, mockEndTimeStamp);
+    const result = formatTimestamp(timestamp);
 
-    expect(result).toBe('1 to 2');
-    expect(mockFormat).toHaveBeenCalledWith(mockStartDate, 'MM/dd/yyyy h:mm a');
-    expect(mockFormat).toHaveBeenCalledWith(mockEndDate, 'MM/dd/yyyy h:mm a');
+    expect(result).toEqual({
+      formattedDate: '09/25/2025',
+      formattedTime: '14:05:01.123',
+    });
   });
 });
