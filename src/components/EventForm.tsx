@@ -24,12 +24,10 @@ const eventSchema = z
       .min(2, { message: 'Location must be at least 2 characters' })
       .max(100, { message: 'Location cannot exceed 100 characters' })
       .transform((s) => s.trim()),
-    start: z
-      .string()
-      .regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d$/, {
-        message: 'Invalid start date and time format (YYYY-MM-DDTHH:mm)',
-      }),
-    end: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d$/, {
+    start: z.iso.datetime({
+      message: 'Invalid start date and time format (YYYY-MM-DDTHH:mm)',
+    }),
+    end: z.iso.datetime({
       message: 'Invalid end date and time format (YYYY-MM-DDTHH:mm)',
     }),
     capacity: z
@@ -126,10 +124,25 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     setFunctionError(null);
     setFormErrors({}); // clear previous errors
 
+    // Check if date stings are empty before trying to convert them to ISO 8601 standard
+    if (!formData.start || !formData.end) {
+      const errors: Record<string, string | undefined> = {};
+      if (!formData.start) errors.start = 'Start date and time is required.';
+      if (!formData.end) errors.end = 'End date and time is required.';
+      setFormErrors(errors);
+      return;
+    }
+    // Convert datetimes to ISO 8601
+    const toValidate = {
+      ...formData,
+      start: new Date(formData.start).toISOString(),
+      end: new Date(formData.end).toISOString(),
+    };
+
     let validatedData: CreateEventRequest;
     try {
       // Validate form data using Zod schema
-      const parsedData = eventSchema.parse(formData);
+      const parsedData = eventSchema.parse(toValidate);
       validatedData = { ...parsedData, organizationId }; // Add organizationId from props
     } catch (err) {
       if (err instanceof ZodError) {
