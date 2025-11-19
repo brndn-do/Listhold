@@ -1,5 +1,6 @@
 interface FormInputProps {
   id: string;
+  type?: 'text' | 'number' | 'datetime-local';
   name?: string;
   required: boolean;
   label: string;
@@ -21,6 +22,7 @@ interface FormInputProps {
  */
 const FormInput = ({
   id,
+  type = 'text',
   name,
   required,
   label,
@@ -33,7 +35,7 @@ const FormInput = ({
   return (
     <div className='relative z-0 w-full mb-5 group'>
       <input
-        type='text'
+        type={type}
         id={id}
         name={name || id}
         required={required}

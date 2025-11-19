@@ -43,7 +43,7 @@ interface CreateOrganizationResult {
 
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
-const Form = () => {
+const OrganizationForm = () => {
   const router = useRouter();
   const { user } = useAuth();
   const [formData, setFormData] = useState<FormData>({ id: '', name: '' });
@@ -181,4 +181,4 @@ const Form = () => {
   );
 };
 
-export default Form;
+export default OrganizationForm;

@@ -1,3 +1,4 @@
+import OrganizationView from '@/components/organization/OrganizationView';
 import { getOrganizationById, getOwnerNameById } from '@/services/server-only/organizationService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -52,6 +53,7 @@ export default async function OrganizationPage({ params }: OrganizationPageProps
         <h1 className='text-2xl font-bold'>{name}</h1>
         <p>Owner: {ownerName}</p>
         {description && <p>{description}</p>}
+        <OrganizationView organizationId={organizationId} ownerId={ownerId} />
       </div>
     );
   } catch (err) {
