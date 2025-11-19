@@ -4,17 +4,17 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className='p-16 flex flex-col items-center justify-center'>
-      <h1 className='text-5xl font-bold tracking-wider text-center text-transparent bg-clip-text bg-gradient-to-r to-purple-800 from-slate-200'>
+      <h1 className='text-5xl font-bold tracking-wider text-center text-transparent bg-clip-text bg-gradient-to-r to-purple-800 dark:to-purple-600 from-slate-700 dark:from-slate-300'>
         Rosterize
       </h1>
-      <p className='mt-4 text-lg text-center text-slate-600'>
-        Manage your event rosters with ease.
+      <p className='mt-4 text-lg text-center text-slate-700 dark:text-slate-400'>
+        {'Manage your organization\'s event rosters—with ease.'}
       </p>
       <Link
-        href='/events/nuarchery-example'
-        className='mt-4 text-lg text-center text-slate-200 underline'
+        href='/organizations/new'
+        className='mt-4 text-lg text-center text-purple-700 dark:text-purple-500 underline'
       >
-        Link to Example Practice
+        Create an organization to get started.
       </Link>
     </main>
   );
