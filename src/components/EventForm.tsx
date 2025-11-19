@@ -26,10 +26,12 @@ const eventSchema = z
       .transform((s) => s.trim()),
     start: z
       .string()
-      .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, { message: 'Invalid start date and time format' }),
-    end: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, { message: 'Invalid end date and time format' }),
+      .regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d$/, {
+        message: 'Invalid start date and time format (YYYY-MM-DDTHH:mm)',
+      }),
+    end: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])T([01]\d|2[0-3]):[0-5]\d$/, {
+      message: 'Invalid end date and time format (YYYY-MM-DDTHH:mm)',
+    }),
     capacity: z
       .string()
       .min(1, { message: 'Capacity is required' })
@@ -42,6 +44,21 @@ const eventSchema = z
           .min(1, { message: 'Capacity must be at least 1' })
           .max(300, { message: 'Capacity cannot exceed 300' }),
       ),
+    eventId: z.preprocess(
+      (val) => (val === '' ? undefined : val),
+      z
+        .string()
+        .trim()
+        .min(4, { message: 'Custom ID must be at least 4 characters' })
+        .max(50, { message: 'Custom ID cannot exceed 50 characters' })
+        .regex(/^[a-zA-Z0-9_-]+$/, {
+          message: 'Custom ID can only contain letters, numbers, hyphens (-), and underscores (_).',
+        })
+        .refine((val) => val.toLowerCase() !== 'new', {
+          message: "The ID 'new' is a reserved word and cannot be used.",
+        })
+        .optional(),
+    ),
   })
   .superRefine((data, ctx) => {
     if (new Date(data.start) >= new Date(data.end)) {
@@ -63,6 +80,7 @@ interface FormData {
   start: string;
   end: string;
   capacity: string; // Stored as string in form state
+  eventId: string;
 }
 
 interface CreateEventResult {
@@ -86,6 +104,7 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     start: '',
     end: '',
     capacity: '',
+    eventId: '',
   });
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
   const [functionError, setFunctionError] = useState<string | null>(null);
@@ -144,19 +163,20 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
       const result = await createEvent(validatedData);
       router.push(`/events/${encodeURIComponent(result.data.eventId)}`);
     } catch (err) {
+      setIsLoading(false);
       const firebaseError = err as FunctionsError;
       console.error('Firebase functions Error:', firebaseError.message);
       console.log(firebaseError.code);
       if (firebaseError.code.includes('permission-denied')) {
         setFunctionError('You do not have permission to create events for this organization.');
+      } else if (firebaseError.code.includes('already-exists')) {
+        setFunctionError('An event with that ID already exists. Try again in a bit.');
       } else {
         setFunctionError('An unexpected error occurred. Please try again.');
       }
       setTimeout(() => {
         setFunctionError(null);
       }, ERROR_TIME);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -197,6 +217,13 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
           required={true}
           label='Location'
           value={formData.location}
+          onChange={handleChange}
+        />
+        <FormInput
+          id='eventId'
+          required={false}
+          label='Custom Event ID (optional)'
+          value={formData.eventId}
           onChange={handleChange}
         />
         <FormInput

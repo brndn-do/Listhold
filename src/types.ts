@@ -18,6 +18,8 @@ export interface EventData {
   name: string;
   description?: string;
   organizationId: string;
+  createdAt: Timestamp;
+  creatorId: string;
   location: string;
   start: Timestamp;
   end: Timestamp;

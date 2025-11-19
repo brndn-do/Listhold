@@ -1,7 +1,7 @@
 import { CallableRequest, HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import { setGlobalOptions, logger } from 'firebase-functions';
 import { adminDb } from './firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { OAuth2Client } from 'google-auth-library';
 import shortUUID from 'short-uuid';
 
@@ -438,6 +438,151 @@ export const createOrganization = onCall(
 
     try {
       return await handleCreateOrganization({ name: trimmedName, id: request.data.id }, callerId);
+    } catch (err) {
+      throw err as Error;
+    }
+  },
+);
+
+interface CreateEventRequest {
+  organizationId: string;
+  name: string;
+  location: string;
+  start: string;
+  end: string;
+  capacity: number;
+  eventId?: string;
+  creatorId: string;
+}
+
+interface CreateEventResult {
+  eventId: string;
+  message: string;
+}
+
+const handleCreateEvent = async (eventData: CreateEventRequest): Promise<CreateEventResult> => {
+  let eventId = eventData.eventId;
+  if (!eventId) {
+    eventId = shortUUID().new();
+  }
+
+  const { start, end, ...restOfEventData } = eventData;
+  const firestoreEventData = {
+    ...restOfEventData,
+    start: Timestamp.fromDate(new Date(start)),
+    end: Timestamp.fromDate(new Date(end)),
+    createdAt: FieldValue.serverTimestamp(),
+    signupsCount: 0,
+  };
+
+  try {
+    await adminDb.runTransaction(async (transaction) => {
+      const eventDocRef = adminDb.doc(`events/${eventId}`);
+      const eventDoc = await transaction.get(eventDocRef);
+
+      if (eventDoc.exists) {
+        throw new HttpsError('already-exists', `An event with the ID '${eventId}' already exists.`);
+      }
+
+      transaction.create(eventDocRef, firestoreEventData);
+    });
+
+    return {
+      eventId,
+      message: `Created new event ${eventData.name} with id ${eventId}`,
+    };
+  } catch (err) {
+    logger.log(`ERROR CREATING EVENT: ${err}`);
+    throw err as Error;
+  }
+};
+
+export const createEvent = onCall(
+  async (
+    request: CallableRequest<Omit<CreateEventRequest, 'creatorId'>>,
+  ): Promise<CreateEventResult> => {
+    const { organizationId, name, location, start, end, capacity, eventId } = request.data;
+    const callerId = request.auth?.uid;
+
+    // 1. Authentication check
+    if (!callerId) {
+      throw new HttpsError('unauthenticated', 'You must be logged in to create an event.');
+    }
+
+    // 2. Authorization check (is user the owner of the org?)
+    const orgDocRef = adminDb.doc(`organizations/${organizationId}`);
+    const orgDoc = await orgDocRef.get();
+
+    if (!orgDoc.exists) {
+      throw new HttpsError('not-found', `Organization with id ${organizationId} does not exist.`);
+    }
+
+    if (orgDoc.data()?.ownerId !== callerId) {
+      throw new HttpsError(
+        'permission-denied',
+        'You do not have permission to create events for this organization.',
+      );
+    }
+
+    // 3. Server-side validation
+    if (!organizationId || typeof organizationId !== 'string')
+      throw new HttpsError('invalid-argument', 'A valid organization ID must be provided.');
+    if (!name || typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100)
+      throw new HttpsError('invalid-argument', 'Event name must be a string between 2 and 100 characters.');
+    if (
+      !location ||
+      typeof location !== 'string' ||
+      location.trim().length < 2 ||
+      location.trim().length > 100
+    )
+      throw new HttpsError('invalid-argument', 'Location must be a string between 2 and 100 characters.');
+    if (!start || typeof start !== 'string' || !Date.parse(start))
+      throw new HttpsError('invalid-argument', 'A valid start date must be provided.');
+    if (!end || typeof end !== 'string' || !Date.parse(end))
+      throw new HttpsError('invalid-argument', 'A valid end date must be provided.');
+    if (new Date(start) >= new Date(end))
+      throw new HttpsError('invalid-argument', 'End date must be after start date.');
+    if (
+      typeof capacity !== 'number' ||
+      !Number.isInteger(capacity) ||
+      capacity < 1 ||
+      capacity > 1000
+    )
+      throw new HttpsError('invalid-argument', 'Capacity must be an integer between 1 and 1000.');
+
+    const validatedData: CreateEventRequest = {
+      organizationId,
+      name: name.trim(),
+      location: location.trim(),
+      start,
+      end,
+      capacity,
+      creatorId: callerId,
+    };
+
+    // Optional eventId validation
+    if (eventId !== undefined && eventId !== null) {
+      if (typeof eventId !== 'string')
+        throw new HttpsError('invalid-argument', 'Event ID must be a string if provided.');
+      const trimmedId = eventId.trim();
+      if (trimmedId.toLowerCase() === 'new')
+        throw new HttpsError('invalid-argument', 'The Event ID \'new\' is a reserved word.');
+      if (trimmedId.length > 0) {
+        if (trimmedId.length < 4 || trimmedId.length > 50)
+          throw new HttpsError('invalid-argument', 'Event ID must be between 4 and 50 characters.');
+        if (!/^[a-zA-Z0-9_-]+$/.test(trimmedId))
+          throw new HttpsError(
+            'invalid-argument',
+            'Event ID can only contain letters, numbers, hyphens, and underscores.',
+          );
+        validatedData.eventId = trimmedId;
+      }
+    }
+
+    logger.log(`Received request to create event with name ${validatedData.name}`);
+
+    try {
+      return await handleCreateEvent(validatedData);
     } catch (err) {
       throw err as Error;
     }
