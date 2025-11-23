@@ -1,7 +1,6 @@
-import React from 'react';
 import Link from 'next/link';
 
-export default function Home() {
+const Home = () => {
   return (
     <main className='py-16 px-4 flex flex-col items-center justify-center'>
       <h1 className='text-5xl font-bold tracking-wider text-center text-transparent bg-clip-text bg-gradient-to-r to-purple-800 dark:to-purple-600 from-slate-700 dark:from-slate-300'>
@@ -18,4 +17,6 @@ export default function Home() {
       </Link>
     </main>
   );
-}
+};
+
+export default Home;

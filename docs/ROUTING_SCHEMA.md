@@ -1,42 +1,30 @@
-### Authentication
+# Routing Schema
 
-- `/login`
-  - **Description:** A dedicated page to prompt users to sign in, likely redirecting to the Google authentication provider. This is a cleaner user experience than a pop-up on the main page.
-- `/api/auth/[...nextauth]`
-  - **Description:** Standard NextAuth.js route for handling callbacks, session management, and sign-out logic, especially for restricting access to specific email domains.
+---
 
-### Core App Routes
+### Home
 
-- `/` or `/events`
-  - **Description:** The main dashboard. It displays a list of all upcoming events. For a logged-in user, it could highlight events they've signed up for or are waitlisted on. This corresponds to "Users can view a list of available events."
-  - **File:** `src/app/events/page.tsx`
+- **`/`**
+  - **Description:** Landing page with a brief introduction to Rosterize and a link to create an organization.
 
-- `/events/[eventId]`
-  - **Description:** The detailed view for a single event. This is the most important page, where users will sign up, leave an event, or join a waitlist. It will display the event details, the real-time roster of attendees, and the waitlist.
-  - **File:** `src/app/events/[eventId]/page.tsx`
+### Organization Routes
 
-- `/events/[eventId]/confirm`
-  - **Description:** A special route for users coming from a waitlist notification email. This page would handle the logic to confirm their spot. It should be protected and require a unique, time-sensitive token in the URL query parameters to prevent misuse.
-  - **File:** `src/app/events/[eventId]/confirm/page.tsx`
+- **`/organizations/new`**
+  - **Description:** Form for creating a new organization.
+  - **Authentication:** Required to create.
 
-### User-Specific Routes
+- **`/organizations/[organizationId]`**
+  - **Description:**  Home page for an organization.
+  - **Authentication:** Not required for viewing
 
-- `/profile` or `/my-signups`
-  - **Description:** A user's personal page where they can see a history of all events they have signed up for or attended.
-  - **File:** `src/app/profile/page.tsx`
+- **`/organizations/[organizationId]/events/new`**
+  - **Description:** Form for creating a new event within an organization. Only accessible to the organization owner.
+  - **Authentication:** Required to create.
 
-### Admin/Organization Routes
+### Event Routes
 
-While V1 of the plan states event creation is done in the database, future versions will need an admin UI. This structure prepares for that.
+- **`/events/[eventId]`**
+  - **Description:** The main event page displaying event details, real-time signup list, and waitlist. Users can sign up, answer custom prompts, and leave the event from this page.
+  - **Authentication:** Not required for viewing; required for signing up/leaving
 
-- `/manage` or `/admin`
-  - **Description:** A dashboard for organization administrators to see all the events they manage.
-  - **File:** `src/app/manage/page.tsx`
-
-- `/manage/events/new`
-  - **Description:** A form for creating a new event, including setting rules, capacity, and custom questions.
-  - **File:** `src/app/manage/events/new/page.tsx`
-
-- `/manage/events/[eventId]/edit`
-  - **Description:** A page for editing an existing event's details and rules.
-  - **File:** `src/app/manage/events/[eventId]/edit/page.tsx`
+---

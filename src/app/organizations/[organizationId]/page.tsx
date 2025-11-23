@@ -8,7 +8,7 @@ interface OrganizationPageProps {
 }
 
 // Dynamic metadata for Next.js App Router
-export async function generateMetadata({ params }: OrganizationPageProps): Promise<Metadata> {
+export const generateMetadata = async ({ params }: OrganizationPageProps): Promise<Metadata> => {
   const { organizationId } = await params;
   try {
     const result = await getOrganizationById(organizationId);
@@ -31,9 +31,9 @@ export async function generateMetadata({ params }: OrganizationPageProps): Promi
     console.log('Error fetching organization name and description', err);
     throw err;
   }
-}
+};
 
-export default async function OrganizationPage({ params }: OrganizationPageProps) {
+const OrganizationPage = async ({ params }: OrganizationPageProps) => {
   const { organizationId } = await params;
   try {
     const org = await getOrganizationById(organizationId);
@@ -60,4 +60,6 @@ export default async function OrganizationPage({ params }: OrganizationPageProps
     console.log('Error fetching organization name and description', err);
     throw err;
   }
-}
+};
+
+export default OrganizationPage;

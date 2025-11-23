@@ -8,13 +8,13 @@ interface CreateEventPageProps {
 }
 
 // Dynamic metadata for Next.js App Router
-export async function generateMetadata(): Promise<Metadata> {
+export const generateMetadata = async (): Promise<Metadata> => {
   return {
     title: `Create New Event — Rosterize`,
   };
-}
+};
 
-export default async function CreateEventPage({ params }: CreateEventPageProps) {
+const CreateEventPage = async ({ params }: CreateEventPageProps) => {
   const { organizationId } = await params;
   try {
     const org = await getOrganizationById(organizationId);
@@ -37,4 +37,6 @@ export default async function CreateEventPage({ params }: CreateEventPageProps) 
     console.log('Error fetching organization details', err);
     throw err;
   }
-}
+};
+
+export default CreateEventPage;

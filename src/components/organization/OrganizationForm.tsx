@@ -4,7 +4,7 @@ import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions'
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import { app } from '@/lib/firebase';
-import React, { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Spinner from '../ui/Spinner';

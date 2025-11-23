@@ -18,7 +18,7 @@ import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
  * Shape of the Event context, providing all relevant Firestore data for a single event.
  */
 interface EventContextType {
-  /** 
+  /**
    * The main event document data, including the document ID.
    * `undefined` if the data is not yet loaded.
    */
@@ -30,10 +30,10 @@ interface EventContextType {
   /** Error encountered while loading the event document, if any. */
   eventError: FirestoreError | undefined;
 
-  /** 
-   * Array of signups in the main list.  
-   * Each signup includes its document ID.  
-   * Sorted by `signupTime` timestamp.  
+  /**
+   * Array of signups in the main list.
+   * Each signup includes its document ID.
+   * Sorted by `signupTime` timestamp.
    * `undefined` if data is not yet loaded.
    */
   signups: WithId<SignupData>[] | undefined;
@@ -47,10 +47,10 @@ interface EventContextType {
   /** Error encountered while loading the main signup list, if any. */
   signupsError: FirestoreError | undefined;
 
-  /** 
-   * Array of signups in the waitlist.  
-   * Each signup includes its document ID.  
-   * Sorted by `signupTime` timestamp.  
+  /**
+   * Array of signups in the waitlist.
+   * Each signup includes its document ID.
+   * Sorted by `signupTime` timestamp.
    * `undefined` if data is not yet loaded.
    */
   waitlist: WithId<SignupData>[] | undefined;
@@ -64,8 +64,8 @@ interface EventContextType {
   /** Error encountered while loading the waitlist, if any. */
   waitlistError: FirestoreError | undefined;
 
-  /** 
-   * Map of prompt document IDs to prompt data.  
+  /**
+   * Map of prompt document IDs to prompt data.
    * `undefined` if the prompts have not been loaded yet.
    */
   prompts: Record<string, PromptData> | undefined;
@@ -76,7 +76,6 @@ interface EventContextType {
   /** Error encountered while loading prompts, if any. */
   promptsError: Error | undefined;
 }
-
 
 /**
  * Generic Firestore data converter for a given type.

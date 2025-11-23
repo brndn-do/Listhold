@@ -9,7 +9,7 @@ interface EventPageProps {
 }
 
 // Dynamic metadata for Next.js App Router
-export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+export const generateMetadata = async ({ params }: EventPageProps): Promise<Metadata> => {
   const { eventId } = await params;
   try {
     const result = await getEventNameAndDescById(eventId);
@@ -32,13 +32,15 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     console.log('Error fetching event name and description', err);
     throw err;
   }
-}
+};
 
-export default async function EventPage({ params }: EventPageProps) {
+const EventPage = async ({ params }: EventPageProps) => {
   const { eventId } = await params;
   return (
     <EventProvider eventId={eventId}>
       <EventView />
     </EventProvider>
   );
-}
+};
+
+export default EventPage;

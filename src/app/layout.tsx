@@ -19,11 +19,11 @@ export const metadata: Metadata = {
   description: 'Built with Next.js, Typescript, and Firebase',
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   return (
     <html
       lang='en'
@@ -45,4 +45,6 @@ export default function RootLayout({
       </AuthProvider>
     </html>
   );
-}
+};
+
+export default RootLayout;
