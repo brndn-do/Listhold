@@ -1,6 +1,8 @@
-# Firestore Database Schema Proposal
+# Firestore Database Schema
 
-This document outlines a proposed database schema for the sign-up platform, designed for Firestore and based on the requirements from `PROJECT_PLAN.md` and `scenario.md`.
+This document outlines the database schema for the sign-up platform, designed for Firestore and based on the requirements from `PROJECT_PLAN.md` and `scenario.md`.
+
+> **Note:** This schema includes both **implemented features** and **planned future functionality**. Fields and features marked as "Not yet implemented" are part of the roadmap. See `src/types.ts` for the current implementation state.
 
 ---
 
@@ -13,9 +15,10 @@ This collection stores information about each user who has authenticated with th
 - **Collection:** `users`
 - **Document ID:** `uid` (from Firebase Authentication)
 - **Fields:**
-  - `name`: `string` (e.g., "Alice") - From Google account.
-  - `email`: `string` (e.g., "alice@northwestern.edu") - Verified from the token.
-  - `photoURL`: `string` (e.g., "http://...") - From Google account.
+  - `displayName`: `string | null` (e.g., "Alice") - From Google account.
+  - `email`: `string | null` (e.g., "alice@northwestern.edu") - Verified from the token.
+  - `photoURL`: `string | null` (e.g., "http://...") - From Google account.
+  - `lastLogin`: `timestamp` - When the user last signed in.
 
 ### 2. `organizations`
 
@@ -25,32 +28,35 @@ Represents an organization that hosts events.
 - **Document ID:** A unique slug (e.g., `northwestern-archery-club`)
 - **Fields:**
   - `name`: `string` (e.g., "Northwestern Archery Club")
-  - `description`: `string`
-  - `ownerId`: `string` the user id of the owner
-  - `contactEmail?`: `string`
-  - `logoURL?`: `string` - A URL to the organization's logo
-  - `websiteURL?`: `string` - A URL to the organization's website
-  - `visibility?`: `string` - public or private
-  - `admins`: `map` of `uid`s - Map of users who can manage the organization and its events.
+  - `description?`: `string` (optional)
+  - `ownerId`: `string` - The user ID of the owner
+  - `createdAt`: `timestamp` - When the organization was created
+  - `contactEmail?`: `string` - **Not yet implemented**
+  - `logoURL?`: `string` - **Not yet implemented** - A URL to the organization's logo
+  - `websiteURL?`: `string` - **Not yet implemented** - A URL to the organization's website
+  - `visibility?`: `string` - **Not yet implemented** - public or private
+  - `admins?`: `map` of `uid`s - **Not yet implemented** - Map of users who can manage the organization and its events.
 
 ### 3. `events`
 
 This is the central collection for all events created on the platform.
 
 - **Collection:** `events`
-- **Document ID:** Auto-generated unique ID.
+- **Document ID:** Auto-generated unique ID or custom slug.
 - **Fields:**
   - `name`: `string` (e.g., "Friday Practice 8:15 PM")
-  - `description?`: - Description of event.
+  - `description?`: `string` (optional) - Description of event.
   - `organizationId`: `string` - A reference to the document ID in the `organizations` collection.
+  - `createdAt`: `timestamp` - When the event was created.
+  - `creatorId`: `string` - The user ID of the event creator.
   - `location`: `string` - The location of the event.
   - `start`: `timestamp` - The start time of the event.
   - `end`: `timestamp` - The end time of the event.
   - `capacity`: `number` - Maximum number of attendees.
   - `signupsCount`: `number` - The current number of signups.
-  - `rules?`: `map` - A map to hold various event-specific rules.
-    - `crossEventRestriction`: `boolean` - If true, users can only sign up for one event at a time within this organization.
-    - `waitlistResponseTime`: `map` - Time in seconds users have to respond to a waitlist notification.
+  - `rules?`: `map` - **Not yet implemented** - A map to hold various event-specific rules.
+    - `crossEventRestriction`: `boolean` - **Not yet implemented** - If true, users can only sign up for one event at a time within this organization.
+    - `waitlistResponseTime`: `map` - **Not yet implemented** - Time in seconds users have to respond to a waitlist notification.
       - `day`: `number` (e.g., 3600 for 1 hour)
       - `night`: `number` (e.g., 43200 for 12 hours)
 
@@ -67,18 +73,19 @@ A subcollection containing the custom prompts (a question or notice) for a speci
   - `text`: `string` - The main text of the prompt or question.
   - `type`: `string` - Defines how the prompt is rendered and validated.
     - `yes/no`: A boolean question.
-    - `text`: A free-form text input.
-    - `select`: A single-choice dropdown from `options`.
-    - `checkbox`: Multiple choices from `options`.
     - `notice`: Informational text requiring user acknowledgment (e.g., "I understand").
-  - `options?`: `array` of `string`s - [Optional] A list of choices for `select` or `checkbox` type prompts.
-  - `validation?`: `map` - [Optional] Defines rules for validating user input for questions.
+    - `text`: **Not yet implemented** - A free-form text input.
+    - `select`: **Not yet implemented** - A single-choice dropdown from `options`.
+    - `checkbox`: **Not yet implemented** - Multiple choices from `options`.
+  - `visibility?`: `'public' | 'private'` (optional) - For non-notice prompts, `'public'` allows answers to this prompt to be displayed publicly on the event page.
+  - `options?`: `array` of `string`s - **Not yet implemented** - A list of choices for `select` or `checkbox` type prompts.
+  - `validation?`: `map` - **Not yet implemented** - Defines rules for validating user input for questions.
     - `valid`: `boolean | string | string[] | string[][]` - The expected correct answer(s).
       - `boolean`: For `yes/no` questions (e.g., `true`).
       - `string`: For `select` questions (e.g., `"Option A"`) or exact text matches.
       - `string[]`: For `checkbox` questions, a single combination of selected options that is correct (e.g., `["Option A", "Option B"]`).
       - `string[][]`: For `checkbox` questions, multiple combinations of selected options that are correct (e.g., `[["Option A", "Option B"], ["Option B", "Option C"]]`).
-    - `errorMessage?`: `string` - [Optional] A custom message displayed to the user if validation fails.
+    - `errorMessage?`: `string` - A custom message displayed to the user if validation fails.
 
 ### 5. `signups` (Sub-collection of `events`)
 
@@ -88,10 +95,12 @@ Stores the roster of confirmed attendees for an event.
 - **Document ID:** `uid` (The user ID of the attendee)
 - **Fields:**
   - `displayName`: `string` - The display name of the user **at the time of signup.**
-  - `photoURL`: `string` - The photo URL of the user **at the time of signup.**
+  - `photoURL`: `string | null` - The photo URL of the user **at the time of signup.**
+  - `email`: `string` - The email of the user **at the time of signup.**
   - `signupTime`: `timestamp` - When the user signed up.
-  - `answers?`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
-    - **Example:** `{ "q1_new_member": true, "q2_tshirt_size": "M" }`
+  - `answers`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
+    - Currently supports `boolean | null` values (for `yes/no` and `notice` type prompts)
+    - **Example:** `{ "promptId1": true, "promptId2": null }`
 
 ### 6. `waitlist` (Sub-collection of `events`)
 
@@ -100,17 +109,14 @@ Stores the queue of users waiting for a spot.
 - **Path:** `events/{eventId}/waitlist`
 - **Document ID:** `uid` (The user ID of the waitlisted person)
 - **Fields:**
-  - `joinTime`: `timestamp` - Used to determine the user's position in the queue (first-in, first-out).
-  - `status`: `string` - The user's current waitlist status (e.g., "pending", "notified").
-  - `notifiedAt`: `timestamp` - (Optional) Set when a notification is sent, to track response time limits.
-  - `answers?`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
-    - **Example:** `{ "q1_new_member": true, "q2_tshirt_size": "M" }`
+  - `displayName`: `string` - The display name of the user **at the time of joining the waitlist.**
+  - `photoURL`: `string | null` - The photo URL of the user **at the time of joining the waitlist.**
+  - `email`: `string` - The email of the user **at the time of joining the waitlist.**
+  - `signupTime`: `timestamp` - When the user joined the waitlist (used to determine position in queue, FIFO).
+  - `answers`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
+    - Currently supports `boolean | null` values (for `yes/no` and `notice` type prompts)
+    - **Example:** `{ "promptId1": true, "promptId2": null }`
+  - `status`: `string` - **Not yet implemented** - The user's current waitlist status (e.g., "pending", "notified").
+  - `notifiedAt`: `timestamp` - **Not yet implemented** - Set when a notification is sent, to track response time limits.
 
 ---
-
-## Rationale
-
-- **Scalability:** Keeping `signups` and `waitlist` as sub-collections prevents the main `event` documents from becoming bloated.
-- **Real-time Functionality:** This structure is ideal for live updates. A client application can listen directly to the `signups` and `waitlist` sub-collections of a specific event and update the UI in real-time as documents are added or removed.
-- **Query Efficiency:** Queries are straightforward. Getting an event roster is a collection read, not a complex array filter. For example, to get the waitlist ordered by time: `db.collection('events').doc(eventId).collection('waitlist').orderBy('joinTime').get()`.
-- **Security:** Firestore Security Rules can be applied granularly. For example, we can write a rule that only allows a user to create a document in a `signups` sub-collection if the collection size is less than the `spotLimit` in the parent event document.
