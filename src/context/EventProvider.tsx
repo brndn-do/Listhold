@@ -14,23 +14,75 @@ import {
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 
+/**
+ * Shape of the Event context, providing all relevant Firestore data for a single event.
+ */
 interface EventContextType {
+  /** 
+   * The main event document data, including the document ID.
+   * `undefined` if the data is not yet loaded.
+   */
   event: WithId<EventData> | undefined;
+
+  /** Whether the event document is currently loading. */
   eventLoading: boolean;
+
+  /** Error encountered while loading the event document, if any. */
   eventError: FirestoreError | undefined;
+
+  /** 
+   * Array of signups in the main list.  
+   * Each signup includes its document ID.  
+   * Sorted by `signupTime` timestamp.  
+   * `undefined` if data is not yet loaded.
+   */
   signups: WithId<SignupData>[] | undefined;
-  signupIds: Set<string> | undefined; // a set with the user ID's of all people on the main list
+
+  /** Set of user IDs corresponding to all signups in the main list. */
+  signupIds: Set<string> | undefined;
+
+  /** Whether the main signup list is currently loading. */
   signupsLoading: boolean;
+
+  /** Error encountered while loading the main signup list, if any. */
   signupsError: FirestoreError | undefined;
+
+  /** 
+   * Array of signups in the waitlist.  
+   * Each signup includes its document ID.  
+   * Sorted by `signupTime` timestamp.  
+   * `undefined` if data is not yet loaded.
+   */
   waitlist: WithId<SignupData>[] | undefined;
-  waitlistIds: Set<string> | undefined; // a set with the user ID's of all people on the waitlist
+
+  /** Set of user IDs corresponding to all signups in the waitlist. */
+  waitlistIds: Set<string> | undefined;
+
+  /** Whether the waitlist is currently loading. */
   waitlistLoading: boolean;
+
+  /** Error encountered while loading the waitlist, if any. */
   waitlistError: FirestoreError | undefined;
+
+  /** 
+   * Map of prompt document IDs to prompt data.  
+   * `undefined` if the prompts have not been loaded yet.
+   */
   prompts: Record<string, PromptData> | undefined;
+
+  /** Whether the prompts are currently loading. */
   promptsLoading: boolean;
+
+  /** Error encountered while loading prompts, if any. */
   promptsError: Error | undefined;
 }
 
+
+/**
+ * Generic Firestore data converter for a given type.
+ * @template T - The TypeScript type to convert.
+ * @returns FirestoreDataConverter<T>
+ */
 function converter<T extends object>(): FirestoreDataConverter<T> {
   return {
     toFirestore(t: T) {
@@ -45,8 +97,14 @@ const eventConverter = converter<EventData>();
 const signupConverter = converter<SignupData>();
 const promptConverter = converter<PromptData>();
 
+/** React context for providing event data throughout the app */
 const EventContext = createContext<EventContextType | undefined>(undefined);
 
+/**
+ * Provides event-related data (event, signups, waitlist, prompts) via context.
+ * @param props.eventId - ID of the Firestore event document
+ * @param props.children - React children to wrap with this provider
+ */
 export const EventProvider = ({ eventId, children }: { eventId: string; children: ReactNode }) => {
   // --- Listen to the event document in Firestore ---
   const eventRef = doc(db, 'events', eventId).withConverter(eventConverter);
