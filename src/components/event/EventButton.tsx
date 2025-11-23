@@ -24,45 +24,20 @@ const EventButton = ({
   handleLeave,
 }: EventButtonProps) => {
   const { user } = useAuth();
-  const {
-    eventData,
-    eventLoading,
-    eventError,
-    signups,
-    signupsLoading,
-    signupsError,
-    waitlist,
-    waitlistLoading,
-    waitlistError,
-    prompts,
-    promptsLoading,
-    promptsError,
-  } = useEvent();
+  const { event, signups, signupIds, waitlist, waitlistIds, prompts } = useEvent();
 
   // did the user already join either the signups list or the waitlist)
   const alreadyJoined: boolean = useMemo(() => {
-    return !!(
-      user &&
-      (signups?.some((s) => s.id === user.uid) || waitlist?.some((s) => s.id === user.uid))
-    );
-  }, [user, signups, waitlist]);
+    return !!(user && (signupIds?.has(user.uid) || waitlistIds?.has(user.uid)));
+  }, [user, signupIds, waitlistIds]);
 
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
-    return !!((eventData?.capacity ?? 0) > (eventData?.signupsCount ?? 0));
-  }, [eventData]);
+    return !!((event?.capacity ?? 0) > (event?.signupsCount ?? 0));
+  }, [event]);
 
   // We do not have enough information about event to allow the user to join/leave
-  if (
-    eventLoading ||
-    eventError ||
-    signupsLoading ||
-    signupsError ||
-    waitlistLoading ||
-    waitlistError ||
-    promptsLoading ||
-    promptsError
-  ) {
+  if (!event || !signups || !waitlist || !prompts) {
     return null;
   }
 
@@ -98,7 +73,9 @@ const EventButton = ({
   if (!spotsOpen) {
     return (
       <Button
-        onClick={prompts?.length === 0 ? () => handleSignup({}) : handleFlowOpen} // handleSignup expects a map of answers, so provide empty map when there are no prompts
+        onClick={
+          prompts && Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen
+        } // handleSignup expects a map of answers, so provide empty map when there are no prompts
         disabled={isLoading || !!cooldown}
         content={
           <>
@@ -115,7 +92,9 @@ const EventButton = ({
   // default (can join)
   return (
     <Button
-      onClick={prompts?.length === 0 ? () => handleSignup({}) : handleFlowOpen} // handleSignup expects a map of answers, so provide empty map when there are no prompts
+      onClick={
+        prompts && Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen
+      } // handleSignup expects a map of answers, so provide empty map when there are no prompts
       disabled={isLoading || !!cooldown}
       content={
         <>

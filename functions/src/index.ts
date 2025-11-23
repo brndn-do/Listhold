@@ -528,14 +528,20 @@ export const createEvent = onCall(
     if (!organizationId || typeof organizationId !== 'string')
       throw new HttpsError('invalid-argument', 'A valid organization ID must be provided.');
     if (!name || typeof name !== 'string' || name.trim().length < 2 || name.trim().length > 100)
-      throw new HttpsError('invalid-argument', 'Event name must be a string between 2 and 100 characters.');
+      throw new HttpsError(
+        'invalid-argument',
+        'Event name must be a string between 2 and 100 characters.',
+      );
     if (
       !location ||
       typeof location !== 'string' ||
       location.trim().length < 2 ||
       location.trim().length > 100
     )
-      throw new HttpsError('invalid-argument', 'Location must be a string between 2 and 100 characters.');
+      throw new HttpsError(
+        'invalid-argument',
+        'Location must be a string between 2 and 100 characters.',
+      );
     if (!start || typeof start !== 'string' || !Date.parse(start))
       throw new HttpsError('invalid-argument', 'A valid start date must be provided.');
     if (!end || typeof end !== 'string' || !Date.parse(end))
@@ -566,7 +572,7 @@ export const createEvent = onCall(
         throw new HttpsError('invalid-argument', 'Event ID must be a string if provided.');
       const trimmedId = eventId.trim();
       if (trimmedId.toLowerCase() === 'new')
-        throw new HttpsError('invalid-argument', 'The Event ID \'new\' is a reserved word.');
+        throw new HttpsError('invalid-argument', "The Event ID 'new' is a reserved word.");
       if (trimmedId.length > 0) {
         if (trimmedId.length < 4 || trimmedId.length > 50)
           throw new HttpsError('invalid-argument', 'Event ID must be between 4 and 50 characters.');

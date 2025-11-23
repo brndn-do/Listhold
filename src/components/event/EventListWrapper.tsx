@@ -25,9 +25,9 @@ const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventListWrapper = () => {
   const { user } = useAuth();
-  const { eventData } = useEvent();
+  const { event } = useEvent();
   const userId = user?.uid;
-  const eventId = eventData?.id;
+  const eventId = event?.id;
 
   const [cooldown, setCooldown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

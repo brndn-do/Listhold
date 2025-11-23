@@ -1,6 +1,6 @@
 /**
  * A reusable spinner component.
- * 
+ *
  * Used to indicate loading states.
  */
 const Spinner = () => (

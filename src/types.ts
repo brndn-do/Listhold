@@ -1,20 +1,24 @@
 import { Timestamp } from 'firebase/firestore';
 
 /**
- * Represents a Firestore organization document, with document ID.
+ * A reusable helper type that includes an `id` field.
+ * The `id` field represents the document ID in Firestore.
+ */
+export type WithId<T> = T & { id: string };
+
+/**
+ * Represents a Firestore organization document
  */
 export interface OrganizationData {
-  id: string;
   name: string;
   description?: string;
   ownerId: string;
 }
 
 /**
- * Represents a Firestore event document, with document ID.
+ * Represents a Firestore event document
  */
 export interface EventData {
-  id: string;
   name: string;
   description?: string;
   organizationId: string;
@@ -28,10 +32,9 @@ export interface EventData {
 }
 
 /**
- * Represents a Firestore prompt document, with document ID.
+ * Represents a Firestore prompt document
  */
 export interface PromptData {
-  id: string;
   order: number;
   type: 'notice' | 'yes/no';
   text: string;
@@ -39,10 +42,9 @@ export interface PromptData {
 }
 
 /**
- * Represents a Firestore signup document, with user's UID.
+ * Represents a Firestore signup document
  */
 export interface SignupData {
-  id: string;
   displayName: string;
   signupTime: Timestamp;
   photoURL: string | null;
@@ -51,10 +53,9 @@ export interface SignupData {
 }
 
 /**
- * Represents a Firestore user document with document ID.
+ * Represents Firestore user document
  */
 export interface UserData {
-  id: string;
   displayName: string | null;
   email: string | null;
   photoURL: string | null;

@@ -1,5 +1,4 @@
 import EventForm from '@/components/EventForm';
-import Form from '@/components/organization/OrganizationForm';
 import { getOrganizationById } from '@/services/server-only/organizationService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';

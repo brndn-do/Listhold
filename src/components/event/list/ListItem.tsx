@@ -1,12 +1,12 @@
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
-import { SignupData } from '@/types';
+import { SignupData, WithId } from '@/types';
 import { formatTimestamp } from '@/utils/timeFormatter';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
 interface ListItemProps {
-  signup: SignupData;
+  signup: WithId<SignupData>;
 }
 
 const ListItem = ({ signup }: ListItemProps) => {
@@ -20,12 +20,10 @@ const ListItem = ({ signup }: ListItemProps) => {
       return [];
     }
 
-    const promptsMap = new Map(prompts.map((p) => [p.id, p]));
-
     // Filter the user's answers
     return Object.entries(signup.answers)
       .map(([promptId, answer]) => {
-        const prompt = promptsMap.get(promptId);
+        const prompt = prompts[promptId];
         // Return an object with all info needed for rendering
         return {
           promptId,
