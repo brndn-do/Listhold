@@ -11,7 +11,8 @@
     "format": "prettier --write .",
     "test": "TZ=UTC jest",
     "test:watch": "TZ=UTC jest --watch",
-    "release": "./release.sh"
+    "release": "./release.sh",
+    "issues": "gh issue list --repo brndn-do/rosterize --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > .github/issues.json"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",
