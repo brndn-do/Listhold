@@ -1,4 +1,5 @@
-import OrganizationView from '@/components/organization/OrganizationView';
+import CreateEventLink from '@/components/organization/CreateEventLink';
+import EventsList from '@/components/organization/EventsList';
 import { getOrganizationById, getOwnerNameById } from '@/services/server-only/organizationService';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -49,11 +50,21 @@ const OrganizationPage = async ({ params }: OrganizationPageProps) => {
     const ownerName = await getOwnerNameById(ownerId);
 
     return (
-      <div className='flex flex-col p-8 gap-2 items-center'>
-        <h1 className='text-2xl font-bold'>{name}</h1>
-        <p>Owner: {ownerName}</p>
-        {description && <p>{description}</p>}
-        <OrganizationView organizationId={organizationId} ownerId={ownerId} />
+      <div className='w-full flex flex-col p-8 gap-4 items-center'>
+        <div className='flex flex-col gap-1 items-center'>
+          <h1 className='text-2xl font-bold'>{name}</h1>
+          {description && <p className='text-md'>{description}</p>}
+          <p className='mt-2 text-sm opacity-50'>Owner: {ownerName}</p>
+        </div>
+
+        {/* dotted separator */}
+        <div className='w-full border-b border-dotted'></div>
+
+        <div className='flex flex-col gap-2 items-center'>
+          <h1 className='text-xl font-bold'>Upcoming Events:</h1>
+          <CreateEventLink organizationId={organizationId} ownerId={ownerId} />
+          <EventsList organizationId={organizationId} />
+        </div>
       </div>
     );
   } catch (err) {
