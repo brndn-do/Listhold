@@ -361,6 +361,7 @@ const handleCreateOrganization = async (
       transaction.create(orgDocRef, {
         ...rest,
         ownerId: callerId, // set the owner of org to be the caller by default
+        createdAt: FieldValue.serverTimestamp(),
       });
 
       return {
@@ -572,7 +573,7 @@ export const createEvent = onCall(
         throw new HttpsError('invalid-argument', 'Event ID must be a string if provided.');
       const trimmedId = eventId.trim();
       if (trimmedId.toLowerCase() === 'new')
-        throw new HttpsError('invalid-argument', "The Event ID 'new' is a reserved word.");
+        throw new HttpsError('invalid-argument', 'The Event ID "new" is a reserved word.');
       if (trimmedId.length > 0) {
         if (trimmedId.length < 4 || trimmedId.length > 50)
           throw new HttpsError('invalid-argument', 'Event ID must be between 4 and 50 characters.');
