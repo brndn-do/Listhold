@@ -4,40 +4,85 @@ A full-stack, serverless event management platform built with Next.js, Firebase,
 
 Rosterize allows organizations to create and manage events, while attendees can discover, sign up for, and track events they are participating in.
 
-## Features
+## Current Features
 
-- **User Authentication:** Secure sign-up and sign-in using Firebase Authentication.
-- **Organization Management:**
-  - Create, edit, and view organizations.
-  - Assign roles (Owner, Admin) for collaborative management.
-  - Customizable, URL-safe organization IDs.
-- **Event Management:**
-  - Create, edit, and view events.
-  - Define event capacity, location, start/end times, and optional custom IDs.
-  - Implement client-side and server-side validation for all inputs using Zod.
-  - Support for public and private events.
-  - Recurring event capabilities (future enhancement).
-- **Rosters & Waitlists:**
-  - View public attendee lists (display names and avatars).
-  - Admin-only detailed rosters with contact information and signup timestamps.
-  - Waitlist management for full events.
-- **Interactive Prompts:**
-  - Create custom prompts for events (e.g., 'Are you new to archery?', 'Dietary restrictions?').
-  - Support for different prompt types: 'Notice', 'Yes/No'.
-  - Control prompt visibility (public vs. private).
-  - Handle prompt answers during signup, with the ability for attendees to edit their answers later.
-- **User Profiles:**
-  - View a personal dashboard showing organizations and events the user is involved in.
-- **Deployment Automation:**
-  - Automated release script (`npm run release`) for deploying to production and managing Git branches.
-  - Firebase CLI integration for environment management (`prod`, `dev`).
+### Implemented
+
+- **User Authentication**
+  - Google OAuth sign-in via Firebase Authentication
+
+- **Organization Management**
+  - Create organizations with customizable, URL-safe IDs (or auto-generated)
+  - View organization details and owner information
+  - Owner can create an event under the organization
+
+- **Event Management**
+  - Create events with custom or auto-generated IDs
+  - Define event capacity, location, start/end times, and optional descriptions
+  - Real-time tracking of available spots
+
+- **Real-time Rosters & Waitlists**
+  - Users can see a live roster of signups and waitlisted people, and their respective spots, for each event.
+  - Automatic waitlist when events reach capacity
+  - Automatic promotion: When a spot opens, the next person on the waitlist (if any) is instantly moved to the main list
+  - Email notifications sent to promoted users
+
+- **Interactive Prompts**
+  - Sequential signup flow with custom prompts
+  - Two prompt types supported: `'yes/no'` (boolean questions) and `'notice'` (acknowledgment)
+  - Public visibility control: users can see others' answers to public prompts
+  - Prompt answers stored and displayed with signups
+
+- **Signup/Leave Flow**
+  - Join event (main list if space available, otherwise waitlist)
+  - Answer custom prompts during signup
+  - Leave event or waitlist at any time
+  - View your own signup status with visual highlighting
+
+### Planned Features
+
+- **Advanced Organization Management**
+  - Invite and manage multiple admins per organization
+  - Organization logos, websites, and contact information
+  - Public/private organization visibility settings
+
+- **Enhanced Event Features**
+  - Edit and delete events
+  - Cross-event signup restrictions (prevent users from signing up for overlapping events)
+  - Configurable waitlist response time windows (day vs. night notifications)
+  - Domain-based access restrictions per event (e.g., `@northwestern.edu` only)
+  - Recurring events
+  - Public/private event visibility
+
+- **Extended Prompt System**
+  - Additional prompt types: free-text, single-select, multi-select
+  - Prompt validation with required correct answers
+  - Custom error messages for validation failures
+  - Ability to edit prompt answers after signup
+
+- **User Dashboard**
+  - Personal profile page showing all events signed up for
+  - Event history and attendance tracking
+
+- **Admin Features**
+  - Detailed roster view with contact information and all prompt answers
+  - Export signup data
+  - Waitlist status tracking (pending, notified timestamps)
+
+- **Enhanced Waitlist**
+  - Manual confirmation flow for promoted users
+  - Time-limited responses with automatic re-queuing
+
+- **Real-time Presence**
+  - Show who else is currently viewing an event page (Google Docs-style)
 
 ## Tech Stack
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS, Zod, `react-firebase-hooks`.
-- **Backend:** Firebase Cloud Firestore, Firebase Cloud Functions (Node.js), Firebase Authentication.
-- **Hosting:** Vercel.
-- **Tooling:** Git, npm, ESLint, Prettier, Jest.
+- **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod, `react-firebase-hooks`
+- **Backend:** Firebase (Firestore, Cloud Functions v2, Authentication, App Check)
+- **Hosting:** Vercel (frontend), Firebase (Cloud Functions)
+- **Email:** Firebase Extensions (Trigger Email from Firestore)
+- **Tooling:** Git, npm, ESLint, Prettier, Jest, React Testing Library
 
 ## Getting Started
 
