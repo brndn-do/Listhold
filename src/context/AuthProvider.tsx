@@ -1,19 +1,18 @@
 'use client';
 
 import { auth } from '@/lib/firebase';
-import { saveUserDocument } from '@/services/userService';
 import { signInWithPopup, signOut, User, GoogleAuthProvider } from 'firebase/auth';
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 /**
  * Defines the shape of the authentication context.
- * - `user`: The current Firebase user, or null if not signed in.
+ * - `user`: The current Firebase user, or null/undefined if not signed in or not yet loaded.
  * - `loading`: Whether the authentication state is still loading.
  */
 interface AuthContextType {
-  user: User | null | undefined;
-  loading: boolean;
+  readonly user: User | null | undefined;
+  readonly loading: boolean;
 }
 
 // Create a react context for authentication state
@@ -24,7 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, loading] = useAuthState(auth);
-  const value = { user, loading };
+  const value = useMemo(() => ({ user, loading }), [user, loading]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
  * @throws Error if called outside of an `AuthProvider`.
  * @returns `{user, loading}`
  */
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
@@ -43,33 +42,30 @@ export const useAuth = () => {
 };
 
 /**
- * Handles user sign-in with Google.
+ * Signs the user in using Google's OAuth popup flow.
  *
- * Opens a popup for Google authentication, and after a successful login,
- * saves the user document to Firestore using `saveUserDocument()`.
+ * Opens a Google authentication popup window. After a successful login,
+ * resolves with the authenticated Firebase `User` object.
+ *
+ * @returns A `Promise` that resolves with a Firebase `User` object.
+ * @throws If the Google sign-in popup fails or is blocked.
  */
-export const handleSignIn = async () => {
+export const handleSignIn = async (): Promise<User> => {
   const provider = new GoogleAuthProvider();
 
   // Prompts account selection each time
   provider.setCustomParameters({ prompt: 'select_account' });
-  try {
-    const result = await signInWithPopup(auth, provider);
-    await saveUserDocument(result);
-  } catch (err) {
-    console.error(err);
-  }
+  const result = await signInWithPopup(auth, provider);
+  const user = result.user;
+  return user;
 };
 
 /**
- * Handles user sign-out.
+ * Signs the current user out of Firebase Authentication.
  *
- * Signs the user out from Firebase Authentication.
+ * @returns A `Promise` that resolves once the user is signed out.
+ * @throws If sign-out fails.
  */
-export const handleSignOut = async () => {
-  try {
-    await signOut(auth);
-  } catch (err) {
-    console.error(err);
-  }
+export const handleSignOut = async (): Promise<void> => {
+  await signOut(auth);
 };

@@ -1,13 +1,12 @@
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { UserCredential } from 'firebase/auth';
+import { User } from 'firebase/auth';
 
 /**
  * Creates or updates a user document in Firestore.
  * @param user The UserCredential object resolved by signInWithPopup.
  */
-export const saveUserDocument = async (userCredential: UserCredential) => {
-  const user = userCredential.user;
+export const saveUserDocument = async (user: User) => {
   const userData = {
     displayName: user.displayName,
     email: user.email,

@@ -3,9 +3,28 @@
 import { handleSignIn, handleSignOut, useAuth } from '@/context/AuthProvider';
 import Image from 'next/image';
 import Button from '../ui/Button';
+import { saveUserDocument } from '@/services/userService';
 
 const Auth = () => {
   const { user } = useAuth();
+
+  const signIn = async () => {
+    try {
+      const user = await handleSignIn();
+      await saveUserDocument(user);
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      await handleSignOut();
+    } catch(err) {
+      console.error(err);
+    }
+  }
+  
   return (
     <div className='flex items-center gap-3 h-8'>
       {user ? (
@@ -23,7 +42,7 @@ const Auth = () => {
         <></>
       )}
       <Button
-        onClick={user ? handleSignOut : handleSignIn}
+        onClick={user ? signOut : signIn}
         content={user ? 'Sign out' : 'Sign in with Google'}
       />
     </div>
