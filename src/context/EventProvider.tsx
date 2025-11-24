@@ -22,13 +22,13 @@ interface EventContextType {
    * The main event document data, including the document ID.
    * `undefined` if the data is not yet loaded.
    */
-  event: WithId<EventData> | undefined;
+  readonly event: WithId<EventData> | undefined;
 
   /** Whether the event document is currently loading. */
-  eventLoading: boolean;
+  readonly eventLoading: boolean;
 
   /** Error encountered while loading the event document, if any. */
-  eventError: FirestoreError | undefined;
+  readonly eventError: FirestoreError | undefined;
 
   /**
    * Array of signups in the main list.
@@ -36,16 +36,16 @@ interface EventContextType {
    * Sorted by `signupTime` timestamp.
    * `undefined` if data is not yet loaded.
    */
-  signups: WithId<SignupData>[] | undefined;
+  readonly signups: ReadonlyArray<WithId<SignupData>> | undefined;
 
   /** Set of user IDs corresponding to all signups in the main list. */
-  signupIds: Set<string> | undefined;
+  readonly signupIds: ReadonlySet<string> | undefined;
 
   /** Whether the main signup list is currently loading. */
-  signupsLoading: boolean;
+  readonly signupsLoading: boolean;
 
   /** Error encountered while loading the main signup list, if any. */
-  signupsError: FirestoreError | undefined;
+  readonly signupsError: FirestoreError | undefined;
 
   /**
    * Array of signups in the waitlist.
@@ -53,28 +53,28 @@ interface EventContextType {
    * Sorted by `signupTime` timestamp.
    * `undefined` if data is not yet loaded.
    */
-  waitlist: WithId<SignupData>[] | undefined;
+  readonly waitlist: ReadonlyArray<WithId<SignupData>> | undefined;
 
   /** Set of user IDs corresponding to all signups in the waitlist. */
-  waitlistIds: Set<string> | undefined;
+  readonly waitlistIds: ReadonlySet<string> | undefined;
 
   /** Whether the waitlist is currently loading. */
-  waitlistLoading: boolean;
+  readonly waitlistLoading: boolean;
 
   /** Error encountered while loading the waitlist, if any. */
-  waitlistError: FirestoreError | undefined;
+  readonly waitlistError: FirestoreError | undefined;
 
   /**
    * Map of prompt document IDs to prompt data.
    * `undefined` if the prompts have not been loaded yet.
    */
-  prompts: Record<string, PromptData> | undefined;
+  readonly prompts: Readonly<Record<string, PromptData>> | undefined;
 
   /** Whether the prompts are currently loading. */
-  promptsLoading: boolean;
+  readonly promptsLoading: boolean;
 
   /** Error encountered while loading prompts, if any. */
-  promptsError: Error | undefined;
+  readonly promptsError: Error | undefined;
 }
 
 /**
