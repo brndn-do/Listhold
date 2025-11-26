@@ -222,11 +222,15 @@ const handleRemoveUserFromEvent = async (
 export const addUserToEvent = onCall(
   async (
     request: CallableRequest<{
+      warmup: boolean;
       eventId: string;
       userId: string;
       answers: Record<string, boolean | null>;
     }>,
   ) => {
+    if (request.data.warmup) {
+      return { success: true };
+    }
     // get event id
     const eventId = request.data.eventId;
     if (!eventId) throw new HttpsError('invalid-argument', 'Must provide valid event id');
@@ -278,7 +282,10 @@ export const addUserToEvent = onCall(
 );
 
 export const removeUserFromEvent = onCall(
-  async (request: CallableRequest<{ eventId: string; userId: string }>) => {
+  async (request: CallableRequest<{ warmup: boolean; eventId: string; userId: string }>) => {
+    if (request.data.warmup) {
+      return { success: true };
+    }
     // get event id
     const eventId = request.data.eventId;
     if (!eventId) throw new HttpsError('invalid-argument', 'Must use valid event id');

@@ -1,9 +1,9 @@
 'use client';
 
-import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
+import { FunctionsError, httpsCallable } from 'firebase/functions';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
-import { app } from '@/lib/firebase';
+import { functions } from '@/lib/firebase';
 import { FormEventHandler, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -101,7 +101,6 @@ const OrganizationForm = () => {
     // validated, continue
     setIsLoading(true);
     try {
-      const functions = getFunctions(app);
       const createOrganization = httpsCallable<CreateOrganizationRequest, CreateOrganizationResult>(
         functions,
         'createOrganization',

@@ -1,9 +1,9 @@
 'use client';
 
-import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
+import { FunctionsError, httpsCallable } from 'firebase/functions';
 import Button from './ui/Button';
 import FormInput from './ui/FormInput';
-import { app } from '@/lib/firebase';
+import { functions } from '@/lib/firebase';
 import { FormEventHandler, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
@@ -168,7 +168,6 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     // validated, continue
     setIsLoading(true);
     try {
-      const functions = getFunctions(app);
       const createEvent = httpsCallable<CreateEventRequest, CreateEventResult>(
         functions,
         'createEvent', // This cloud function needs to be implemented

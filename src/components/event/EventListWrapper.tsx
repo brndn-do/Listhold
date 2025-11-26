@@ -1,8 +1,8 @@
 'use client';
 
-import { app } from '@/lib/firebase';
-import { FunctionsError, getFunctions, httpsCallable } from 'firebase/functions';
-import { useState } from 'react';
+import { functions } from '@/lib/firebase';
+import { FunctionsError, httpsCallable } from 'firebase/functions';
+import { useEffect, useState } from 'react';
 import EventButton from './EventButton';
 import EventList from './list/EventList';
 import { useEvent } from '@/context/EventProvider';
@@ -23,6 +23,21 @@ interface RemoveUserResult {
 const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
+const addUserToEvent = httpsCallable<
+  {
+    warmup: boolean;
+    eventId: string;
+    userId: string;
+    answers: Record<string, boolean | null>;
+  },
+  AddUserResult
+>(functions, 'addUserToEvent');
+
+const removeUserFromEvent = httpsCallable<
+  { warmup: boolean; eventId: string; userId: string },
+  RemoveUserResult
+>(functions, 'removeUserFromEvent');
+
 const EventListWrapper = () => {
   const { user } = useAuth();
   const { event } = useEvent();
@@ -34,6 +49,18 @@ const EventListWrapper = () => {
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [viewingWaitlist, setViewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
   const [showFlow, setShowFlow] = useState(false);
+
+  const [hasWarmedUp, setHasWarmedUp] = useState(false);
+
+  useEffect(() => {
+    // warmup cloud functions to reduce cold start
+    if (!hasWarmedUp && user && event) {
+      console.log('Warming up cloud functions...')
+      addUserToEvent({ warmup: true, eventId: event.id, userId: user.uid, answers: {} });
+      removeUserFromEvent({ warmup: true, eventId: event.id, userId: user.uid});
+      setHasWarmedUp(true);
+    }
+  }, [event, user, hasWarmedUp])
 
   const handleFlowOpen = () => {
     setShowFlow(true);
@@ -51,12 +78,7 @@ const EventListWrapper = () => {
     setIsLoading(true);
     setFunctionError(null);
     try {
-      const functions = getFunctions(app);
-      const addUserToEvent = httpsCallable<
-        { eventId: string; userId: string; answers: Record<string, boolean | null> },
-        AddUserResult
-      >(functions, 'addUserToEvent');
-      const res = await addUserToEvent({ eventId, userId, answers });
+      const res = await addUserToEvent({ warmup: false, eventId, userId, answers });
       setIsLoading(false);
       setCooldown(
         res.data.status === 'signedUp'
@@ -91,12 +113,7 @@ const EventListWrapper = () => {
     setIsLoading(true);
     setFunctionError(null);
     try {
-      const functions = getFunctions(app);
-      const removeUserFromEvent = httpsCallable<
-        { eventId: string; userId: string },
-        RemoveUserResult
-      >(functions, 'removeUserFromEvent');
-      const res = await removeUserFromEvent({ eventId, userId });
+      const res = await removeUserFromEvent({ warmup: false, eventId, userId });
       setIsLoading(false);
       setCooldown(
         res.data.status === 'leftEvent'

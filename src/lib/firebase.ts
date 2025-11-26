@@ -3,6 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { initializeAppCheck } from 'firebase/app-check';
 import { ReCaptchaV3Provider } from 'firebase/app-check';
+import { getFunctions } from 'firebase/functions';
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -41,3 +42,6 @@ export const auth = getAuth(app);
 
 // Export the Firestore instance
 export const db = getFirestore(app);
+
+// Export the functions instance
+export const functions = getFunctions(app);
