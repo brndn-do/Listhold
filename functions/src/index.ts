@@ -229,6 +229,7 @@ export const addUserToEvent = onCall(
     }>,
   ) => {
     if (request.data.warmup) {
+      logger.log('Received warm-up request');
       return { success: true };
     }
     // get event id
@@ -284,6 +285,7 @@ export const addUserToEvent = onCall(
 export const removeUserFromEvent = onCall(
   async (request: CallableRequest<{ warmup: boolean; eventId: string; userId: string }>) => {
     if (request.data.warmup) {
+      logger.log('Received warm-up request');
       return { success: true };
     }
     // get event id
