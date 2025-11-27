@@ -6,6 +6,7 @@
 - Ask for permission before proposing large changes (new architecture, major refactors, or file reorganization).
 
 ## Project structure
+
 - `src/` - source code for frontend
 - `functions/` - code for Firebase Cloud Functions.
 - `docs/` - Markdown documentation files.

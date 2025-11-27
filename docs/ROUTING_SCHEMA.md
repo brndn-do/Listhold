@@ -14,7 +14,7 @@
   - **Authentication:** Required to create.
 
 - **`/organizations/[organizationId]`**
-  - **Description:**  Home page for an organization.
+  - **Description:** Home page for an organization.
   - **Authentication:** Not required for viewing
 
 - **`/organizations/[organizationId]/events/new`**

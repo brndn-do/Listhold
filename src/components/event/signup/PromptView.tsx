@@ -1,6 +1,6 @@
 'use client';
 
-import { PromptData } from '@/types';
+import { PromptData } from '@/types/promptData';
 
 interface PromptViewProps {
   promptData: PromptData;

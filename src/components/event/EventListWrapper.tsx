@@ -55,12 +55,12 @@ const EventListWrapper = () => {
   useEffect(() => {
     // warmup cloud functions to reduce cold start
     if (!hasWarmedUp && user && event) {
-      console.log('Warming up cloud functions...')
+      console.log('Warming up cloud functions...');
       addUserToEvent({ warmup: true, eventId: event.id, userId: user.uid, answers: {} });
-      removeUserFromEvent({ warmup: true, eventId: event.id, userId: user.uid});
+      removeUserFromEvent({ warmup: true, eventId: event.id, userId: user.uid });
       setHasWarmedUp(true);
     }
-  }, [event, user, hasWarmedUp])
+  }, [event, user, hasWarmedUp]);
 
   const handleFlowOpen = () => {
     setShowFlow(true);

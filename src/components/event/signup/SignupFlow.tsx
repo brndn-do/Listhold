@@ -4,7 +4,7 @@ import { useEvent } from '@/context/EventProvider';
 import Spinner from '../../ui/Spinner';
 import PromptView from './PromptView';
 import { useState } from 'react';
-import { PromptData } from '@/types';
+import PromptData from '@/types/promptData';
 
 interface SignupFlowProps {
   handleFlowClose: (answers: Record<string, boolean | null>) => void;

@@ -12,19 +12,19 @@ const Auth = () => {
     try {
       const user = await handleSignIn();
       await saveUserDocument(user);
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   const signOut = async () => {
     try {
       await handleSignOut();
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
-  }
-  
+  };
+
   return (
     <div className='flex items-center gap-3 h-8'>
       {user ? (
