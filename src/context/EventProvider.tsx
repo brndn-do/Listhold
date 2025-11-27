@@ -1,10 +1,10 @@
 'use client';
 
 import { db } from '@/lib/firebase';
-import EventData from '@/types/eventData';
-import PromptData from '@/types/promptData';
-import SignupData from '@/types/signupData';
-import WithId from '@/types/withId';
+import { EventData } from '@/types/eventData';
+import { PromptData } from '@/types/promptData';
+import { SignupData } from '@/types/signupData';
+import { WithId } from '@/types/withId';
 import {
   collection,
   doc,

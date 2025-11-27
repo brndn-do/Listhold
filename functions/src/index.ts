@@ -4,6 +4,9 @@ import { adminDb } from './firebase-admin';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { OAuth2Client } from 'google-auth-library';
 import shortUUID from 'short-uuid';
+import { EventData } from './types/eventData';
+import { UserData } from './types/userData';
+import { OrganizationData } from './types/organizationData';
 
 // Only up to 10 instances at a time, rest are queued
 setGlobalOptions({ maxInstances: 10 });
@@ -21,10 +24,10 @@ interface RemoveUserResult {
   promotedUserId?: string;
 }
 
-const handleEmail = async (userId: string, eventId: string) => {
+const handleEmail = async (userId: string, eventId: string): Promise<void> => {
   const userDocRef = adminDb.doc(`users/${userId}`);
   const userDoc = await userDocRef.get();
-  const userData = userDoc.data();
+  const userData = userDoc.data() as UserData;
 
   if (!userData) {
     return;
@@ -32,7 +35,7 @@ const handleEmail = async (userId: string, eventId: string) => {
 
   const eventDocRef = adminDb.doc(`events/${eventId}`);
   const eventDoc = await eventDocRef.get();
-  const eventData = eventDoc.data();
+  const eventData = eventDoc.data() as EventData;
 
   if (!eventData) {
     return;
@@ -470,18 +473,24 @@ interface CreateEventResult {
   message: string;
 }
 
-const handleCreateEvent = async (eventData: CreateEventRequest): Promise<CreateEventResult> => {
-  let eventId = eventData.eventId;
+const handleCreateEvent = async (request: CreateEventRequest): Promise<CreateEventResult> => {
+  let eventId = request.eventId;
   if (!eventId) {
     eventId = shortUUID().new();
   }
 
-  const { start, end, ...restOfEventData } = eventData;
-  const firestoreEventData = {
-    ...restOfEventData,
+  const orgDocRef = adminDb.doc(`organizations/${request.organizationId}`);
+  const orgDoc = await orgDocRef.get();
+  const orgData = orgDoc.data() as OrganizationData;
+  const orgName = orgData.name;
+
+  const { start, end, ...rest } = request;
+  const firestoreEventData: EventData = {
+    ...rest,
+    organizationName: orgName,
     start: Timestamp.fromDate(new Date(start)),
     end: Timestamp.fromDate(new Date(end)),
-    createdAt: FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp() as Timestamp,
     signupsCount: 0,
   };
 
@@ -499,7 +508,7 @@ const handleCreateEvent = async (eventData: CreateEventRequest): Promise<CreateE
 
     return {
       eventId,
-      message: `Created new event ${eventData.name} with id ${eventId}`,
+      message: `Created new event ${request.name} with id ${eventId}`,
     };
   } catch (err) {
     logger.log(`ERROR CREATING EVENT: ${err}`);

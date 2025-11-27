@@ -1,8 +1,8 @@
 'use client';
 
 import { getEventsByOrgId } from '@/services/eventsService';
-import EventData from '@/types/eventData';
-import WithId from '@/types/withId';
+import { EventData } from '@/types/eventData';
+import { WithId } from '@/types/withId';
 import { formatTimestamp } from '@/utils/timeFormatter';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

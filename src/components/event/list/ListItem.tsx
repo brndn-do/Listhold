@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
-import SignupData from '@/types/signupData';
-import WithId from '@/types/withId';
+import { SignupData } from '@/types/signupData';
+import { WithId } from '@/types/withId';
 import { formatTimestamp } from '@/utils/timeFormatter';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';

@@ -1,10 +1,16 @@
 import { format, isSameDay } from 'date-fns';
 import { Timestamp } from 'firebase/firestore';
 
-export const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
+export const formatEventTiming = (start: Timestamp, end?: Timestamp): string => {
   const startDate = start.toDate();
-  const endDate = end.toDate();
-  if (isSameDay(startDate, endDate)) {
+  const endDate = end?.toDate();
+
+  if (!endDate) {
+    // Format for event with no specified end
+    // "12/01/2025, 7:00PM"
+    const dateTimeFormat = 'MM/dd/yyyy, h:mm a';
+    return format(startDate, dateTimeFormat);
+  } else if (isSameDay(startDate, endDate)) {
     // Format for a single-day event
     // "12/01/2025, 7:00 PM - 9:30 PM"
     const formattedDate = format(startDate, 'MM/dd/yyyy');
@@ -14,10 +20,10 @@ export const formatEventTiming = (start: Timestamp, end: Timestamp): string => {
   } else {
     // Format for a multi-day event
     // "12/01/2025 7:00 PM to 12/02/2025 9:30 PM"
-    const dateTimeFormat = 'MM/dd/yyyy h:mm a';
+    const dateTimeFormat = 'MM/dd/yyyy, h:mm a';
     const formattedStart = format(startDate, dateTimeFormat);
     const formattedEnd = format(endDate, dateTimeFormat);
-    return `${formattedStart} to ${formattedEnd}`;
+    return `${formattedStart} - ${formattedEnd}`;
   }
 };
 

@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "rosterize-prod",
+    "default": "rosterize-dev",
     "dev": "rosterize-dev",
     "prod": "rosterize-prod"
   }
