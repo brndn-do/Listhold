@@ -1,6 +1,6 @@
 # Firestore Database Schema
 
-This document outlines the database schema for the sign-up platform, designed for Firestore and based on the requirements from `PROJECT_PLAN.md` and `scenario.md`.
+This document outlines the database schema for Rosterize, designed for Firestore.
 
 > **Note:** This schema includes both **implemented features** and **planned future functionality**. Fields and features marked as "Not yet implemented" are part of the roadmap. See `src/types.ts` for the current implementation state.
 
@@ -130,5 +130,20 @@ Stores all organizations the user is involved in. **Not yet implemented**.
   - `name`: `string` - The name of the organization **(denormalized)**.
   - `logoURL?`: `string` - A URL to the organization's logo **(denormalized)**.
   - `Role`: `string` - e.g. "owner", "admin", "member"
+
+### 8. `events` (Sub-collection of `users`)
+
+Stores the events the user has interacted with. **Not yet implemented**.
+
+- **Path:** `/users/{userId}/events`
+- **Document ID:** The event ID.
+- **Fields:**
+  - `name`: `string` - The name of the event **(denormalized)**.
+  - `organizationName`: `string` - The name of the organization **(denormalized)**.
+  - `location`: `string` - The location of the event **(denormalized)**.
+  - `start`: `timestamp` - The start time of the event **(denormalized)**.
+  - `end?`: `timestamp` (optional) - The end time of the event **(denormalized)**.
+  - `status`: `string` - e.g. "Joined", "Waitlisted".
+  - `lastUpdate`: `timestamp` - The latest timestamp where the user's status changed (i.e. time they joined the list/waitlist, or the time they were promoted).
 
 ---

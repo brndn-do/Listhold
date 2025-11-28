@@ -1,7 +1,8 @@
 ## High-level behavior
 
+- Keep responses concise without taking shortcuts that affect code quality.
 - Do not run terminal commands unless explicitly told to.
-- When asked a general/design question (e.g. should I add this feature, should I work on this task next) prefer answering concisely with words while showing no code.
+- When asked a general/design question (e.g. should I add this feature, should I work on this task next) prefer answering with words while showing no code.
 - When asked a coding-related question (e.g. how to implement this feature, how to fix this error) prefer example implementations and code snippets over generating full code for me.
 
 ## Project structure
