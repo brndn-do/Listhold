@@ -47,11 +47,12 @@ This is the central collection for all events created on the platform.
   - `name`: `string` (e.g., "Friday Practice 8:15 PM")
   - `description?`: `string` (optional) - Description of event.
   - `organizationId`: `string` - A reference to the document ID in the `organizations` collection.
+  - `organizationName`: `string` - The organization's name (denormalized).
   - `createdAt`: `timestamp` - When the event was created.
   - `creatorId`: `string` - The user ID of the event creator.
   - `location`: `string` - The location of the event.
   - `start`: `timestamp` - The start time of the event.
-  - `end`: `timestamp` - The end time of the event.
+  - `end?`: `timestamp` (optional) - The end time of the event.
   - `capacity`: `number` - Maximum number of attendees.
   - `signupsCount`: `number` - The current number of signups.
   - `rules?`: `map` - **Not yet implemented** - A map to hold various event-specific rules.
@@ -94,9 +95,9 @@ Stores the roster of confirmed attendees for an event.
 - **Path:** `events/{eventId}/signups`
 - **Document ID:** `uid` (The user ID of the attendee)
 - **Fields:**
-  - `displayName`: `string` - The display name of the user **at the time of signup.**
-  - `photoURL`: `string | null` - The photo URL of the user **at the time of signup.**
-  - `email`: `string` - The email of the user **at the time of signup.**
+  - `displayName`: `string` - The display name of the user **(denormalized)**.
+  - `photoURL`: `string | null` - The photo URL of the user **(denormalized)**.
+  - `email`: `string` - The email of the user **(denormalized)**.
   - `signupTime`: `timestamp` - When the user signed up.
   - `answers`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
     - Currently supports `boolean | null` values (for `yes/no` and `notice` type prompts)
@@ -109,14 +110,25 @@ Stores the queue of users waiting for a spot.
 - **Path:** `events/{eventId}/waitlist`
 - **Document ID:** `uid` (The user ID of the waitlisted person)
 - **Fields:**
-  - `displayName`: `string` - The display name of the user **at the time of joining the waitlist.**
-  - `photoURL`: `string | null` - The photo URL of the user **at the time of joining the waitlist.**
-  - `email`: `string` - The email of the user **at the time of joining the waitlist.**
+  - `displayName`: `string` - The display name of the user **(denormalized)**.
+  - `photoURL`: `string | null` - The photo URL of the user **(denormalized)**.
+  - `email`: `string` - The email of the user **(denormalized)**.
   - `signupTime`: `timestamp` - When the user joined the waitlist (used to determine position in queue, FIFO).
   - `answers`: `map` - Stores user's responses to prompts, where keys are `promptId`s and values are the user's answers.
     - Currently supports `boolean | null` values (for `yes/no` and `notice` type prompts)
     - **Example:** `{ "promptId1": true, "promptId2": null }`
   - `status`: `string` - **Not yet implemented** - The user's current waitlist status (e.g., "pending", "notified").
   - `notifiedAt`: `timestamp` - **Not yet implemented** - Set when a notification is sent, to track response time limits.
+
+### 7. `organizations` (Sub-collection of `users`)
+
+Stores all organizations the user is involved in. **Not yet implemented**.
+
+- **Path:** `/users/{userId}/organizations`
+- **Document ID:** The organization ID.
+- **Fields:**
+  - `name`: `string` - The name of the organization **(denormalized)**.
+  - `logoURL?`: `string` - A URL to the organization's logo **(denormalized)**.
+  - `Role`: `string` - e.g. "owner", "admin", "member"
 
 ---

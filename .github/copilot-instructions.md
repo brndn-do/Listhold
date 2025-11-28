@@ -1,13 +1,12 @@
 ## High-level behavior
 
 - Do not run terminal commands unless explicitly told to.
-- For simple tasks, implement immediately. For complex tasks, break them into small logical steps and proceed step-by-step.
-- Ask for clarification only when instructions are truly ambiguous or a missing type/module must be located before generating code.
-- Ask for permission before proposing large changes (new architecture, major refactors, or file reorganization).
+- When asked a general/design question (e.g. should I add this feature, should I work on this task next) prefer answering concisely with words while showing no code.
+- When asked a coding-related question (e.g. how to implement this feature, how to fix this error) prefer example implementations and code snippets over generating full code for me.
 
 ## Project structure
 
-- `src/` - source code for frontend
+- `src/` - source code for NextJS Project
 - `functions/` - code for Firebase Cloud Functions.
 - `docs/` - Markdown documentation files.
 
@@ -15,8 +14,6 @@
 
 - Write code for humans first; maintain readability and maintainability over compact cleverness.
 - Keep generated code small and focused; avoid unnecessary abstractions or redundant wrappers/hooks.
-- Remove dead code and unused imports.
-- Ensure generated code passes linting, formatting, and type checks; if any generated output violates rules in this file, revise automatically.
 
 ## Code style, linting & formatting
 
@@ -40,29 +37,14 @@
 
 ## Imports, modules & dependencies
 
-- Import functions and types explicitly by name.
-- Keep imports organized (external libs first, internal modules next, types last).
 - Avoid introducing new dependencies unless explicitly approved; prefer built-in APIs and existing utilities.
 - Reuse existing utilities and types (`/types`, `types.ts`) before adding duplicates.
-- Do not inline credentials or secrets; use environment variables.
 
 ## File edits, diffs & refactoring
 
 - When modifying code: aim for the smallest possible diff that accomplishes the change, while still using clean, readable, and maintainable code.
 - Do not rewrite/refactor unrelated parts of a file unless required for correctness or explicitly requested.
 - Consider existing file structure, naming conventions, types, and utilities before adding files or types.
-
-## Naming, comments & docs
-
-- Use PascalCase for components, camelCase for variables/functions, kebab-case for filenames, and SCREAMING_SNAKE_CASE for constants.
-- Use meaningful, descriptive names.
-- Add brief, meaningful comments only where necessary.
-- For exported/shared utilities, include a short doc describing inputs, outputs, and purpose.
-
-## Types & type-safety
-
-- Use existing types where possible; check for duplicates before creating new types/interfaces.
-- Ask where a missing type/module should live before committing placeholder types.
 
 ## Error handling & async
 
@@ -86,4 +68,3 @@
 ## Commits & PRs
 
 - Ensure commit messages follow Conventional Commits; keep summaries within 72 characters.
-- Suggest PR descriptions that include what changed, why, and how to test.
