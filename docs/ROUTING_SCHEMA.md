@@ -7,6 +7,11 @@
 - **`/`**
   - **Description:** Landing page with a brief introduction to Rosterize and a link to create an organization.
 
+### Dashboard
+- **`/dashboard`**
+  - **Description:** A dashboard summarizing the user's involved organizations and events.
+  - **Authentication:** Required to view. 
+
 ### Organization Routes
 
 - **`/organizations/new`**

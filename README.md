@@ -1,12 +1,10 @@
 # Rosterize
 
-A full-stack, serverless event management platform built with Next.js, Firebase, and TypeScript.
+A full-stack, serverless event management and sign-up platform built with Next.js + Firebase.
 
-Rosterize allows organizations to create and manage events, while attendees can discover, sign up for, and track events they are participating in.
+## Features
 
-## Current Features
-
-### Implemented
+#### Implemented
 
 - **User Authentication**
   - Google OAuth sign-in via Firebase Authentication
@@ -39,7 +37,7 @@ Rosterize allows organizations to create and manage events, while attendees can 
   - Leave event or waitlist at any time
   - View your own signup status with visual highlighting
 
-### Planned Features
+#### Planned Features
 
 - **Advanced Organization Management**
   - Invite and manage multiple admins per organization
@@ -76,6 +74,14 @@ Rosterize allows organizations to create and manage events, while attendees can 
 - **Real-time Presence**
   - Show who else is currently viewing an event page (Google Docs-style)
 
+## Documentation
+
+For design and implementation details see:
+
+- [docs/SCENARIO.md](docs/SCENARIO.md) — Usage scenario and user journeys.
+- [docs/DB_SCHEMA.md](docs/DB_SCHEMA.md) — Firestore database schema.
+- [docs/ROUTING_SCHEMA.md](docs/ROUTING_SCHEMA.md) — App Router layout.
+
 ## Tech Stack
 
 - **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod, `react-firebase-hooks`
@@ -86,13 +92,13 @@ Rosterize allows organizations to create and manage events, while attendees can 
 
 ## Getting Started
 
-### Prerequisites
+#### Prerequisites
 
 - Node.js v20 or higher
 - npm
 - Firebase CLI (`npm install -g firebase-tools`)
 
-### Installation
+#### Installation
 
 1.  Clone the repository:
 
@@ -106,13 +112,13 @@ Rosterize allows organizations to create and manage events, while attendees can 
     npm install
     ```
 
-### Firebase Setup
+#### Firebase Setup
 
 - Enable **Authentication**, **Firestore**, and **Cloud Functions** for your Firebase project(s).
 - Configure your Firebase CLI to use the correct project(s) (e.g. for `dev` and `prod` environments). You can use `firebase use <project_id>` to switch contexts.
 - Deploy Firebase functions and database rules using `firebase deploy`.
 
-### Environment Variables
+#### Environment Variables
 
 This project uses environment variables for configuration. First, run the following command:
 
@@ -156,7 +162,7 @@ APP_DOMAIN=""
 
 Then, configure your app's domain.
 
-### Running the Project
+#### Running the Project
 
 1.  Start the development server:
     ```bash
@@ -164,7 +170,7 @@ Then, configure your app's domain.
     ```
     The application will be available at `http://localhost:3000` (or another port if 3000 is in use).
 
-## Scripts
+#### Scripts
 
 This project includes several useful npm scripts:
 
@@ -174,7 +180,8 @@ This project includes several useful npm scripts:
 - `npm run lint`: Lints the code using ESLint.
 - `npm run format`: Formats the code using Prettier.
 - `npm run test`: Runs tests using Jest.
-- `npm run release`: Executes the automated release script (`./release.sh`) for deploying to production and managing Git branches.
+- `npm run deploy:firebase`: Executes the automated release script`./deploy-firebase.sh` for deploying Firebase to production.
+- `npm run deploy:next`: Executes the automated release script `./deploy-next.sh` for pushing changes to `origin main`, triggering the build and deployment of our NextJS project on Vercel.
 
 ## Contributing
 
