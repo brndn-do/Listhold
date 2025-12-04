@@ -7,6 +7,7 @@ import shortUUID from 'short-uuid';
 import { EventData } from './types/eventData';
 import { UserData } from './types/userData';
 import { OrganizationData } from './types/organizationData';
+import { MembershipData } from './types/membershipData';
 
 // Only up to 10 instances at a time, rest are queued
 setGlobalOptions({ maxInstances: 10 });
@@ -369,12 +370,20 @@ const handleCreateOrganization = async (
         );
       }
 
-      // create
+      // create organization
       transaction.create(orgDocRef, {
         ...rest,
         ownerId: callerId, // set the owner of org to be the caller by default
         createdAt: FieldValue.serverTimestamp(),
       });
+
+      // create membership
+      const membershipDocRef = adminDb.doc(`users/${callerId}/memberships/${organizationId}`);
+      const membershipData: MembershipData = {
+        organizationName: organization.name,
+        role: 'owner',
+      };
+      transaction.create(membershipDocRef, membershipData);
 
       return {
         organizationId,

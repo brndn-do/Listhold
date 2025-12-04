@@ -37,6 +37,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Memberships Subcollection: Authenticated users can read their own memberships, no client-side writes
+    match /users/{userId}/memberships/{membershipId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

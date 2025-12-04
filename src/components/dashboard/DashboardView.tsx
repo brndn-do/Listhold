@@ -1,7 +1,7 @@
 'use client';
 
 import EventsView from '@/components/dashboard/EventsView';
-import OrganizationsView from '@/components/dashboard/OrganizationsView';
+import MembershipsView from '@/components/dashboard/MembershipsView';
 import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthProvider';
 import Link from 'next/link';
@@ -22,8 +22,10 @@ const DashboardView = () => {
     );
   }
   return (
-    <div className='flex flex-col gap-2 items-center'>
-      <OrganizationsView />
+    <div className='flex flex-col gap-4 items-center'>
+      <h1 className='text-2xl font-bold'>Your Organizations:</h1>
+      <div className='w-full border-b border-dotted'></div>
+      <MembershipsView />
       <EventsView />
     </div>
   );

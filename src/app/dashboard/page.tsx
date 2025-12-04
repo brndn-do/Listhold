@@ -18,7 +18,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 const DashboardPage = () => (
-  <div className='p-8'>
+  <div className='w-full p-8'>
     <DashboardView />
   </div>
 );
