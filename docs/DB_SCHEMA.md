@@ -120,16 +120,16 @@ Stores the queue of users waiting for a spot.
   - `status`: `string` - **Not yet implemented** - The user's current waitlist status (e.g., "pending", "notified").
   - `notifiedAt`: `timestamp` - **Not yet implemented** - Set when a notification is sent, to track response time limits.
 
-### 7. `organizations` (Sub-collection of `users`)
+### 7. `memberships` (Sub-collection of `users`)
 
 Stores all organizations the user is involved in. **Not yet implemented**.
 
-- **Path:** `/users/{userId}/organizations`
+- **Path:** `/users/{userId}/memberships`
 - **Document ID:** The organization ID.
 - **Fields:**
-  - `name`: `string` - The name of the organization **(denormalized)**.
+  - `organizationName`: `string` - The name of the organization **(denormalized)**.
   - `logoURL?`: `string` - A URL to the organization's logo **(denormalized)**.
-  - `Role`: `string` - e.g. "owner", "admin", "member"
+  - `role`: `string` - e.g. "owner", "admin", "member"
 
 ### 8. `events` (Sub-collection of `users`)
 
