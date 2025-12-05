@@ -43,6 +43,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Event Records Subcollection: Authenticated users can read their own records, no client-side writes
+    match /users/{userId}/eventRecords/{recordId} {
+      allow read: if request.auth.uid == userId;
+      allow write: if false;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

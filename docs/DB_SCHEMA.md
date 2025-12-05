@@ -131,11 +131,11 @@ Stores all organizations the user is involved in. **Not yet implemented**.
   - `logoURL?`: `string` - A URL to the organization's logo **(denormalized)**.
   - `role`: `string` - e.g. "owner", "admin", "member"
 
-### 8. `events` (Sub-collection of `users`)
+### 8. `eventRecords` (Sub-collection of `users`)
 
 Stores the events the user has interacted with. **Not yet implemented**.
 
-- **Path:** `/users/{userId}/events`
+- **Path:** `/users/{userId}/eventRecords`
 - **Document ID:** The event ID.
 - **Fields:**
   - `name`: `string` - The name of the event **(denormalized)**.
@@ -143,7 +143,7 @@ Stores the events the user has interacted with. **Not yet implemented**.
   - `location`: `string` - The location of the event **(denormalized)**.
   - `start`: `timestamp` - The start time of the event **(denormalized)**.
   - `end?`: `timestamp` (optional) - The end time of the event **(denormalized)**.
-  - `status`: `string` - e.g. "Joined", "Waitlisted".
+  - `status`: `string` - e.g. "joined", "waitlisted".
   - `lastUpdate`: `timestamp` - The latest timestamp where the user's status changed (i.e. time they joined the list/waitlist, or the time they were promoted).
 
 ---

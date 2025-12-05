@@ -11,7 +11,7 @@ export interface EventData {
   creatorId: string;
   location: string;
   start: Timestamp;
-  end: Timestamp;
+  end?: Timestamp;
   capacity: number;
   signupsCount: number;
   createdAt: Timestamp;

@@ -75,6 +75,8 @@ const handleAddUserToEvent = async (
         throw new HttpsError('not-found', `Event with id ${eventId} does not exist`);
       }
 
+      const eventData = eventDoc.data() as EventData;
+
       const userDocRef = adminDb.doc(`users/${userId}`);
       const userDoc = await transaction.get(userDocRef);
 
@@ -82,7 +84,7 @@ const handleAddUserToEvent = async (
         throw new HttpsError('not-found', `User with id ${userId} does not exist`);
       }
 
-      const userData = userDoc.data();
+      const userData = userDoc.data() as UserData;
 
       const userDisplayName = userData?.displayName;
       if (!userDisplayName) {
@@ -110,21 +112,35 @@ const handleAddUserToEvent = async (
         );
       }
 
+      // reference to eventRecord document to be added/created
+      const eventRecordRef = adminDb.doc(`users/${userId}/eventRecords/${eventId}`);
+
       // get current event capacity and sign up count
-      const eventCapacity = eventDoc.data()?.capacity || 0;
-      const eventSignupsCount = eventDoc.data()?.signupsCount || 0;
+      const eventCapacity = eventData.capacity || 0;
+      const eventSignupsCount = eventData.signupsCount || 0;
 
       if (eventSignupsCount < eventCapacity) {
         // add to main list
         transaction.create(signupDocRef, {
           displayName: userDisplayName,
-          photoURL: userData?.photoURL,
-          email: userData?.email,
+          photoURL: userData.photoURL,
+          email: userData.email,
           signupTime: FieldValue.serverTimestamp(),
           answers: answers,
         });
+        // update signupsCount
         transaction.update(eventDocRef, {
           signupsCount: FieldValue.increment(1),
+        });
+        // update event record under user
+        transaction.set(eventRecordRef, {
+          name: eventData.name,
+          organizationName: eventData.organizationName,
+          location: eventData.location,
+          start: eventData.start,
+          end: eventData.end,
+          status: 'joined',
+          lastUpdate: FieldValue.serverTimestamp(),
         });
         return { status: 'signedUp', message: 'Signed up successfully!' };
       }
@@ -136,6 +152,16 @@ const handleAddUserToEvent = async (
         email: userData?.email,
         signupTime: FieldValue.serverTimestamp(),
         answers: answers,
+      });
+      // update event record under user
+      transaction.set(eventRecordRef, {
+        name: eventData.name,
+        organizationName: eventData.organizationName,
+        location: eventData.location,
+        start: eventData.start,
+        end: eventData.end,
+        status: 'waitlisted',
+        lastUpdate: FieldValue.serverTimestamp(),
       });
       return { status: 'waitlisted', message: 'Added to waitlist' };
     });
@@ -180,8 +206,12 @@ const handleRemoveUserFromEvent = async (
         );
       }
 
+      // reference to Event Record document
+      const eventRecordRef = adminDb.doc(`users/${userId}/eventRecords/${eventId}`);
+
       if (waitlistDoc.exists) {
         transaction.delete(waitlistDocRef);
+        transaction.delete(eventRecordRef);
         return { status: 'leftWaitlist', message: 'Left waitlist successfully.' };
       }
 
@@ -189,6 +219,7 @@ const handleRemoveUserFromEvent = async (
       transaction.update(eventDocRef, {
         signupsCount: FieldValue.increment(-1),
       });
+      transaction.delete(eventRecordRef);
 
       // if no one found on waitlist, return early
       if (waitlistSnapshot.empty) {
@@ -196,15 +227,29 @@ const handleRemoveUserFromEvent = async (
       }
       // get next on waitlist to promote
       const nextDoc = waitlistSnapshot.docs[0];
+      // get user Id
+      const nextUserId = nextDoc.id;
+
       // place to write
       const newSignupDocRef = adminDb.doc(`events/${eventId}/signups/${nextDoc.id}`);
       // place to delete
       const oldWaitlistDocRef = adminDb.doc(`events/${eventId}/waitlist/${nextDoc.id}`);
 
+      // new event record to write
+      const newEventRecordRef = adminDb.doc(`users/${nextUserId}/eventRecords/${eventId}`);
+
       transaction.create(newSignupDocRef, nextDoc.data());
       transaction.update(eventDocRef, {
         signupsCount: FieldValue.increment(1),
       });
+      transaction.set(
+        newEventRecordRef,
+        {
+          status: 'joined',
+          lastUpdate: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
       transaction.delete(oldWaitlistDocRef);
       return {
         status: 'leftEvent',
