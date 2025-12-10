@@ -1,15 +1,14 @@
 'use client';
 
-import { FunctionsError, httpsCallable } from 'firebase/functions';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
-import { functions } from '@/lib/firebase';
 import { FormEventHandler, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Spinner from '../ui/Spinner';
 
 import { z, ZodError } from 'zod';
+import { createOrg } from '@/services/createOrg';
 
 const organizationSchema = z.object({
   name: z
@@ -34,11 +33,6 @@ type CreateOrganizationRequest = z.infer<typeof organizationSchema>;
 interface FormData {
   id: string;
   name: string;
-}
-
-interface CreateOrganizationResult {
-  organizationId: string;
-  message: string;
 }
 
 const ERROR_TIME = 5000; // how long to display error before allowing retries
@@ -101,18 +95,12 @@ const OrganizationForm = () => {
     // validated, continue
     setIsLoading(true);
     try {
-      const createOrganization = httpsCallable<CreateOrganizationRequest, CreateOrganizationResult>(
-        functions,
-        'createOrganization',
-      );
-      const result = await createOrganization(validatedData);
-      router.push(`/organizations/${encodeURIComponent(result.data.organizationId)}`);
-    } catch (err) {
+      const orgId = await createOrg(validatedData);
+      router.push(`/organizations/${encodeURIComponent(orgId)}`);
+    } catch (err: unknown) {
+      const error = err as Error;
       setIsLoading(false);
-      const firebaseError = err as FunctionsError;
-      console.error('Firebase functions Error:', firebaseError.message);
-      console.log(firebaseError.code);
-      if (firebaseError.code.includes('already-exists')) {
+      if (error.message === 'already-exists') {
         setFunctionError('An organization with that id already exists. Try again in a bit.');
       } else {
         setFunctionError('An unexpected error occured. Try again in a bit.');

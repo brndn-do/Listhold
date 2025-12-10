@@ -1,11 +1,6 @@
-import { Timestamp } from 'firebase/firestore';
-
-/**
- * Represents a Firestore organization document
- */
 export interface OrganizationData {
   name: string;
   description?: string;
   ownerId: string;
-  createdAt: Timestamp;
+  createdAt: Date;
 }

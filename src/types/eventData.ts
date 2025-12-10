@@ -1,8 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
-
-/**
- * Represents a Firestore event document
- */
 export interface EventData {
   name: string;
   description?: string;
@@ -10,9 +5,9 @@ export interface EventData {
   organizationName: string;
   creatorId: string;
   location: string;
-  start: Timestamp;
-  end?: Timestamp;
+  start: Date;
+  end?: Date;
   capacity: number;
   signupsCount: number;
-  createdAt: Timestamp;
+  createdAt: Date;
 }

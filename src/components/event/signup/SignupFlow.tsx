@@ -1,7 +1,6 @@
 'use client';
 
 import { useEvent } from '@/context/EventProvider';
-import Spinner from '../../ui/Spinner';
 import PromptView from './PromptView';
 import { useState } from 'react';
 import { PromptData } from '@/types/promptData';
@@ -11,7 +10,7 @@ interface SignupFlowProps {
 }
 
 const SignupFlow = ({ handleFlowClose }: SignupFlowProps) => {
-  const { prompts, promptsLoading, promptsError } = useEvent();
+  const { prompts } = useEvent();
   const [curIndex, setCurIndex] = useState(0);
 
   // turn the map into an array of [string, PromptData], sorted by the order field
@@ -44,12 +43,8 @@ const SignupFlow = ({ handleFlowClose }: SignupFlowProps) => {
       aria-modal='true'
       className='fixed inset-0 bg-white/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center z-50'
     >
-      {promptsLoading && <Spinner />}
-      {promptsError && <p>{promptsError.message}</p>}
       {promptsArray && (
-        <>
-          <PromptView promptData={promptsArray[curIndex][1]} handleNext={handleNext} />
-        </>
+        <PromptView promptData={promptsArray[curIndex][1]} handleNext={handleNext} />
       )}
     </div>
   );

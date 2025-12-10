@@ -1,12 +1,7 @@
-import { Timestamp } from 'firebase/firestore';
-
-/**
- * Represents a Firestore signup document
- */
 export interface SignupData {
   displayName: string;
-  signupTime: Timestamp;
+  signupTime: Date;
   photoURL: string | null;
   email: string;
-  answers: Record<string, boolean | null>;
+  answers?: Record<string, boolean | null>;
 }

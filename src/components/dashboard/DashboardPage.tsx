@@ -6,7 +6,7 @@ import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthProvider';
 import Link from 'next/link';
 
-const DashboardView = () => {
+const DashboardPage = () => {
   const { user, loading } = useAuth();
   if (loading) {
     return <Spinner />;
@@ -31,4 +31,4 @@ const DashboardView = () => {
   );
 };
 
-export default DashboardView;
+export default DashboardPage;

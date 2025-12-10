@@ -1,6 +1,9 @@
+'use client';
+
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthProvider';
-import { getMembershipsByUserId } from '@/services/membershipsService';
+import { getMembershipsByUserId } from '@/services/getMembershipsByUserId';
 import { MembershipData } from '@/types/membershipData';
 import { WithId } from '@/types/withId';
 import Link from 'next/link';
@@ -32,7 +35,7 @@ const MembershipsView = () => {
   }
 
   if (error) {
-    return <p className='text-red-500'>An unexpected error occured. Try refreshing the page.</p>;
+    return <ErrorMessage content={'An unexpected error occured. Try refreshing the page.'} />;
   }
 
   if (!memberships || memberships.length === 0) {
@@ -44,7 +47,7 @@ const MembershipsView = () => {
   }
 
   return (
-    <div className='grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+    <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
       {memberships.length > 0 &&
         memberships.map((membership) => {
           const { id: orgId, organizationName: orgName, role } = membership;

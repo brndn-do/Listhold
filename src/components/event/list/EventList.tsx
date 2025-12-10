@@ -14,7 +14,7 @@ const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
   const selectionError = viewingWaitlist ? waitlistError : signupsError;
 
   if (selectionLoading) {
-    return <div>{<Spinner />}</div>;
+    return <div className='p-4'>{<Spinner size={24} />}</div>;
   }
 
   if (selectionError) {
@@ -32,7 +32,7 @@ const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
   return (
     <div className='flex flex-col w-full h-full'>
       <ol className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'>
-        {selection?.map((signup) => (
+        {selection.map((signup) => (
           <ListItem signup={signup} key={signup.id} />
         ))}
       </ol>

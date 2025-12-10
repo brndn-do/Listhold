@@ -1,46 +1,30 @@
 'use client';
 
-import { formatEventTiming } from '@/utils/timeFormatter';
-import Spinner from '../ui/Spinner';
-import { useEvent } from '@/context/EventProvider';
 import Link from 'next/link';
+import { WithId } from '@/types/withId';
+import { EventData } from '@/types/eventData';
+import SpotsCounter from '@/components/event/SpotsCounter';
+import EventTime from '@/components/event/EventTime';
 
-const EventInfo = () => {
-  const { event, eventLoading, eventError } = useEvent();
+interface EventInfoProps {
+  eventData: WithId<EventData>;
+}
 
-  if (eventLoading) {
-    return (
-      <div className='flex items-center'>
-        <span>
-          <Spinner />
-        </span>
-      </div>
-    );
-  }
-  if (eventError) {
-    return (
-      <p className='text-2xl text-center font-bold'>
-        {' '}
-        Error fetching event details: {eventError.message || 'unexpected error'}
-      </p>
-    );
-  }
-  if (event) {
-    return (
-      <div className='flex flex-col gap-[1px]'>
-        <h1 className='text-[1.3rem] text-center font-bold'>{event.name}</h1>
-        <Link
-          href={`/organizations/${event.organizationId}`}
-          className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500 underline'
-        >
-          {event.organizationName} →
-        </Link>
-        <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming(event.start, event.end)}`}</p>
-        <p className='text-[0.8rem] text-center'>{`📍 ${event?.location}`}</p>
-        <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${event.capacity - event.signupsCount}/${event.capacity}`}</p>
-      </div>
-    );
-  }
+const EventInfo = ({ eventData }: EventInfoProps) => {
+  return (
+    <div className='flex flex-col items-center gap-[1px]'>
+      <h1 className='text-[1.3rem] text-center font-bold'>{eventData.name}</h1>
+      <Link
+        href={`/organizations/${eventData.organizationId}`}
+        className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500 underline'
+      >
+        {eventData.organizationName} →
+      </Link>
+      <EventTime start={eventData.start} end={eventData.end} />
+      <p className='text-[0.8rem] text-center'>{`📍 ${eventData?.location}`}</p>
+      <SpotsCounter capacity={eventData.capacity} />
+    </div>
+  );
 };
 
 export default EventInfo;

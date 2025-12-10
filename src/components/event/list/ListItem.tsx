@@ -1,8 +1,10 @@
+'use client';
+
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
 import { SignupData } from '@/types/signupData';
 import { WithId } from '@/types/withId';
-import { formatTimestamp } from '@/utils/timeFormatter';
+import { formatDate } from '@/utils/timeFormatter';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
 
@@ -13,11 +15,15 @@ interface ListItemProps {
 const ListItem = ({ signup }: ListItemProps) => {
   const { user } = useAuth();
   const { prompts } = useEvent();
-  const { formattedDate, formattedTime } = formatTimestamp(signup.signupTime);
+  const { formattedDate, formattedTime } = formatDate(signup.signupTime);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const publicAnswers = useMemo(() => {
-    if (!signup.answers || !prompts) {
+    if (
+      !signup.answers ||
+      Object.keys(signup.answers).length === 0 ||
+      Object.keys(prompts).length === 0
+    ) {
       return [];
     }
 

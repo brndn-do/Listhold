@@ -1,5 +1,5 @@
-// Ensure this file is only executed on the server side
 import 'server-only';
+
 import * as admin from 'firebase-admin';
 
 let app: admin.app.App;
@@ -24,3 +24,4 @@ if (!admin.apps.length) {
 
 // Export the Firestore instance for server-side operations
 export const adminDb = app.firestore();
+export const Timestamp = admin.firestore.Timestamp;

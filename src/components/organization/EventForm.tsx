@@ -1,15 +1,14 @@
 'use client';
 
-import { FunctionsError, httpsCallable } from 'firebase/functions';
-import Button from './ui/Button';
-import FormInput from './ui/FormInput';
-import { functions } from '@/lib/firebase';
+import Button from '../ui/Button';
+import FormInput from '../ui/FormInput';
 import { FormEventHandler, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
-import Spinner from './ui/Spinner';
+import Spinner from '../ui/Spinner';
 
 import { z, ZodError } from 'zod';
+import { createEvent } from '@/services/createEvent';
 
 // Zod Schema for Event Creation
 const eventSchema = z
@@ -79,11 +78,6 @@ interface FormData {
   end: string;
   capacity: string; // Stored as string in form state
   eventId: string;
-}
-
-interface CreateEventResult {
-  eventId: string;
-  message: string;
 }
 
 interface EventFormProps {
@@ -168,20 +162,14 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     // validated, continue
     setIsLoading(true);
     try {
-      const createEvent = httpsCallable<CreateEventRequest, CreateEventResult>(
-        functions,
-        'createEvent', // This cloud function needs to be implemented
-      );
-      const result = await createEvent(validatedData);
-      router.push(`/events/${encodeURIComponent(result.data.eventId)}`);
-    } catch (err) {
+      const eventId = await createEvent(validatedData);
+      router.push(`/events/${encodeURIComponent(eventId)}`);
+    } catch (err: unknown) {
+      const error = err as Error;
       setIsLoading(false);
-      const firebaseError = err as FunctionsError;
-      console.error('Firebase functions Error:', firebaseError.message);
-      console.log(firebaseError.code);
-      if (firebaseError.code.includes('permission-denied')) {
+      if (error.message === 'permission-denied') {
         setFunctionError('You do not have permission to create events for this organization.');
-      } else if (firebaseError.code.includes('already-exists')) {
+      } else if (error.message === 'already-exists') {
         setFunctionError('An event with that ID already exists. Try again in a bit.');
       } else {
         setFunctionError('An unexpected error occurred. Please try again.');

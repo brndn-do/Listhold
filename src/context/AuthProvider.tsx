@@ -1,17 +1,16 @@
 'use client';
 
-import { auth } from '@/lib/firebase';
-import { signInWithPopup, signOut, User, GoogleAuthProvider } from 'firebase/auth';
-import { createContext, ReactNode, useContext, useMemo } from 'react';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { signInWithGoogle, signOutUser, subscribeToAuthState } from '@/services/authService';
+import { AuthUser } from '@/types/authUser';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 /**
  * Defines the shape of the authentication context.
- * - `user`: The current Firebase user, or null/undefined if not signed in or not yet loaded.
+ * - `user`: The current authenticated user, or null/undefined if not signed in or not yet loaded.
  * - `loading`: Whether the authentication state is still loading.
  */
 interface AuthContextType {
-  readonly user: User | null | undefined;
+  readonly user: AuthUser | null | undefined;
   readonly loading: boolean;
 }
 
@@ -22,7 +21,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * Provides authentication context to all child components
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, loading] = useAuthState(auth);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubAuthState = subscribeToAuthState((data) => {
+      setUser(data);
+      setLoading(false);
+    });
+
+    return () => {
+      unsubAuthState();
+    };
+  }, []);
+
   const value = useMemo(() => ({ user, loading }), [user, loading]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -45,27 +57,21 @@ export const useAuth = (): AuthContextType => {
  * Signs the user in using Google's OAuth popup flow.
  *
  * Opens a Google authentication popup window. After a successful login,
- * resolves with the authenticated Firebase `User` object.
+ * resolves with an `AuthUser` object.
  *
- * @returns A `Promise` that resolves with a Firebase `User` object.
+ * @returns A `Promise` that resolves with an `AuthUser` object.
  * @throws If the Google sign-in popup fails or is blocked.
  */
-export const handleSignIn = async (): Promise<User> => {
-  const provider = new GoogleAuthProvider();
-
-  // Prompts account selection each time
-  provider.setCustomParameters({ prompt: 'select_account' });
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-  return user;
+export const handleSignIn = async (): Promise<AuthUser> => {
+  return await signInWithGoogle();
 };
 
 /**
- * Signs the current user out of Firebase Authentication.
+ * Signs the current user out.
  *
  * @returns A `Promise` that resolves once the user is signed out.
  * @throws If sign-out fails.
  */
 export const handleSignOut = async (): Promise<void> => {
-  await signOut(auth);
+  await signOutUser();
 };

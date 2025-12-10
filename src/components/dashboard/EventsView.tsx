@@ -1,3 +1,5 @@
+'use client';
+
 const EventsView = () => {
   return <p>Your Events</p>;
 };

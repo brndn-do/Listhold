@@ -84,7 +84,7 @@ For design and implementation details see:
 
 ## Tech Stack
 
-- **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod, `react-firebase-hooks`
+- **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod
 - **Backend:** Firebase (Firestore, Cloud Functions v2, Authentication, App Check)
 - **Hosting:** Vercel (frontend), Firebase (Cloud Functions)
 - **Email:** Firebase Extensions (Trigger Email from Firestore)

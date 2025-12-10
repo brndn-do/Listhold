@@ -5,45 +5,63 @@ import Spinner from '../ui/Spinner';
 import { useEvent } from '@/context/EventProvider';
 import { useMemo } from 'react';
 import Button from '@/components/ui/Button';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 
 interface EventButtonProps {
-  functionError: string | null;
-  cooldown: string | null;
-  isLoading: boolean;
+  cooldownMessage: string | null;
+  requestLoading: boolean;
+  requestError: string | null;
   handleFlowOpen: () => void;
   handleSignup: (answers: Record<string, boolean | null>) => void;
   handleLeave: () => void;
 }
 
 const EventButton = ({
-  functionError,
-  cooldown,
-  isLoading,
+  cooldownMessage,
+  requestLoading,
+  requestError,
   handleFlowOpen,
   handleSignup,
   handleLeave,
 }: EventButtonProps) => {
   const { user } = useAuth();
-  const { event, signups, signupIds, waitlist, waitlistIds, prompts } = useEvent();
+  const {
+    eventData,
+    signups,
+    signupsLoading,
+    signupsError,
+    signupIds,
+    waitlistLoading,
+    waitlistError,
+    waitlistIds,
+    prompts,
+  } = useEvent();
 
-  // did the user already join either the signups list or the waitlist)
+  // did the user already join either the signups list or the waitlist?
   const alreadyJoined: boolean = useMemo(() => {
     return !!(user && (signupIds?.has(user.uid) || waitlistIds?.has(user.uid)));
   }, [user, signupIds, waitlistIds]);
 
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
-    return !!((event?.capacity ?? 0) > (event?.signupsCount ?? 0));
-  }, [event]);
+    return !!((eventData?.capacity ?? 0) > signups.length);
+  }, [eventData, signups]);
 
   // We do not have enough information about event to allow the user to join/leave
-  if (!event || !signups || !waitlist || !prompts) {
+  if (
+    !eventData ||
+    signupsLoading ||
+    signupsError ||
+    waitlistLoading ||
+    waitlistError ||
+    !prompts
+  ) {
     return null;
   }
 
-  if (functionError) {
+  if (requestError) {
     // if there's an error joining/leaving display the error instead of a button
-    return <p className='mt-2 text-sm text-red-600 self-end'>{functionError}</p>;
+    return <ErrorMessage content={requestError} />;
   }
 
   // must sign in first to do anything
@@ -56,13 +74,13 @@ const EventButton = ({
     return (
       <Button
         onClick={handleLeave}
-        disabled={isLoading || !!cooldown}
+        disabled={requestLoading || !!cooldownMessage}
         content={
           <>
-            {isLoading && <Spinner />}
-            {isLoading && 'Leaving...'}
-            {!isLoading && cooldown}
-            {!isLoading && !cooldown && 'Leave this event'}
+            {requestLoading && <Spinner />}
+            {requestLoading && 'Leaving...'}
+            {!requestLoading && cooldownMessage}
+            {!requestLoading && !cooldownMessage && 'Leave this event'}
           </>
         }
       />
@@ -73,16 +91,14 @@ const EventButton = ({
   if (!spotsOpen) {
     return (
       <Button
-        onClick={
-          prompts && Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen
-        } // handleSignup expects a map of answers, so provide empty map when there are no prompts
-        disabled={isLoading || !!cooldown}
+        onClick={Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen} // handleSignup expects a map of answers, so provide empty map when there are no prompts
+        disabled={requestLoading || !!cooldownMessage}
         content={
           <>
-            {isLoading && <Spinner />}
-            {isLoading && 'Joining...'}
-            {!isLoading && cooldown}
-            {!isLoading && !cooldown && 'Event is full - join the waitlist'}
+            {requestLoading && <Spinner />}
+            {requestLoading && 'Joining...'}
+            {!requestLoading && cooldownMessage}
+            {!requestLoading && !cooldownMessage && 'Event is full - join the waitlist'}
           </>
         }
       />
@@ -92,16 +108,14 @@ const EventButton = ({
   // default (can join)
   return (
     <Button
-      onClick={
-        prompts && Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen
-      } // handleSignup expects a map of answers, so provide empty map when there are no prompts
-      disabled={isLoading || !!cooldown}
+      onClick={Object.keys(prompts).length === 0 ? () => handleSignup({}) : handleFlowOpen} // handleSignup expects a map of answers, so provide empty map when there are no prompts
+      disabled={requestLoading || !!cooldownMessage}
       content={
         <>
-          {isLoading && <Spinner />}
-          {isLoading && 'Joining...'}
-          {!isLoading && cooldown}
-          {!isLoading && !cooldown && 'Join the List'}
+          {requestLoading && <Spinner />}
+          {requestLoading && 'Joining...'}
+          {!requestLoading && cooldownMessage}
+          {!requestLoading && !cooldownMessage && 'Join the List'}
         </>
       }
     />

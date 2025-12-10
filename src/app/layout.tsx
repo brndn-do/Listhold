@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Rosterize',
-  description: 'Built with Next.js, Typescript, and Firebase',
+  description: 'Automate event signups, rosters, and waitlists.',
 };
 
 const RootLayout = ({
@@ -25,19 +25,16 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <html
-      lang='en'
-      className={`h-[100dvh] ${geistSans.variable} ${geistMono.variable} antialiased`}
-    >
+    <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <AuthProvider>
         {/* body should always take the entire viewport height */}
-        <body className='h-[100dvh] m-0 flex flex-col'>
+        <body className='min-h-[100dvh] m-0 flex flex-col'>
           <header className='pt-4 pr-4'>
             <nav className='flex justify-end'>
               <Auth />
             </nav>
           </header>
-          <main className='flex-1 flex flex-col items-center'>{children}</main>
+          <main className='flex-1 flex flex-col items-center pt-6 px-4'>{children}</main>
           <footer className='p-2 flex flex-col text-xs'>
             <p className='opacity-70 ml-4'>&copy; 2025 Rosterize</p>
           </footer>

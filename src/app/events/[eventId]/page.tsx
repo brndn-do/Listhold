@@ -1,46 +1,58 @@
-import EventView from '@/components/event/EventView';
+import EventPage from '@/components/event/EventPage';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
-import { getEventNameAndDescById } from '@/services/server-only/eventNameAndDescService';
+import { getEventById } from '@/services/getEventById';
+import { getPromptsByEventId } from '@/services/getPromptsByEventId';
+import { EventData } from '@/types/eventData';
+import { PromptData } from '@/types/promptData';
+import { WithId } from '@/types/withId';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 
-interface EventPageProps {
+export const revalidate = 60;
+
+export const generateMetadata = async ({
+  params,
+}: {
   params: Promise<{ eventId: string }>;
-}
-
-// Dynamic metadata for Next.js App Router
-export const generateMetadata = async ({ params }: EventPageProps): Promise<Metadata> => {
+}): Promise<Metadata> => {
   const { eventId } = await params;
   try {
-    const result = await getEventNameAndDescById(eventId);
-
-    // check if null
-    if (!result) {
-      return notFound();
+    const eventData: WithId<EventData> | null = await getEventById(eventId);
+    if (!eventData) {
+      return {
+        title: 'Event Not Found — Rosterize',
+        description: 'The requested event could not be found.',
+      };
     }
 
-    // extract name and desc
-    const { name, description } = result;
-
-    return description
-      ? {
-          title: `${name} — Rosterize`,
-          description: description,
-        }
-      : { title: `${name} — Rosterize` };
+    return {
+      title: `${eventData.name} — Rosterize`,
+      description: eventData.description || 'Join this event on Rosterize.',
+    };
   } catch (err) {
-    console.log('Error fetching event name and description', err);
-    throw err;
+    return {
+      title: 'Error — Rosterize',
+      description: 'There was an error fetching the event.',
+    };
   }
 };
 
-const EventPage = async ({ params }: EventPageProps) => {
+const Event = async ({ params }: { params: Promise<{ eventId: string }> }) => {
   const { eventId } = await params;
-  return (
-    <EventProvider eventId={eventId}>
-      <EventView />
-    </EventProvider>
-  );
+  try {
+    const eventData: WithId<EventData> | null = await getEventById(eventId);
+    if (!eventData) {
+      return <p>Not found</p>;
+    }
+    const prompts: Record<string, PromptData> = await getPromptsByEventId(eventId);
+    return (
+      <EventProvider eventData={eventData} prompts={prompts}>
+        <EventPage />
+      </EventProvider>
+    );
+  } catch (err: unknown) {
+    return <ErrorMessage />;
+  }
 };
 
-export default EventPage;
+export default Event;

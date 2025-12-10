@@ -7,20 +7,16 @@
  * - Past events (attended primary, waitlisted secondary)
  */
 
-import DashboardView from '@/components/dashboard/DashboardView';
+import DashboardPage from '@/components/dashboard/DashboardPage';
 import { Metadata } from 'next';
 
-export const generateMetadata = async (): Promise<Metadata> => {
-  return {
-    title: 'Dashboard—Rosterize',
-    description: 'View your organizations and events',
-  };
+export const revalidate = false;
+
+export const metadata: Metadata = {
+  title: 'Dashboard—Rosterize',
+  description: 'View your organizations and events',
 };
 
-const DashboardPage = () => (
-  <div className='w-full p-8'>
-    <DashboardView />
-  </div>
-);
+const Dashboard = () => <DashboardPage />;
 
-export default DashboardPage;
+export default Dashboard;
