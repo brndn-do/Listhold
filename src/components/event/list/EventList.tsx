@@ -1,10 +1,14 @@
 'use client';
 
 import { useEvent } from '@/context/EventProvider';
-import Spinner from '../../ui/Spinner';
 import ListItem from './ListItem';
+import Dots from '@/components/ui/Dots';
 
-const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
+interface EventListProps {
+  viewingWaitlist: boolean
+}
+
+const EventList = ({ viewingWaitlist }: EventListProps) => {
   const { signups, signupsLoading, signupsError, waitlist, waitlistLoading, waitlistError } =
     useEvent();
 
@@ -13,29 +17,40 @@ const EventList = ({ viewingWaitlist }: { viewingWaitlist: boolean }) => {
   const selectionLoading = viewingWaitlist ? waitlistLoading : signupsLoading;
   const selectionError = viewingWaitlist ? waitlistError : signupsError;
 
-  if (selectionLoading) {
-    return <div className='p-4'>{<Spinner size={24} />}</div>;
-  }
+  // helper for handling loading state, error states, empty list, and non-empty list
+  const content = () => {
+    if (selectionLoading) {
+      return (
+        <div className='p-36'>
+          <Dots size={3}/>
+        </div>
+      )
+    }
 
-  if (selectionError) {
-    return <p>Error: {selectionError.message}</p>;
-  }
+    if (selectionError) {
+      return <p>Error: {selectionError.message}</p>;
+    }
 
-  if (selection?.length === 0) {
+    if (selection?.length === 0) {
+      return (
+        <div className='flex flex-col items-center justify-center w-full h-full'>
+          <p className='text-lg font-bold'>It&apos;s empty...</p>
+        </div>
+      );
+    }
+
     return (
-      <div className='flex flex-col items-center justify-center w-full h-full'>
-        <p className='text-lg font-bold'>It&apos;s empty...</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className='flex flex-col w-full h-full'>
       <ol className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'>
         {selection.map((signup) => (
           <ListItem signup={signup} key={signup.id} />
         ))}
       </ol>
+    );
+  };
+
+  return (
+    <div className='border-1 border-gray-500 rounded-2xl py-2 px-1 flex flex-col items-center w-full h-90'>
+      {content()}
     </div>
   );
 };

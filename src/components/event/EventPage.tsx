@@ -103,9 +103,7 @@ const EventPage = () => {
           </button>
         </div>
 
-        <div className='relative flex flex-col items-center border border-gray-500 h-90 w-full py-2 px-1 rounded-2xl'>
-          <EventList viewingWaitlist={viewingWaitlist} />
-        </div>
+        <EventList viewingWaitlist={viewingWaitlist} />
 
         <div className='flex flex-col items-end pt-1 px-2 w-full'>
           <EventButton
