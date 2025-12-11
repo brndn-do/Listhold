@@ -1,6 +1,5 @@
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { AuthUser } from '@/types/authUser';
-import { signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 
 /**
  * Signs the user in using Google's OAuth popup flow.
@@ -11,17 +10,8 @@ import { signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from
  * @returns A `Promise` that resolves with a Firebase `User` object.
  * @throws If the Google sign-in popup fails or is blocked.
  */
-export const signInWithGoogle = async (): Promise<AuthUser> => {
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-  return {
-    uid: user.uid,
-    displayName: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
-  };
+export const signInWithGoogle = async (): Promise<void> => {
+  await supabase.auth.signInWithOAuth({ provider: 'google' });
 };
 
 /**
@@ -31,7 +21,7 @@ export const signInWithGoogle = async (): Promise<AuthUser> => {
  * @throws If sign-out fails.
  */
 export const signOutUser = async (): Promise<void> => {
-  await signOut(auth);
+  await supabase.auth.signOut();
 };
 
 /**
@@ -41,5 +31,23 @@ export const signOutUser = async (): Promise<void> => {
  * @returns Unsubscribe function to stop listening
  */
 export const subscribeToAuthState = (callback: (user: AuthUser | null) => void): (() => void) => {
-  return onAuthStateChanged(auth, callback);
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      callback(null);
+    }
+    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+      if (!session?.user?.id) return;
+      const user: AuthUser = {
+        uid: session?.user.id,
+        displayName: session?.user.user_metadata.full_name ?? null,
+        email: session?.user.email ?? null,
+        photoURL: session?.user.user_metadata.avatar_url ?? null,
+      };
+      callback(user || null);
+    }
+  });
+
+  return () => {
+    data.subscription.unsubscribe();
+  };
 };

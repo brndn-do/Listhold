@@ -1,21 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { handleSignIn, handleSignOut, useAuth } from '@/context/AuthProvider';
-import { saveUser } from '@/services/saveUser';
+import { saveProfile } from '@/services/saveProfile';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 
 const Auth = () => {
   const { user } = useAuth();
+  const [profileSaved, setProfileSaved] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // save the user to the database once, when authenticated
+  useEffect(() => {
+    if (user && !profileSaved) {
+      saveProfile(user);
+      setProfileSaved(true);
+    }
+  }, [user, profileSaved]);
 
   const signIn = async () => {
     setLoading(true);
     try {
-      const user = await handleSignIn();
-      // save most recent user data to database
-      await saveUser(user);
+      await handleSignIn();
     } finally {
       setLoading(false);
     }

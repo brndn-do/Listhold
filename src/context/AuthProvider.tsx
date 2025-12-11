@@ -62,7 +62,7 @@ export const useAuth = (): AuthContextType => {
  * @returns A `Promise` that resolves with an `AuthUser` object.
  * @throws If the Google sign-in popup fails or is blocked.
  */
-export const handleSignIn = async (): Promise<AuthUser> => {
+export const handleSignIn = async (): Promise<void> => {
   return await signInWithGoogle();
 };
 
