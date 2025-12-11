@@ -13,10 +13,10 @@ interface EventInfoProps {
 const EventInfo = ({ eventData }: EventInfoProps) => {
   return (
     <div className='flex flex-col items-center gap-[1px]'>
-      <h1 className='text-[1.3rem] text-center font-bold'>{eventData.name}</h1>
+      <h1 className='text-xl text-center font-bold'>{eventData.name}</h1>
       <Link
         href={`/organizations/${eventData.organizationId}`}
-        className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500 underline'
+        className='pb-1 text-sm text-center font-bold text-purple-700 dark:text-purple-500 underline'
       >
         {eventData.organizationName} →
       </Link>

@@ -1,7 +1,7 @@
 'use client';
 
+import Dots from '@/components/ui/Dots';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import Spinner from '@/components/ui/Spinner';
 import { useEvent } from '@/context/EventProvider';
 import { useMemo } from 'react';
 
@@ -15,19 +15,16 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
     return signups.length;
   }, [signups]);
 
-  if (signupsLoading) {
-    return (
-      <div className='p-[2px]'>
-        <Spinner size={15} />
-      </div>
-    );
-  }
-  if (signupsError) {
-    return <ErrorMessage size='sm' content={`Couldn't load signups. Try refreshing the page.`} />;
-  }
-
   return (
-    <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
+    <div className='h-4 flex items-center'>
+      {signupsLoading && <Dots size={1} />}
+      {signupsError && (
+        <ErrorMessage size='sm' content={`Couldn't load signups. Try refreshing the page.`} />
+      )}
+      {!signupsLoading && !signupsError && (
+        <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
+      )}
+    </div>
   );
 };
 
