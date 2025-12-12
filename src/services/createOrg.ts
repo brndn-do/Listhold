@@ -1,4 +1,6 @@
 import { supabase } from '@/lib/supabase';
+import { ServiceError } from '@/types/serviceError';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 interface CreateOrgRequest {
   name: string;
@@ -9,7 +11,7 @@ interface CreateOrgRequest {
  * Creates an organization.
  * @param request - An object including the request details.
  * @returns The id of the newly created organization.
- * @throws If the user is not signed in or the organization could not be created.
+ * @throws A `ServiceError` if the organization could not be created.
  */
 export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
   const toSend = {
@@ -22,8 +24,17 @@ export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
     body: toSend,
   });
 
-  if (error || !data) {
-    throw new Error('Error creating organization');
+  if (error) {
+    const functionsError = error as FunctionsHttpError;
+    const status = functionsError.context.status;
+    if (status === 409) {
+      throw new ServiceError('already-exists');
+    }
+    throw new ServiceError('internal');
+  }
+
+  if (!data) {
+    throw new ServiceError('internal');
   }
 
   const { slug } = data;

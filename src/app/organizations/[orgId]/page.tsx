@@ -5,10 +5,15 @@ import { getOrgById } from '@/services/getOrgById';
 import { EventData } from '@/types/eventData';
 import { OrganizationData } from '@/types/organizationData';
 import { WithId } from '@/types/withId';
+import { Metadata } from 'next';
 
 export const revalidate = 60;
 
-export const generateMetadata = async ({ params }: { params: Promise<{ orgId: string }> }) => {
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ orgId: string }>;
+}): Promise<Metadata> => {
   const { orgId } = await params;
   try {
     const orgData: WithId<OrganizationData> | null = await getOrgById(orgId);
@@ -20,10 +25,12 @@ export const generateMetadata = async ({ params }: { params: Promise<{ orgId: st
     }
     return {
       title: `${orgData.name} — Rosterize`,
-      description: orgData.description || `View ${orgData.name} on Rosterize.`
-    }
+      description: orgData.description || `View ${orgData.name} on Rosterize.`,
+    };
   } catch (err: unknown) {
-    return <ErrorMessage />;
+    return {
+      title: 'Error — Rosterize',
+    };
   }
 };
 

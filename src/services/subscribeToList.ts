@@ -57,7 +57,6 @@ export const subscribeToSignups = (
       onData(signups);
     },
     (error) => {
-      console.error('Error subscribing to signups:', error);
       onError?.(error);
     },
   );
@@ -94,7 +93,6 @@ export const subscribeToWaitlist = (
       onData(waitlist);
     },
     (error) => {
-      console.error('Error subscribing to waitlist:', error);
       onError?.(error);
     },
   );

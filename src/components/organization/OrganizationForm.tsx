@@ -9,6 +9,7 @@ import Spinner from '../ui/Spinner';
 
 import { z, ZodError } from 'zod';
 import { createOrg } from '@/services/createOrg';
+import { ServiceError, ServiceErrorMessage } from '@/types/serviceError';
 
 const organizationSchema = z.object({
   name: z
@@ -88,7 +89,6 @@ const OrganizationForm = () => {
 
         setFormErrors(errors);
       }
-      console.log('Validation failed, preventing submission...');
       return; // stop submission if validation fails
     }
 
@@ -98,9 +98,9 @@ const OrganizationForm = () => {
       const orgId = await createOrg(validatedData);
       router.push(`/organizations/${encodeURIComponent(orgId)}`);
     } catch (err: unknown) {
-      const error = err as Error;
-      setIsLoading(false);
-      if (error.message === 'already-exists') {
+      const error = err as ServiceError;
+      const msg = error.message as ServiceErrorMessage;
+      if (msg === 'already-exists') {
         setFunctionError('An organization with that id already exists. Try again in a bit.');
       } else {
         setFunctionError('An unexpected error occured. Try again in a bit.');
@@ -108,11 +108,12 @@ const OrganizationForm = () => {
       setTimeout(() => {
         setFunctionError(null);
       }, ERROR_TIME);
+      setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={submitForm} className='w-[80%] md:w-[40%] lg:w-[30%] xl:w-[25%] 2xl:w-[20%]'>
+    <form onSubmit={submitForm} className='w-[80%] md:w-[60%] lg:w-[50%] xl:w-[30%] 2xl:w-[25%]'>
       <div>
         <FormInput
           id='name'

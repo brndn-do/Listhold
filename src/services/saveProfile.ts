@@ -6,14 +6,11 @@ import { supabase } from '@/lib/supabase';
  * @param user - The authenticated user
  */
 export const saveProfile = async (user: AuthUser): Promise<void> => {
-  const { error } = await supabase.from('profiles').upsert([
+  await supabase.from('profiles').upsert([
     {
       id: user.uid,
       display_name: user.displayName,
       avatar_url: user.photoURL,
     },
   ]);
-  if (error) {
-    console.error('Error saving user profile: ', error.message)
-  }
 };

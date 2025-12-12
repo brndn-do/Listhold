@@ -14,10 +14,10 @@ CREATE POLICY "Profiles: public read access"
 CREATE POLICY "Profiles: users can insert their own profile"
   ON public.profiles
   FOR INSERT
-  WITH CHECK (auth.uid() = id);
+  WITH CHECK ((select auth.uid()) = id);
 
 CREATE POLICY "Profiles: users can update their own profile"
   ON public.profiles
   FOR UPDATE
-  USING (auth.uid() = id)
-  WITH CHECK (auth.uid() = id);
+  USING ((select auth.uid()) = id)
+  WITH CHECK ((select auth.uid()) = id);

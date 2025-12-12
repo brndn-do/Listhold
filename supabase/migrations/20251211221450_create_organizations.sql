@@ -15,9 +15,7 @@ CREATE INDEX idx_owner_id ON public.organizations(owner_id);
 
 ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY server_access
+CREATE POLICY "Organizations: public read access"
   ON public.organizations
-  FOR ALL
-  USING (
-    current_setting('app.current_role') = 'server'
-  );
+  FOR SELECT
+  USING (true);

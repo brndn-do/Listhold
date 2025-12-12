@@ -155,7 +155,6 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
         }
         setFormErrors(errors);
       }
-      console.log('Validation failed, preventing submission...');
       return; // stop submission if validation fails
     }
 

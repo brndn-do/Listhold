@@ -1,10 +1,11 @@
 import 'server-only';
 
-import { adminDb } from '@/lib/firebase-admin';
 import { OrganizationData } from '@/types/organizationData';
 import { WithId } from '@/types/withId';
-import { Timestamp } from 'firebase/firestore';
-import { unstable_cache } from 'next/cache';
+import { Database } from '../../supabaseTypes';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+
+type OrganizationRow = Database['public']['Tables']['organizations']['Row'];
 
 /**
  * Fetches an organization by its ID.
@@ -12,48 +13,24 @@ import { unstable_cache } from 'next/cache';
  * @param orgId - The unique identifier of the organization
  * @returns A Promise resolving to the organization data with its ID, or null if not found
  */
-const getOrgByIdInteral = async (orgId: string): Promise<WithId<OrganizationData> | null> => {
-  const ref = adminDb.doc(`organizations/${orgId}`);
-  const snap = await ref.get();
+export const getOrgById = async (orgId: string): Promise<WithId<OrganizationData> | null> => {
+  const { data, error } = await supabaseAdmin
+    .from('organizations')
+    .select('*')
+    .eq('slug', orgId)
+    .single();
 
-  if (!snap.exists) {
+  if (error || !data) {
     return null;
   }
 
-  const data = snap.data() as {
-    name: string;
-    description?: string;
-    ownerId: string;
-    createdAt: Timestamp;
-  };
-
-  const { createdAt, ...rest } = data;
+  const row = data as OrganizationRow;
 
   return {
-    id: orgId,
-    createdAt: createdAt.toDate(),
-    ...(rest as Omit<OrganizationData, 'createdAt'>),
+    id: row.id,
+    name: row.organization_name,
+    description: row.description ?? undefined,
+    ownerId: row.owner_id,
+    createdAt: new Date(row.created_at),
   };
 };
-
-/**
- * Fetches an organization by its ID with Next.js caching.
- *
- * @param orgId - The unique identifier of the organization to fetch.
- *
- * @returns A promise resolving to the organization's data including its ID, or `null`
- * if the organization does not exist.
- *
- * @remarks
- * - Revalidates every 60 seconds.
- * - Tagged with `"orgs"` for group invalidation.
- * - Runs only on the server (`server-only`).
- */
-export const getOrgById = unstable_cache(
-  async (orgId: string) => getOrgByIdInteral(orgId),
-  ['getOrgById'], // global cache key
-  {
-    revalidate: 60,
-    tags: ['orgs'],
-  },
-);

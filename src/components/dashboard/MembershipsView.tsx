@@ -22,7 +22,6 @@ const MembershipsView = () => {
         const result = await getMembershipsByUserId(user.uid);
         setMemberships(result);
       } catch (err) {
-        console.error(err);
         setError(err as Error);
       } finally {
         setLoading(false);
