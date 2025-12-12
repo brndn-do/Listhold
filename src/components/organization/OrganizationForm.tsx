@@ -14,7 +14,7 @@ const organizationSchema = z.object({
   name: z
     .string()
     .min(2, { message: 'Organization name must be at least 2 characters' })
-    .max(100, { message: 'Organization name cannot exceed 100 characters' })
+    .max(50, { message: 'Organization name cannot exceed 50 characters' })
     .transform((s) => s.trim()),
   id: z
     .string()
