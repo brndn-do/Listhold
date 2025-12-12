@@ -10,7 +10,7 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
  * - `loading`: Whether the authentication state is still loading.
  */
 interface AuthContextType {
-  readonly user: AuthUser | null | undefined;
+  readonly user: AuthUser | null;
   readonly loading: boolean;
 }
 

@@ -39,18 +39,16 @@ export const signOutUser = async (): Promise<void> => {
  */
 export const subscribeToAuthState = (callback: (user: AuthUser | null) => void): (() => void) => {
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
+    if (!session) {
       callback(null);
-    }
-    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-      if (!session?.user?.id) return;
+    } else {
       const user: AuthUser = {
         uid: session?.user.id,
         displayName: session?.user.user_metadata.full_name ?? null,
         email: session?.user.email ?? null,
         photoURL: session?.user.user_metadata.avatar_url ?? null,
       };
-      callback(user || null);
+      callback(user);
     }
   });
 
