@@ -27,7 +27,7 @@ export const getOrgById = async (orgId: string): Promise<WithId<OrganizationData
   const row = data as OrganizationRow;
 
   return {
-    id: row.id,
+    id: row.slug,
     name: row.organization_name,
     description: row.description ?? undefined,
     ownerId: row.owner_id,

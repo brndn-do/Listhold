@@ -1,15 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { handleSignIn, handleSignOut, useAuth } from '@/context/AuthProvider';
+import { useAuth } from '@/context/AuthProvider';
+import { signInWithGoogle, signOut } from '@/services/authService';
 import { saveProfile } from '@/services/saveProfile';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+
+const ERROR_TIME = 3000;
 
 const Auth = () => {
   const { user } = useAuth();
   const [profileSaved, setProfileSaved] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   // save the user to the database once, when authenticated
   useEffect(() => {
@@ -19,19 +24,19 @@ const Auth = () => {
     }
   }, [user, profileSaved]);
 
-  const signIn = async () => {
-    setLoading(true);
-    try {
-      await handleSignIn();
-    } finally {
-      setLoading(false);
-    }
+  const handleSignIn = () => {
+    signInWithGoogle();
   };
 
-  const signOut = async () => {
+  const handleSignOut = async () => {
     setLoading(true);
     try {
-      await handleSignOut();
+      await signOut();
+    } catch {
+      setError(true);
+      setTimeout(() => {
+        setError(false);
+      }, ERROR_TIME);
     } finally {
       setLoading(false);
     }
@@ -54,11 +59,14 @@ const Auth = () => {
         ) : (
           <></>
         )}
-        <Button
-          onClick={user ? signOut : signIn}
+        {!error && (
+          <Button
+          onClick={user ? handleSignOut : handleSignIn}
           content={user ? 'Sign out' : 'Sign in with Google'}
           disabled={loading}
-        />
+          />
+        )}
+        {error && <ErrorMessage content={'Try again.'} />}
       </div>
     </div>
   );

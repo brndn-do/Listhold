@@ -34,6 +34,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      events: {
+        Row: {
+          avatar_url: string | null
+          capacity: number
+          created_at: string
+          creator_id: string
+          description: string | null
+          end_time: string | null
+          event_name: string
+          id: string
+          location: string
+          organization_id: string
+          signupscount: number
+          slug: string
+          start_time: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          capacity: number
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          end_time?: string | null
+          event_name: string
+          id?: string
+          location: string
+          organization_id: string
+          signupscount?: number
+          slug: string
+          start_time: string
+        }
+        Update: {
+          avatar_url?: string | null
+          capacity?: number
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          end_time?: string | null
+          event_name?: string
+          id?: string
+          location?: string
+          organization_id?: string
+          signupscount?: number
+          slug?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           avatar_url: string | null

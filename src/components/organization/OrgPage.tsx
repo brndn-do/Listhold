@@ -2,6 +2,7 @@
 
 import CreateEventLink from '@/components/organization/CreateEventLink';
 import EventsList from '@/components/organization/EventsList';
+import Line from '@/components/ui/Line';
 import { EventData } from '@/types/eventData';
 import { OrganizationData } from '@/types/organizationData';
 import { WithId } from '@/types/withId';
@@ -16,14 +17,13 @@ const OrgPage = ({ orgData, events }: OrgPageProps) => {
   const { id: orgId, name, description, ownerId } = orgData;
 
   return (
-    <div className='w-full flex flex-col p-8 gap-4 items-center'>
+    <div className='w-full flex flex-col gap-4 items-center'>
       <div className='flex flex-col gap-1 items-center'>
-        <h1 className='text-2xl font-bold'>{name}</h1>
-        {description && <p className='text-md'>{description}</p>}
+        <h1 className='text-2xl text-center font-bold'>{name}</h1>
+        {description && <p className='text-md text-center'>{description}</p>}
       </div>
 
-      {/* dotted separator */}
-      <div className='w-full border-b border-dotted'></div>
+      <Line />
 
       <div className='flex flex-col gap-2 items-center'>
         <h1 className='text-xl font-bold'>Upcoming Events:</h1>

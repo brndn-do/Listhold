@@ -2,16 +2,16 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Loading from '@/app/loading';
+import { getSession } from '@/services/authService';
 
-export default function AuthCallbackPage() {
+const AuthCallback = () => {
   const router = useRouter();
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Parse session from URL
-      await supabase.auth.getSession();
+      // Store session
+      await getSession();
 
       // Redirect to original page
       const urlParams = new URLSearchParams(window.location.search);
@@ -23,4 +23,6 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return <Loading />;
-}
+};
+
+export default AuthCallback;

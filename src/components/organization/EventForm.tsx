@@ -16,12 +16,12 @@ const eventSchema = z
     name: z
       .string()
       .min(2, { message: 'Event name must be at least 2 characters' })
-      .max(100, { message: 'Event name cannot exceed 100 characters' })
+      .max(50, { message: 'Event name cannot exceed 100 characters' })
       .transform((s) => s.trim()),
     location: z
       .string()
       .min(2, { message: 'Location must be at least 2 characters' })
-      .max(100, { message: 'Location cannot exceed 100 characters' })
+      .max(300, { message: 'Location cannot exceed 300 characters' })
       .transform((s) => s.trim()),
     start: z.iso.datetime({
       message: 'Invalid start date and time format (YYYY-MM-DDTHH:mm)',
@@ -202,7 +202,7 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
   }
 
   return (
-    <form onSubmit={submitForm} className='w-[80%] md:w-[40%] lg:w-[30%] xl:w-[25%] 2xl:w-[20%]'>
+    <form onSubmit={submitForm} className='w-[80%] md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[20%]'>
       <div>
         <FormInput
           id='name'

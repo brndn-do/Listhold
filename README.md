@@ -1,13 +1,13 @@
 # Rosterize
 
-A full-stack, serverless event management and sign-up platform built with Next.js + Firebase.
+A full-stack, serverless event management and sign-up platform built with Next.js + Supabase.
 
 ## Features
 
 #### Implemented
 
 - **User Authentication**
-  - Google OAuth sign-in via Firebase Authentication
+  - Google OAuth sign-in
 
 - **Organization Management**
   - Create organizations with customizable, URL-safe IDs (or auto-generated)
@@ -79,24 +79,23 @@ A full-stack, serverless event management and sign-up platform built with Next.j
 For design and implementation details see:
 
 - [docs/SCENARIO.md](docs/SCENARIO.md) — Usage scenario and user journeys.
-- [docs/DB_SCHEMA.md](docs/DB_SCHEMA.md) — Firestore database schema.
+- [docs/DB_SCHEMA.md](docs/DB_SCHEMA.md) — Database schema.
 - [docs/ROUTING_SCHEMA.md](docs/ROUTING_SCHEMA.md) — App Router layout.
 
 ## Tech Stack
 
-- **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod
-- **Backend:** Firebase (Firestore, Cloud Functions v2, Authentication, App Check)
-- **Hosting:** Vercel (frontend), Firebase (Cloud Functions)
-- **Email:** Firebase Extensions (Trigger Email from Firestore)
-- **Tooling:** Git, npm, ESLint, Prettier, Jest, React Testing Library
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod
+- **Backend:** Supabase
+- **Hosting:** Vercel, Supabase
+- **Email:** SendGrid
+- **Tooling:** Git, npm, Supabase CLI, ESLint, Prettier, Jest, React Testing Library
 
 ## Getting Started
 
 #### Prerequisites
 
 - Node.js v20 or higher
-- npm
-- Firebase CLI (`npm install -g firebase-tools`)
+- Docker Desktop (for local Supabase)
 
 #### Installation
 
@@ -112,67 +111,33 @@ For design and implementation details see:
     npm install
     ```
 
-#### Firebase Setup
-
-- Enable **Authentication**, **Firestore**, and **Cloud Functions** for your Firebase project(s).
-- Configure your Firebase CLI to use the correct project(s) (e.g. for `dev` and `prod` environments). You can use `firebase use <project_id>` to switch contexts.
-- Deploy Firebase functions and database rules using `firebase deploy`.
-
 #### Environment Variables
 
 This project uses environment variables for configuration. First, run the following command:
 
 ```bash
-cp .env.example .env # .env will be ignored by git
+cp .env.example .env.local # .env will be ignored by git
 ```
 
-`.env` will look like this:
-
-```dotenv
-# Client SDK configuration
-NEXT_PUBLIC_FIREBASE_API_KEY=""
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
-NEXT_PUBLIC_FIREBASE_APP_ID=""
-NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=""
-
-# Recaptcha for app check
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=""
-
-# Admin credentials for server side, paste single-line JSON
-FIREBASE_SERVICE_ACCOUNT=''
-```
-
-Then, copy and paste the values of your Firebase project's Client SDK configuration, the reCAPTCHA site key for your project's app check, and your service account credentials.
-
-Next, we need to set up an environment variable in `functions/`. Run:
-
-```bash
-cp functions/.env.example functions/.env
-```
-
-Open `functions/.env`:
-
-```dotenv
-# e.g. "rosterize.com"
-APP_DOMAIN=""
-```
-
-Then, configure your app's domain.
+Then, fill in the variables from your local Supabase configuration and Google OAuth credentials from your Google Cloud Project.
 
 #### Running the Project
 
-1.  Start the development server:
-    ```bash
-    npm run dev
-    ```
-    The application will be available at `http://localhost:3000` (or another port if 3000 is in use).
+1. Start Supabase:
+
+```bash
+npx supabase start
+```
+
+2.  Start the NextJS development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:3000` (or another port if 3000 is in use).
 
 #### Scripts
-
-This project includes several useful npm scripts:
 
 - `npm run dev`: Starts the development server.
 - `npm run build`: Builds the application for production.
@@ -180,8 +145,8 @@ This project includes several useful npm scripts:
 - `npm run lint`: Lints the code using ESLint.
 - `npm run format`: Formats the code using Prettier.
 - `npm run test`: Runs tests using Jest.
-- `npm run deploy:firebase`: Executes the automated release script`./deploy-firebase.sh` for deploying Firebase to production.
 - `npm run deploy:next`: Executes the automated release script `./deploy-next.sh` for pushing changes to `origin main`, triggering the build and deployment of our NextJS project on Vercel.
+- `npm run types`: Automatically generates types based on your local Supabase's Postgres schema and writes it to `supabaseTypes.ts`.
 
 ## Contributing
 
@@ -189,4 +154,4 @@ Please email dobrandon05@gmail.com if you are interested in contributing.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](/LICENSE).

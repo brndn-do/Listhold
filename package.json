@@ -13,7 +13,8 @@
     "test:watch": "TZ=UTC jest --watch",
     "deploy:firebase": "./deploy-firebase.sh",
     "deploy:next": "./deploy-next.sh",
-    "issues": "gh issue list --repo brndn-do/rosterize --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > .github/issues.json"
+    "types": "npx supabase start && npx supabase gen types --local > supabaseTypes.ts",
+    "issues": "gh issue list --repo brndn-do/rosterize --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > issues.json"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

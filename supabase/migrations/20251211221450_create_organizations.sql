@@ -6,16 +6,9 @@ CREATE TABLE public.organizations (
   description text,
   avatar_url text,
   created_at timestamptz NOT NULL DEFAULT NOW(),
-  CONSTRAINT slug_url_safe CHECK (slug ~ '^[a-z0-9]+(?:_[a-z0-9]+)*$' AND length(slug) >= 2 AND length(slug) < 50)
+  CONSTRAINT slug_url_safe CHECK (slug ~ '^[A-Za-z0-9](?:[A-Za-z0-9]|[-_](?=[A-Za-z0-9]))*[A-Za-z0-9]$' AND length(slug) >= 2 AND length(slug) < 50)
 );
 
--- Create indexes to allow efficient filtering by slug or by owner id
-CREATE INDEX idx_slug ON public.organizations(slug);
 CREATE INDEX idx_owner_id ON public.organizations(owner_id);
 
 ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Organizations: public read access"
-  ON public.organizations
-  FOR SELECT
-  USING (true);

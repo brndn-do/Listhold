@@ -1,34 +1,35 @@
 import { supabase } from '@/lib/supabase';
 import { AuthUser } from '@/types/authUser';
+import { ServiceError } from '@/types/serviceError';
 
 /**
- * Signs the user in using Google's OAuth popup flow.
- *
- * Opens a Google authentication popup window. After a successful login,
- * resolves with the authenticated Firebase `User` object.
- *
- * @returns A `Promise` that resolves with a Firebase `User` object.
- * @throws If the Google sign-in popup fails or is blocked.
+ * Signs the user in using Google.
  */
-export const signInWithGoogle = async (): Promise<void> => {
+export const signInWithGoogle = (): void => {
   const currentPath = window.location.pathname + window.location.search;
 
-  await supabase.auth.signInWithOAuth({
+  supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(currentPath)}`,
+      queryParams: {
+        // Forces the Google account picker every time
+        prompt: 'select_account',
+      },
     },
   });
 };
 
 /**
- * Signs the current user out of Firebase Authentication.
+ * Signs the current user out.
  *
- * @returns A `Promise` that resolves once the user is signed out.
- * @throws If sign-out fails.
+ * @throws A `ServiceError` if sign-out fails.
  */
-export const signOutUser = async (): Promise<void> => {
-  await supabase.auth.signOut();
+export const signOut = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new ServiceError('misc');
+  }
 };
 
 /**
@@ -56,3 +57,10 @@ export const subscribeToAuthState = (callback: (user: AuthUser | null) => void):
     data.subscription.unsubscribe();
   };
 };
+
+/**
+ * Loads and syncs the current authentication session.
+ */
+export const getSession = async (): Promise<void> => {
+  await supabase.auth.getSession();
+}
