@@ -10,6 +10,11 @@ CREATE TABLE public.profiles (
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+CREATE POLICY "Profiles: users can read their own profile"
+  ON public.profiles
+  FOR SELECT
+  USING ((select auth.uid()) = id);
+
 CREATE POLICY "Profiles: users can insert their own profile"
   ON public.profiles
   FOR INSERT

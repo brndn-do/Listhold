@@ -44,12 +44,16 @@ ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 
 -- Normalize to lower case
 CREATE OR REPLACE FUNCTION normalize_event_slug()
-RETURNS trigger AS $$
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
 BEGIN
   NEW.slug := lower(NEW.slug);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE TRIGGER trg_normalize_event_slug
 BEFORE INSERT OR UPDATE ON public.events
@@ -58,7 +62,11 @@ EXECUTE FUNCTION normalize_event_slug();
 
 -- Reject reserved keywords as slugs (defined in public.reserved_slugs)
 CREATE OR REPLACE FUNCTION reject_reserved_event_slugs()
-RETURNS trigger AS $$
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $$
 BEGIN
   -- Check if the new slug exists in the reserved_slugs table
   IF EXISTS (
@@ -72,7 +80,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 -- Attach the trigger to events
 CREATE TRIGGER trg_reject_reserved_event_slugs
