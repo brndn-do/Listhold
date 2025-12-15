@@ -17,12 +17,12 @@ const organizationSchema = z.object({
     .min(2, { message: 'Organization name must be at least 2 characters' })
     .max(50, { message: 'Organization name cannot exceed 50 characters' })
     .transform((s) => s.trim()),
-  id: z
+  slug: z
     .string()
-    .min(4, { message: 'ID must be at least 4 characters' })
-    .max(50, { message: 'ID cannot exceed 50 characters' })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      message: 'ID can only contain letters, numbers, hyphens (-), and underscores (_).',
+    .min(3, { message: 'Slug must be at least 4 characters' })
+    .max(36, { message: 'Slug cannot exceed 36 characters' })
+    .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/, {
+      message: 'Invalid Slug',
     })
     .optional(),
 });
@@ -32,16 +32,16 @@ type CreateOrganizationRequest = z.infer<typeof organizationSchema>;
 
 // inputs are all strings, including empty strings, but zod's preprocess takes care of it
 interface FormData {
-  id: string;
+  slug: string;
   name: string;
 }
 
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
-const OrganizationForm = () => {
+const OrgForm = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [formData, setFormData] = useState<FormData>({ id: '', name: '' });
+  const [formData, setFormData] = useState<FormData>({ slug: '', name: '' });
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,8 +62,8 @@ const OrganizationForm = () => {
     setFunctionError(null);
     setFormErrors({}); // clear previous errors
 
-    const toValidate: { id: string | undefined; name: string } = {
-      id: formData.id.trim() || undefined,
+    const toValidate: { slug: string | undefined; name: string } = {
+      slug: formData.slug.trim() || undefined,
       name: formData.name.trim(),
     };
 
@@ -95,8 +95,8 @@ const OrganizationForm = () => {
     // validated, continue
     setIsLoading(true);
     try {
-      const orgId = await createOrg(validatedData);
-      router.push(`/organizations/${encodeURIComponent(orgId)}`);
+      const orgSlug = await createOrg(validatedData);
+      router.push(`/organizations/${encodeURIComponent(orgSlug)}`);
     } catch (err: unknown) {
       const error = err as ServiceError;
       const msg = error.message as ServiceErrorMessage;
@@ -123,10 +123,10 @@ const OrganizationForm = () => {
           onChange={handleChange}
         />
         <FormInput
-          id='id'
+          id='slug'
           required={false}
-          label='A unique ID (optional)'
-          value={formData.id}
+          label='A unique slug (optional)'
+          value={formData.slug}
           onChange={handleChange}
         />
       </div>
@@ -169,4 +169,4 @@ const OrganizationForm = () => {
   );
 };
 
-export default OrganizationForm;
+export default OrgForm;

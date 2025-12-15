@@ -3,18 +3,18 @@
 import CreateEventLink from '@/components/organization/CreateEventLink';
 import EventsList from '@/components/organization/EventsList';
 import Line from '@/components/ui/Line';
-import { EventData } from '@/types/eventData';
-import { OrganizationData } from '@/types/organizationData';
+import { EventData } from '@/types/clientEventData';
+import { ClientOrgData } from '@/types/clientOrgData';
 import { WithId } from '@/types/withId';
 
 interface OrgPageProps {
-  orgData: WithId<OrganizationData>;
+  orgData: ClientOrgData;
   events: WithId<EventData>[];
 }
 
 const OrgPage = ({ orgData, events }: OrgPageProps) => {
   // extract name and desc
-  const { id: orgId, name, description, ownerId } = orgData;
+  const { slug, name, description, ownerId } = orgData;
 
   return (
     <div className='w-full flex flex-col gap-4 items-center'>
@@ -27,7 +27,7 @@ const OrgPage = ({ orgData, events }: OrgPageProps) => {
 
       <div className='flex flex-col gap-2 items-center'>
         <h1 className='text-xl font-bold'>Upcoming Events:</h1>
-        <CreateEventLink organizationId={orgId} ownerId={ownerId} />
+        <CreateEventLink orgSlug={slug} ownerId={ownerId} />
         <EventsList events={events} />
       </div>
     </div>

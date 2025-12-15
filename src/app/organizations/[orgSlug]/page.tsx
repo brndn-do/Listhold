@@ -1,9 +1,8 @@
 import OrgPage from '@/components/organization/OrgPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import { getEventsByOrgId } from '@/services/getEventsByOrgId';
-import { getOrgById } from '@/services/getOrgById';
-import { EventData } from '@/types/eventData';
-import { OrganizationData } from '@/types/organizationData';
+import { getEventsByOrgId } from '@/services/TODO/getEventsByOrgId';
+import { getOrgBySlug } from '@/services/getOrgBySlug';
+import { EventData } from '@/types/clientEventData';
 import { WithId } from '@/types/withId';
 import { Metadata } from 'next';
 
@@ -12,11 +11,11 @@ export const revalidate = 60;
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<{ orgId: string }>;
+  params: Promise<{ orgSlug: string }>;
 }): Promise<Metadata> => {
-  const { orgId } = await params;
+  const { orgSlug } = await params;
   try {
-    const orgData: WithId<OrganizationData> | null = await getOrgById(orgId);
+    const orgData = await getOrgBySlug(orgSlug);
     if (!orgData) {
       return {
         title: 'Organization Not Found — Rosterize',
@@ -34,14 +33,14 @@ export const generateMetadata = async ({
   }
 };
 
-const Organization = async ({ params }: { params: Promise<{ orgId: string }> }) => {
-  const { orgId } = await params;
+const Organization = async ({ params }: { params: Promise<{ orgSlug: string }> }) => {
+  const { orgSlug } = await params;
   try {
-    const orgData: WithId<OrganizationData> | null = await getOrgById(orgId);
+    const orgData = await getOrgBySlug(orgSlug);
     if (!orgData) {
       return <p>Not found</p>;
     }
-    const events: WithId<EventData>[] = await getEventsByOrgId(orgId);
+    const events: WithId<EventData>[] = await getEventsByOrgId(orgSlug);
     return <OrgPage orgData={orgData} events={events} />;
   } catch (err: unknown) {
     return <ErrorMessage />;

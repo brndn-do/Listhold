@@ -3,38 +3,43 @@ import { z } from 'zod';
 import type { Database } from '../../../supabaseTypes.ts';
 
 const createEventSchema = z.object({
-  name: z.string().min(2).max(50),
+  name: z.string().min(1).max(50),
+  orgSlug: z
+    .string()
+    .min(3)
+    .max(36)
+    .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/),
   slug: z
     .string()
-    .min(2)
-    .max(30)
-    .regex(/^[a-z0-9]+(?:_[a-z0-9]+)*$/)
+    .min(3)
+    .max(36)
+    .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/)
     .optional(),
-  description: z.string().min(1).max(200).optional(),
-  avatar: z.string().optional(), // Base64
+  location: z.string().min(1).max(200),
+  capacity: z.number().min(1).max(300),
+  start: z.iso.datetime(),
+  end: z.iso.datetime().optional(),
+  description: z.string().min(1).max(1000).optional(),
+  photo: z.string().min(1).max(1000).optional(), // Base64
 });
 
-type OrganizationInsert = Database['public']['Tables']['organizations']['Insert'];
-type OrganizationRow = Database['public']['Tables']['organizations']['Row'];
+type EventsInsert = Database['public']['Tables']['events']['Insert'];
 
 Deno.serve(async (req): Promise<Response> => {
-  if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
-  }
-
   const reqData = await req.json();
-  const parsed = createOrgSchema.safeParse(reqData);
+
+  console.log(reqData);
+
+  const parsed = createEventSchema.safeParse(reqData);
 
   if (!parsed.success) {
     return new Response('Invalid form data', { status: 400 });
   }
 
-  const { name, slug, description } = parsed.data;
+  const { name, orgSlug, slug, description, location, capacity, start, end } = parsed.data;
 
-  // generate ID
-  const organizationId = crypto.randomUUID();
-  // set slug to ID if not provided
-  const finalSlug = slug ?? organizationId;
+  // generate random event slug if not specified
+  const finalSlug = slug ?? crypto.randomUUID();
 
   // check auth
   const authHeader = req.headers.get('Authorization') || '';
@@ -48,32 +53,44 @@ Deno.serve(async (req): Promise<Response> => {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const toInsert: OrganizationInsert = {
-    id: organizationId,
-    organization_name: name,
-    owner_id: user.id,
-    slug: finalSlug,
-    description: description,
-  };
-
-  // create organization
-  const { data, error } = await supabase
+  // get org ID based on org slug
+  const { data: orgData, error: orgError } = await supabase
     .from('organizations')
-    .insert(toInsert)
-    .select('id, slug')
+    .select('id')
+    .eq('slug', orgSlug)
     .single();
 
-  const row = data as OrganizationRow | null;
+  if (orgError || !orgData) {
+    console.error('ERROR FETCHING ORG ID FROM SLUG:', orgError.message);
+    return new Response('Internal', { status: 500 });
+  }
+
+  const orgId = orgData.id;
+
+  const toInsert: EventsInsert = {
+    event_name: name,
+    organization_id: orgId,
+    creator_id: user.id,
+    slug: finalSlug,
+    description,
+    capacity,
+    location,
+    start_time: start,
+    end_time: end,
+  };
+
+  // create event
+  const { data, error } = await supabase.from('events').insert(toInsert).select('slug').single();
 
   if (error) {
-    console.error('ERROR INSERTING: ', error.message);
+    console.error('ERROR INSERTING:', error.message);
     if (error.code === '23505') {
-      return new Response(`An organization with slug ${finalSlug} already exists`, { status: 409 });
+      return new Response(`An event with slug ${finalSlug} already exists`, { status: 409 });
     }
     return new Response('Internal', { status: 500 });
   }
 
-  if (!row) {
+  if (!data) {
     console.error('ERROR INSERTING: row was not returned');
     return new Response('Internal', { status: 500 });
   }
@@ -81,8 +98,7 @@ Deno.serve(async (req): Promise<Response> => {
   return new Response(
     JSON.stringify({
       success: true,
-      organizationId: row.id,
-      slug: row.slug,
+      slug: data.slug,
     }),
     { status: 200, headers: { 'Content-Type': 'application/json' } },
   );

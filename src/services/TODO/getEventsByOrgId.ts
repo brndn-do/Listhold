@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { adminDb, Timestamp } from '@/lib/firebase-admin';
-import { EventData } from '@/types/eventData';
+import { EventData } from '@/types/clientEventData';
 import { WithId } from '@/types/withId';
 
 /**

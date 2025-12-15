@@ -3,18 +3,15 @@
 import EventForm from '@/components/organization/EventForm';
 import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthProvider';
-import { OrganizationData } from '@/types/organizationData';
-import { WithId } from '@/types/withId';
 
 interface CreateEventPageProps {
-  orgData: WithId<OrganizationData>;
+  orgSlug: string;
+  orgName: string;
+  orgOwnerId: string;
 }
 
-const CreateEventPage = ({ orgData }: CreateEventPageProps) => {
+const CreateEventPage = ({ orgSlug, orgName, orgOwnerId }: CreateEventPageProps) => {
   const { user, loading } = useAuth();
-
-  // extract name and ownerId
-  const { id: orgId, name, ownerId } = orgData;
 
   if (loading) {
     return (
@@ -24,14 +21,14 @@ const CreateEventPage = ({ orgData }: CreateEventPageProps) => {
     );
   }
 
-  if (!user || user.uid !== ownerId) {
+  if (!user || user.uid !== orgOwnerId) {
     return <p>Unauthorized, please sign in as the owner.</p>;
   }
 
   return (
     <div className='w-full flex flex-col items-center gap-8'>
-      <h1 className='text-2xl font-bold max-w-full text-center'>Create Event For {name}</h1>
-      <EventForm organizationId={orgId} ownerId={ownerId} />
+      <h1 className='text-2xl font-bold max-w-full text-center'>Create Event For {orgName}</h1>
+      <EventForm orgSlug={orgSlug} ownerId={orgOwnerId} />
     </div>
   );
 };

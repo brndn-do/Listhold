@@ -1,7 +1,7 @@
 'use client';
 
-import { subscribeToSignups, subscribeToWaitlist } from '@/services/subscribeToList';
-import { EventData } from '@/types/eventData';
+import { subscribeToSignups, subscribeToWaitlist } from '@/services/TODO/subscribeToList';
+import { ClientEventData } from '@/types/clientEventData';
 import { PromptData } from '@/types/promptData';
 import { SignupData } from '@/types/signupData';
 import { WithId } from '@/types/withId';
@@ -14,7 +14,7 @@ interface EventContextType {
   /**
    * The main event data, including ID.
    */
-  readonly eventData: WithId<EventData>;
+  readonly eventData: ClientEventData;
 
   /**
    * Map of prompt IDs to prompt data.
@@ -67,7 +67,7 @@ export const EventProvider = ({
   prompts,
   children,
 }: {
-  eventData: WithId<EventData>;
+  eventData: ClientEventData;
   prompts: Record<string, PromptData>;
   children: ReactNode;
 }) => {

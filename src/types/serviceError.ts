@@ -4,6 +4,6 @@ export class ServiceError extends Error {
   constructor(message: ServiceErrorMessage) {
     super(message);
     this.name = 'ServiceError';
-    Object.setPrototypeOf(this, ServiceError.prototype); 
+    Object.setPrototypeOf(this, ServiceError.prototype);
   }
 }

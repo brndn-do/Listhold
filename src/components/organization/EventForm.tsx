@@ -15,13 +15,13 @@ const eventSchema = z
   .object({
     name: z
       .string()
-      .min(2, { message: 'Event name must be at least 2 characters' })
+      .min(1, { message: 'Event name must be at least 1 character' })
       .max(50, { message: 'Event name cannot exceed 100 characters' })
       .transform((s) => s.trim()),
     location: z
       .string()
-      .min(2, { message: 'Location must be at least 2 characters' })
-      .max(300, { message: 'Location cannot exceed 300 characters' })
+      .min(2, { message: 'Location must be at least 1 character' })
+      .max(200, { message: 'Location cannot exceed 200 characters' })
       .transform((s) => s.trim()),
     start: z.iso.datetime({
       message: 'Invalid start date and time format (YYYY-MM-DDTHH:mm)',
@@ -41,18 +41,15 @@ const eventSchema = z
           .min(1, { message: 'Capacity must be at least 1' })
           .max(300, { message: 'Capacity cannot exceed 300' }),
       ),
-    eventId: z.preprocess(
+    slug: z.preprocess(
       (val) => (val === '' ? undefined : val),
       z
         .string()
         .trim()
-        .min(4, { message: 'Custom ID must be at least 4 characters' })
-        .max(50, { message: 'Custom ID cannot exceed 50 characters' })
-        .regex(/^[a-zA-Z0-9_-]+$/, {
-          message: 'Custom ID can only contain letters, numbers, hyphens (-), and underscores (_).',
-        })
-        .refine((val) => val.toLowerCase() !== 'new', {
-          message: "The ID 'new' is a reserved word and cannot be used.",
+        .min(3, { message: 'Slug must be at least 3 characters' })
+        .max(36, { message: 'Slug cannot exceed 36 characters' })
+        .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/, {
+          message: 'Invalid slug',
         })
         .optional(),
     ),
@@ -68,7 +65,7 @@ const eventSchema = z
   });
 
 // Type for the data sent to the cloud function
-type CreateEventRequest = z.infer<typeof eventSchema> & { organizationId: string };
+type CreateEventRequest = z.infer<typeof eventSchema> & { orgSlug: string };
 
 // Type for the internal form state (all inputs are strings)
 interface FormData {
@@ -77,17 +74,17 @@ interface FormData {
   start: string;
   end: string;
   capacity: string; // Stored as string in form state
-  eventId: string;
+  slug: string;
 }
 
 interface EventFormProps {
-  organizationId: string;
+  orgSlug: string;
   ownerId: string;
 }
 
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
-const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
+const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [formData, setFormData] = useState<FormData>({
@@ -96,7 +93,7 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     start: '',
     end: '',
     capacity: '',
-    eventId: '',
+    slug: '',
   });
   const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
   const [functionError, setFunctionError] = useState<string | null>(null);
@@ -137,7 +134,7 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     try {
       // Validate form data using Zod schema
       const parsedData = eventSchema.parse(toValidate);
-      validatedData = { ...parsedData, organizationId }; // Add organizationId from props
+      validatedData = { ...parsedData, orgSlug }; // Add orgId from props
     } catch (err) {
       if (err instanceof ZodError) {
         const flat = z.flattenError(err);
@@ -161,8 +158,8 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
     // validated, continue
     setIsLoading(true);
     try {
-      const eventId = await createEvent(validatedData);
-      router.push(`/events/${encodeURIComponent(eventId)}`);
+      const slug = await createEvent(validatedData);
+      router.push(`/events/${encodeURIComponent(slug)}`);
     } catch (err: unknown) {
       const error = err as Error;
       setIsLoading(false);
@@ -219,10 +216,10 @@ const EventForm = ({ organizationId, ownerId }: EventFormProps) => {
           onChange={handleChange}
         />
         <FormInput
-          id='eventId'
+          id='slug'
           required={false}
           label='Custom Event ID (optional)'
-          value={formData.eventId}
+          value={formData.slug}
           onChange={handleChange}
         />
         <FormInput

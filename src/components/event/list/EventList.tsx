@@ -5,7 +5,7 @@ import ListItem from './ListItem';
 import Dots from '@/components/ui/Dots';
 
 interface EventListProps {
-  viewingWaitlist: boolean
+  viewingWaitlist: boolean;
 }
 
 const EventList = ({ viewingWaitlist }: EventListProps) => {
@@ -22,9 +22,9 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
     if (selectionLoading) {
       return (
         <div className='p-36'>
-          <Dots size={3}/>
+          <Dots size={3} />
         </div>
-      )
+      );
     }
 
     if (selectionError) {

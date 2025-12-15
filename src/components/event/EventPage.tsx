@@ -8,8 +8,8 @@ import EventList from '@/components/event/list/EventList';
 import EventButton from '@/components/event/EventButton';
 import SignupFlow from '@/components/event/signup/SignupFlow';
 import Line from '@/components/ui/Line';
-import { addUserToEvent } from '@/services/addUserToEvent';
-import { removeUserFromEvent } from '@/services/removeUserFromEvent';
+import { addUserToEvent } from '@/services/TODO/addUserToEvent';
+import { removeUserFromEvent } from '@/services/TODO/removeUserFromEvent';
 
 const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries

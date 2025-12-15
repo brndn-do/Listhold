@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { WithId } from '@/types/withId';
-import { EventData } from '@/types/eventData';
+import { EventData } from '@/types/clientEventData';
 import { formatDate } from '@/utils/timeFormatter';
 
 interface EventsListProps {

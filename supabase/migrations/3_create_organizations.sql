@@ -12,8 +12,8 @@ CREATE TABLE public.organizations (
   -- An optional description of the organization. Must be between 1 and 1000 characters inclusive.
   description text CHECK (length(description) BETWEEN 1 AND 1000),
 
-  -- An optional URL to the avatar of the organization. Must be between 10 and 500 characters inclusive.
-  avatar_url text CHECK (avatar_url IS NULL OR length(avatar_url) BETWEEN 10 AND 500),
+  -- An optional URL to the avatar of the organization. Must be at most 500 characters.
+  avatar_url text CHECK (avatar_url IS NULL OR length(avatar_url) <= 500),
 
   created_at timestamptz NOT NULL DEFAULT NOW()
 );

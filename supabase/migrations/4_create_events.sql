@@ -13,10 +13,10 @@ CREATE TABLE public.events (
   -- The organization name. Must be between 1 and 50 characters inclusive.
   event_name text NOT NULL CHECK (length(event_name) BETWEEN 1 AND 50),
 
-  -- The location of the event. Must be between 1 and 50 characters inclusive.
-  location text NOT NULL CHECK (length(location) BETWEEN 1 AND 50),
+  -- The location of the event. Must be between 1 and 200 characters inclusive.
+  location text NOT NULL CHECK (length(location) BETWEEN 1 AND 200),
 
-  -- The maximum number of signups this event can have. Must be between 1 and 300 characters inclusive.
+  -- The maximum number of signups this event can have. Must be between 1 and 300 inclusive.
   capacity integer NOT NULL CHECK (capacity BETWEEN 1 AND 300),
 
   -- The current number of signups this event has. Defaults to 0 when created.
@@ -31,8 +31,8 @@ CREATE TABLE public.events (
   -- An optional end time of the event. Must be after the start time.
   end_time timestamptz CHECK (end_time > start_time),
 
-  -- An optional URL to a picture that represents this event. Must be between 10 and 500 characters inclusive.
-  photo_url text CHECK (photo_url IS NULL OR length(photo_url) BETWEEN 10 AND 500),
+  -- An optional URL to a picture that represents this event. Must be at most 500 characters.
+  photo_url text CHECK (photo_url IS NULL OR length(photo_url) <= 500),
 
   created_at timestamptz NOT NULL DEFAULT NOW()
 );

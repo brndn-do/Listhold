@@ -24,7 +24,7 @@ export default defineConfig([
       '**/__tests__/**',
       '**/*.d.ts',
       '**/functions/**',
-      '**/supabase/**'
+      '**/supabase/**',
     ],
   },
 

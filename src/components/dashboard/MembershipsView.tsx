@@ -3,7 +3,7 @@
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Spinner from '@/components/ui/Spinner';
 import { useAuth } from '@/context/AuthProvider';
-import { getMembershipsByUserId } from '@/services/getMembershipsByUserId';
+import { getMembershipsByUserId } from '@/services/TODO/getMembershipsByUserId';
 import { MembershipData } from '@/types/membershipData';
 import { WithId } from '@/types/withId';
 import Link from 'next/link';

@@ -1,25 +1,18 @@
-import { functions } from '@/lib/firebase';
-import { FunctionsError, httpsCallable } from 'firebase/functions';
+import { supabase } from '@/lib/supabase';
+import { ServiceError } from '@/types/serviceError';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 interface CreateEventRequest {
   name: string;
+  orgSlug: string;
+  slug?: string;
   location: string;
+  capacity: number;
   start: string;
   end?: string;
-  capacity: number;
-  eventId?: string;
-  organizationId: string;
+  description?: string;
+  photo?: File;
 }
-
-interface CreateEventResult {
-  eventId: string;
-  message: string;
-}
-
-const cloudFunction = httpsCallable<CreateEventRequest, CreateEventResult>(
-  functions,
-  'createEvent',
-);
 
 /**
  * Creates an event
@@ -28,12 +21,37 @@ const cloudFunction = httpsCallable<CreateEventRequest, CreateEventResult>(
  * @throws if the cloud function errors.
  */
 export const createEvent = async (request: CreateEventRequest): Promise<string> => {
-  try {
-    const result = await cloudFunction(request);
-    const data = result.data;
-    return data.eventId;
-  } catch (err: unknown) {
-    const firebaseError = err as FunctionsError;
-    throw new Error(firebaseError.code);
+  const toSend = {
+    name: request.name,
+    orgSlug: request.orgSlug,
+    slug: request.slug,
+    location: request.location,
+    capacity: request.capacity,
+    start: request.start,
+    end: request.end,
+    description: request.description,
+  };
+
+  console.log(toSend);
+
+  const { data, error } = await supabase.functions.invoke('create_event', {
+    body: toSend,
+  });
+
+  if (error) {
+    const functionsError = error as FunctionsHttpError;
+    const status = functionsError.context.status;
+    if (status === 409) {
+      throw new ServiceError('already-exists');
+    }
+    throw new ServiceError('internal');
   }
+
+  if (!data) {
+    throw new ServiceError('internal');
+  }
+
+  const { slug } = data;
+
+  return slug;
 };

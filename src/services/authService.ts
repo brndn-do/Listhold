@@ -63,4 +63,4 @@ export const subscribeToAuthState = (callback: (user: AuthUser | null) => void):
  */
 export const getSession = async (): Promise<void> => {
   await supabase.auth.getSession();
-}
+};

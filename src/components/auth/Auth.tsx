@@ -61,9 +61,9 @@ const Auth = () => {
         )}
         {!error && (
           <Button
-          onClick={user ? handleSignOut : handleSignIn}
-          content={user ? 'Sign out' : 'Sign in with Google'}
-          disabled={loading}
+            onClick={user ? handleSignOut : handleSignIn}
+            content={user ? 'Sign out' : 'Sign in with Google'}
+            disabled={loading}
           />
         )}
         {error && <ErrorMessage content={'Try again.'} />}

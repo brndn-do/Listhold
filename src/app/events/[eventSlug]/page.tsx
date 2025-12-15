@@ -1,9 +1,9 @@
 import EventPage from '@/components/event/EventPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
-import { getEventById } from '@/services/getEventById';
-import { getPromptsByEventId } from '@/services/getPromptsByEventId';
-import { EventData } from '@/types/eventData';
+import { getEventBySlug } from '@/services/getEventBySlug';
+import { getPromptsByEventId } from '@/services/TODO/getPromptsByEventId';
+import { EventData } from '@/types/clientEventData';
 import { PromptData } from '@/types/promptData';
 import { WithId } from '@/types/withId';
 import { Metadata } from 'next';
@@ -13,11 +13,11 @@ export const revalidate = 60;
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<{ eventId: string }>;
+  params: Promise<{ eventSlug: string }>;
 }): Promise<Metadata> => {
-  const { eventId } = await params;
+  const { eventSlug } = await params;
   try {
-    const eventData: WithId<EventData> | null = await getEventById(eventId);
+    const eventData: WithId<EventData> | null = await getEventBySlug(eventSlug);
     if (!eventData) {
       return {
         title: 'Event Not Found — Rosterize',
@@ -37,14 +37,14 @@ export const generateMetadata = async ({
   }
 };
 
-const Event = async ({ params }: { params: Promise<{ eventId: string }> }) => {
-  const { eventId } = await params;
+const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => {
+  const { eventSlug } = await params;
   try {
-    const eventData: WithId<EventData> | null = await getEventById(eventId);
+    const eventData: WithId<EventData> | null = await getEventBySlug(eventSlug);
     if (!eventData) {
       return <p>Not found</p>;
     }
-    const prompts: Record<string, PromptData> = await getPromptsByEventId(eventId);
+    const prompts: Record<string, PromptData> = await getPromptsByEventId(eventSlug);
     return (
       <EventProvider eventData={eventData} prompts={prompts}>
         <EventPage />

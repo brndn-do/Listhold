@@ -1,13 +1,14 @@
-export interface EventData {
+export interface ClientEventData {
+  id: string;
+  slug: string;
   name: string;
   description?: string;
-  organizationId: string;
-  organizationName: string;
+  orgSlug: string;
+  orgName: string;
   creatorId: string;
   location: string;
   start: Date;
   end?: Date;
   capacity: number;
-  signupsCount: number;
   createdAt: Date;
 }

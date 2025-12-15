@@ -4,23 +4,22 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 
 interface CreateOrgRequest {
   name: string;
-  id?: string;
+  slug?: string;
 }
 
 /**
  * Creates an organization.
  * @param request - An object including the request details.
- * @returns The id of the newly created organization.
+ * @returns The slug of the newly created organization.
  * @throws A `ServiceError` if the organization could not be created.
  */
 export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
   const toSend = {
     name: request.name,
-    slug: request.id,
+    slug: request.slug,
   };
 
   const { data, error } = await supabase.functions.invoke('create_organization', {
-    method: 'POST',
     body: toSend,
   });
 
