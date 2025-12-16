@@ -1,8 +1,7 @@
 'use client';
 
+import { Prompt } from '@/components/event/signup/PromptView';
 import { subscribeToSignups, subscribeToWaitlist } from '@/services/TODO/subscribeToList';
-import { ClientEventData } from '@/types/clientEventData';
-import { PromptData } from '@/types/promptData';
 import { SignupData } from '@/types/signupData';
 import { WithId } from '@/types/withId';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
@@ -11,15 +10,20 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
  * Shape of the Event context, providing all relevant data for a single event.
  */
 interface EventContextType {
-  /**
-   * The main event data, including ID.
-   */
-  readonly eventData: ClientEventData;
+  readonly eventId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly orgSlug: string;
+  readonly orgName: string;
+  readonly start: Date;
+  readonly end?: Date;
+  readonly location: string;
+  readonly capacity: number;
 
   /**
-   * Map of prompt IDs to prompt data.
+   * Order array of the event's prompts.
    */
-  readonly prompts: Readonly<Record<string, PromptData>>;
+  readonly prompts: ReadonlyArray<Prompt>;
 
   /**
    * Array of signups in the main list.
@@ -57,22 +61,38 @@ interface EventContextType {
 /** React context for providing event data throughout the app */
 const EventContext = createContext<EventContextType | undefined>(undefined);
 
+export interface EventProviderProps {
+  eventId: string;
+  name: string;
+  description?: string;
+  orgSlug: string;
+  orgName: string;
+  start: Date;
+  end?: Date;
+  location: string;
+  capacity: number;
+  prompts: Prompt[];
+  children: ReactNode;
+}
+
 /**
  * Provides event-related data (event, signups, waitlist, prompts) via context.
  * @param props.eventId - ID of the event
  * @param props.children - React children to wrap with this provider
  */
 export const EventProvider = ({
-  eventData,
+  eventId,
+  name,
+  orgSlug,
+  orgName,
+  description,
+  start,
+  end,
+  location,
+  capacity,
   prompts,
   children,
-}: {
-  eventData: ClientEventData;
-  prompts: Record<string, PromptData>;
-  children: ReactNode;
-}) => {
-  const eventId = eventData.id;
-
+}: EventProviderProps) => {
   const [signups, setSignups] = useState<WithId<SignupData>[]>([]);
   const [signupsLoading, setSignupsLoading] = useState(true);
   const [signupsError, setSignupsError] = useState<Error | null>(null);
@@ -122,7 +142,15 @@ export const EventProvider = ({
 
   const value = useMemo(() => {
     return {
-      eventData,
+      eventId,
+      name,
+      orgSlug,
+      orgName,
+      description,
+      start,
+      end,
+      location,
+      capacity,
       prompts,
       signups,
       signupIds,
@@ -134,7 +162,15 @@ export const EventProvider = ({
       waitlistError,
     };
   }, [
-    eventData,
+    eventId,
+    name,
+    orgSlug,
+    orgName,
+    description,
+    start,
+    end,
+    location,
+    capacity,
     prompts,
     signups,
     signupIds,

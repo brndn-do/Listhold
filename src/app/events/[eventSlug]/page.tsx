@@ -1,14 +1,8 @@
 import EventPage from '@/components/event/EventPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
-import { getEventBySlug } from '@/services/getEventBySlug';
-import { getPromptsByEventId } from '@/services/TODO/getPromptsByEventId';
-import { EventData } from '@/types/clientEventData';
-import { PromptData } from '@/types/promptData';
-import { WithId } from '@/types/withId';
+import { getEventProviderProps } from '@/services/getEventProviderProps';
 import { Metadata } from 'next';
-
-export const revalidate = 60;
 
 export const generateMetadata = async ({
   params,
@@ -17,8 +11,8 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { eventSlug } = await params;
   try {
-    const eventData: WithId<EventData> | null = await getEventBySlug(eventSlug);
-    if (!eventData) {
+    const props = await getEventProviderProps(eventSlug);
+    if (!props) {
       return {
         title: 'Event Not Found — Rosterize',
         description: 'The requested event could not be found.',
@@ -26,8 +20,8 @@ export const generateMetadata = async ({
     }
 
     return {
-      title: `${eventData.name} — Rosterize`,
-      description: eventData.description || 'Join this event on Rosterize.',
+      title: `${props.name} — Rosterize`,
+      description: props.description || 'Join this event on Rosterize.',
     };
   } catch (err) {
     return {
@@ -40,13 +34,12 @@ export const generateMetadata = async ({
 const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => {
   const { eventSlug } = await params;
   try {
-    const eventData: WithId<EventData> | null = await getEventBySlug(eventSlug);
-    if (!eventData) {
+    const props = await getEventProviderProps(eventSlug);
+    if (!props) {
       return <p>Not found</p>;
     }
-    const prompts: Record<string, PromptData> = await getPromptsByEventId(eventSlug);
     return (
-      <EventProvider eventData={eventData} prompts={prompts}>
+      <EventProvider {...props}>
         <EventPage />
       </EventProvider>
     );

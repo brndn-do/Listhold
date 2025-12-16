@@ -26,7 +26,7 @@ const EventButton = ({
 }: EventButtonProps) => {
   const { user } = useAuth();
   const {
-    eventData,
+    capacity,
     signups,
     signupsLoading,
     signupsError,
@@ -44,18 +44,11 @@ const EventButton = ({
 
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
-    return !!((eventData?.capacity ?? 0) > signups.length);
-  }, [eventData, signups]);
+    return !!((capacity ?? 0) > signups.length);
+  }, [capacity, signups]);
 
   // We do not have enough information about event to allow the user to join/leave
-  if (
-    !eventData ||
-    signupsLoading ||
-    signupsError ||
-    waitlistLoading ||
-    waitlistError ||
-    !prompts
-  ) {
+  if (signupsLoading || signupsError || waitlistLoading || waitlistError) {
     return null;
   }
 

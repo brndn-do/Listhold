@@ -1,12 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { WithId } from '@/types/withId';
-import { EventData } from '@/types/clientEventData';
 import { formatDate } from '@/utils/timeFormatter';
+import { OrgPageEvent } from '@/components/organization/OrgPage';
 
 interface EventsListProps {
-  events: WithId<EventData>[];
+  events: OrgPageEvent[];
 }
 
 const EventsList = ({ events }: EventsListProps) => {
@@ -23,8 +22,8 @@ const EventsList = ({ events }: EventsListProps) => {
       <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
         {events.map((event) => (
           <Link
-            href={`/events/${encodeURI(event.id)}`}
-            key={event.id}
+            href={`/events/${encodeURI(event.slug)}`}
+            key={event.slug}
             className='group flex flex-col gap-8 rounded-lg border p-3 transition-all duration-250 ease-in hover:scale-103 hover:border-purple-600 hover:text-purple-600 dark:hover:border-purple-500 dark:hover:text-purple-500'
           >
             <div className='flex flex-col gap-1'>

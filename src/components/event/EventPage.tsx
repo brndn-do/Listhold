@@ -16,9 +16,8 @@ const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventPage = () => {
   const { user } = useAuth();
-  const { eventData } = useEvent();
+  const { eventId } = useEvent();
   const userId = user?.uid;
-  const eventId = eventData?.id;
 
   const [cooldownMessage, setCooldownMessage] = useState<string | null>(null);
   const [requestLoading, setRequestLoading] = useState(false); // whether the request to join/leave is loading
@@ -83,7 +82,7 @@ const EventPage = () => {
 
   return (
     <div className='flex flex-col gap-1 items-center w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%]'>
-      <EventInfo eventData={eventData} />
+      <EventInfo />
 
       <Line style='dashed' />
 

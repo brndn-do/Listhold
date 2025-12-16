@@ -1,6 +1,6 @@
 import { supabase } from './supabase.ts';
 import { z } from 'zod';
-import type { Database } from '../../../supabaseTypes.ts';
+import type { Database } from '../../../types/supabaseTypes.ts';
 
 const createOrgSchema = z.object({
   name: z.string().min(1).max(50),

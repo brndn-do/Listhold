@@ -1,7 +1,7 @@
 import OrgForm from '@/components/organization/OrgForm';
 import { Metadata } from 'next';
 
-export const revalidate = false;
+export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
   title: 'Create Organization—Rosterize',

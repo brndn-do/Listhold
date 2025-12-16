@@ -1,26 +1,38 @@
 'use client';
 
-import { PromptData } from '@/types/promptData';
+export interface Prompt {
+  id: string;
+  type: 'yes/no' | 'notice';
+  text: string;
+  required: boolean;
+  private: boolean;
+}
 
 interface PromptViewProps {
-  promptData: PromptData;
+  prompt: {
+    id: string;
+    type: 'yes/no' | 'notice';
+    text: string;
+    required: boolean;
+    private: boolean;
+  };
   handleNext: (answer: boolean | null) => void;
 }
 
-const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
+const PromptView = ({ prompt, handleNext }: PromptViewProps) => {
   return (
     <div className='text-lg max-h-86 w-86 flex flex-col items-center text-center gap-4'>
       {/* Scrollable text area */}
       <div className='h-full overflow-y-auto'>
-        <p className='text-xl'>{promptData.text}</p>
+        <p className='text-xl'>{prompt.text}</p>
       </div>
 
-      {/* A notice for users if there is a specified visibility */}
-      {promptData.visibility && (
+      {/* A notice for users on visibility */}
+      {prompt.type !== 'notice' && (
         <p className='text-sm opacity-65'>
-          {promptData.visibility === 'public'
-            ? 'Your answer may be displayed to others'
-            : 'Your answer will not be publicly displayed, but will be visible to event organizers.'}
+          {prompt.private
+            ? 'Your answer will not be publicly displayed, but will be visible to event organizers.'
+            : 'Your answer may be displayed to others'}
         </p>
       )}
 
@@ -28,7 +40,7 @@ const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
       <div className='w-full border-b opacity-50'></div>
 
       {/* Render "I understand" */}
-      {promptData.type === 'notice' && (
+      {prompt.type === 'notice' && (
         <div>
           <button
             onClick={() => handleNext(null)}
@@ -40,7 +52,7 @@ const PromptView = ({ promptData, handleNext }: PromptViewProps) => {
       )}
 
       {/* Render "Yes" and "No" */}
-      {promptData.type === 'yes/no' && (
+      {prompt.type === 'yes/no' && (
         <div className='flex gap-20 '>
           <button
             onClick={() => handleNext(true)}
