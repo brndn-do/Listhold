@@ -28,8 +28,6 @@ type EventsInsert = Database['public']['Tables']['events']['Insert'];
 Deno.serve(async (req): Promise<Response> => {
   const reqData = await req.json();
 
-  console.log(reqData);
-
   const parsed = createEventSchema.safeParse(reqData);
 
   if (!parsed.success) {
@@ -100,6 +98,6 @@ Deno.serve(async (req): Promise<Response> => {
       success: true,
       slug: data.slug,
     }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } },
+    { status: 201, headers: { 'Content-Type': 'application/json' } },
   );
 });

@@ -26,7 +26,7 @@ export const getEventProviderProps = async (
     )
     .eq('slug', slug)
     .order('display_order', {referencedTable: 'prompts', ascending: true})
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return null;

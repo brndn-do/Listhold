@@ -1,3 +1,5 @@
+CREATE TYPE prompt_type_enum AS ENUM ('yes/no', 'notice');
+
 CREATE TABLE public.prompts (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 
@@ -7,7 +9,7 @@ CREATE TABLE public.prompts (
   display_order integer NOT NULL CHECK (display_order > 0),
 
   -- The type of input to render.
-  prompt_type text NOT NULL CHECK (prompt_type IN ('yes/no', 'notice')),
+  prompt_type prompt_type_enum NOT NULL,
 
   -- The prompt label (e.g. "Are you a new member?")
   prompt_text text NOT NULL,

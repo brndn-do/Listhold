@@ -23,7 +23,7 @@ export const getOrgPageProps = async (slug: string): Promise<OrgPageProps | null
     .gt('events.start_time', new Date().toISOString())
     .order('start_time', { referencedTable: 'events', ascending: true })
     .limit(50, { referencedTable: 'events' })
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     return null;

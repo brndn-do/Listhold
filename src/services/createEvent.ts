@@ -32,8 +32,6 @@ export const createEvent = async (request: CreateEventRequest): Promise<string> 
     description: request.description,
   };
 
-  console.log(toSend);
-
   const { data, error } = await supabase.functions.invoke('create_event', {
     body: toSend,
   });

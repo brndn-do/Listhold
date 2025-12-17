@@ -73,6 +73,6 @@ Deno.serve(async (req): Promise<Response> => {
       success: true,
       slug: data.slug,
     }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } },
+    { status: 201, headers: { 'Content-Type': 'application/json' } },
   );
 });

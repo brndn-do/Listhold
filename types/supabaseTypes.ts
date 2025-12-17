@@ -147,7 +147,7 @@ export type Database = {
           is_private: boolean
           is_required: boolean
           prompt_text: string
-          prompt_type: string
+          prompt_type: Database["public"]["Enums"]["prompt_type_enum"]
         }
         Insert: {
           created_at?: string
@@ -157,7 +157,7 @@ export type Database = {
           is_private?: boolean
           is_required?: boolean
           prompt_text: string
-          prompt_type: string
+          prompt_type: Database["public"]["Enums"]["prompt_type_enum"]
         }
         Update: {
           created_at?: string
@@ -167,7 +167,7 @@ export type Database = {
           is_private?: boolean
           is_required?: boolean
           prompt_text?: string
-          prompt_type?: string
+          prompt_type?: Database["public"]["Enums"]["prompt_type_enum"]
         }
         Relationships: [
           {
@@ -194,15 +194,57 @@ export type Database = {
         }
         Relationships: []
       }
+      signups: {
+        Row: {
+          answers: Json
+          created_at: string
+          event_id: string
+          id: string
+          last_updated: string
+          status: Database["public"]["Enums"]["signup_status_enum"]
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          event_id: string
+          id?: string
+          last_updated?: string
+          status: Database["public"]["Enums"]["signup_status_enum"]
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          event_id?: string
+          id?: string
+          last_updated?: string
+          status?: Database["public"]["Enums"]["signup_status_enum"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signups_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_user_to_event: {
+        Args: { p_answers?: Json; p_event_id: string; p_user_id: string }
+        Returns: Json
+      }
     }
     Enums: {
-      [_ in never]: never
+      prompt_type_enum: "yes/no" | "notice"
+      signup_status_enum: "confirmed" | "waitlisted" | "withdrawn"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -332,7 +374,10 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      prompt_type_enum: ["yes/no", "notice"],
+      signup_status_enum: ["confirmed", "waitlisted", "withdrawn"],
+    },
   },
 } as const
 
