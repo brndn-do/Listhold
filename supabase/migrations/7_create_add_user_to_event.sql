@@ -7,6 +7,7 @@ DECLARE
   v_capacity int;
   v_confirmed_count int;
   v_status signup_status_enum;
+  v_old_status signup_status_enum;
   v_signup_id uuid;
 BEGIN
   -- Read the event capacity and lock the entire row
@@ -21,12 +22,13 @@ BEGIN
   END IF;
 
   -- Check if user is already signed up
-  SELECT id, status INTO v_signup_id, v_status
+  SELECT id, status INTO v_signup_id, v_old_status
   FROM public.signups
   WHERE user_id = p_user_id AND event_id = p_event_id;
 
-  IF FOUND THEN
-    RETURN jsonb_build_object('id', v_signup_id, 'status', v_status);
+  -- If they are already signed up and NOT withdrawn, just return their current status
+  IF FOUND AND v_old_status <> 'withdrawn' THEN
+    RETURN jsonb_build_object('id', v_signup_id, 'status', v_old_status);
   END IF;
 
   IF v_capacity IS NULL THEN
@@ -48,9 +50,22 @@ BEGIN
   END IF;
   
   -- Other transactions cannot make insert/delete/update signups until THIS transaction finishes (assuming they all start by reading event.capacity, which we locked).
-  INSERT INTO public.signups (user_id, event_id, status, answers)
-  VALUES (p_user_id, p_event_id, v_status, COALESCE(p_answers, '{}'::jsonb))
-  RETURNING id INTO v_signup_id;
+  
+  IF v_signup_id IS NOT NULL THEN
+    -- User was previously withdrawn, so update their record.
+    -- Reset created_at to now() so they go to the back of the waitlist if applicable.
+    UPDATE public.signups
+    SET status = v_status,
+        answers = COALESCE(p_answers, '{}'::jsonb),
+        created_at = now(),
+        last_updated = now()
+    WHERE id = v_signup_id;
+  ELSE
+    -- New signup
+    INSERT INTO public.signups (user_id, event_id, status, answers)
+    VALUES (p_user_id, p_event_id, v_status, COALESCE(p_answers, '{}'::jsonb))
+    RETURNING id INTO v_signup_id;
+  END IF;
 
   RETURN jsonb_build_object('id', v_signup_id, 'status', v_status);
 END;

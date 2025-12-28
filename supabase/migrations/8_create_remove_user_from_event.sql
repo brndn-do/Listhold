@@ -43,7 +43,7 @@ BEGIN
 
   -- Mark user as withdrawn
   UPDATE public.signups
-  SET status = 'withdrawn', updated_at = now()
+  SET status = 'withdrawn', last_updated = now()
   WHERE id = v_signup_id;
 
   -- Handle Waitlist Promotion only if they were on confirmed
@@ -67,7 +67,7 @@ BEGIN
 
       IF v_promoted_user_id IS NOT NULL THEN
         UPDATE public.signups
-        SET status = 'confirmed', updated_at = now()
+        SET status = 'confirmed', last_updated = now()
         WHERE user_id = v_promoted_user_id AND event_id = p_event_id;
       END IF;
     END IF;
