@@ -9,7 +9,7 @@ import EventButton from '@/components/event/EventButton';
 import SignupFlow from '@/components/event/signup/SignupFlow';
 import Line from '@/components/ui/Line';
 import { addUserToEvent } from '@/services/addUserToEvent';
-import { removeUserFromEvent } from '@/services/TODO/removeUserFromEvent';
+import { removeUserFromEvent } from '@/services/removeUserFromEvent';
 
 const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
@@ -65,7 +65,7 @@ const EventPage = () => {
       const res = await removeUserFromEvent(eventId, userId);
       // set a cooldown to make sure users can't spam
       setCooldownMessage(
-        res === 'removedFromEvent' ? 'You left the list.' : 'You left the waitlist.',
+        res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.',
       );
       setTimeout(() => {
         setCooldownMessage(null);

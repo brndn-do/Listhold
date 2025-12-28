@@ -53,15 +53,23 @@ Deno.serve(async (req): Promise<Response> => {
       return errorResponse('Internal', 500);
     }
 
-    if (!data || !data.id) {
+    // Handle application-level errors returned by the function
+    if (data && data.error) {
+      return errorResponse(data.error, 404);
+    }
+
+    if (!data || !data.signup_id) {
+      console.error('Unexpected response format:', data);
       return errorResponse('Internal', 500);
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        signupId: data.id,
-        status: data.status,
+        signupId: data.signup_id,
+        status: data.new_status,
+        oldStatus: data.old_status,
+        promotedUserId: data.promoted_user_id
       }),
       { status: 200, headers: { 'Content-Type': 'application/json' } },
     );

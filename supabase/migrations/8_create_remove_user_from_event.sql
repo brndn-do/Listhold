@@ -6,12 +6,13 @@ AS $$
 DECLARE
   v_capacity int;
   v_confirmed_count int;
-  v_status signup_status_enum;
+  v_old_status signup_status_enum;
   v_signup_id uuid;
+  v_promoted_user_id uuid;
 BEGIN
   -- Read the event capacity and lock the entire row
   -- event.capacity cannot change while this function is running.
-  -- Other functinons that create/update/delete a signup for an event MUST start with this same lock.
+  -- Other functions that create/update/delete a signup for an event MUST start with this same lock.
   SELECT capacity INTO v_capacity FROM public.events
   WHERE id = p_event_id
   FOR UPDATE;
@@ -20,16 +21,64 @@ BEGIN
     RAISE EXCEPTION 'Event % not found', p_event_id;
   END IF;
 
-  SELECT id, status INTO v_signup_id, v_status
+  -- Get current signup status
+  SELECT id, status INTO v_signup_id, v_old_status
   FROM public.signups
   WHERE user_id = p_user_id AND event_id = p_event_id
-  FOR UPDATE;
+  FOR UPDATE; -- Lock this signup row
 
   IF NOT FOUND THEN
-    -- Do nothing and return
-    RETURN '{}'::jsonb;
+    RETURN jsonb_build_object('error', 'Signup not found');
   END IF;
-  -- if status is already withdrawn do nothing and return
-  -- if status is waitlisted, set to withdrawn and return
-  -- if status is confirmed, set to withdrawn, then promote next person on waitlist (if exist), then return
-  -- Then, send email to that person (if exist)
+
+  -- Case where user is already withdrawn
+  IF v_old_status = 'withdrawn' THEN
+    RETURN jsonb_build_object(
+      'signup_id', v_signup_id,
+      'old_status', 'withdrawn',
+      'new_status', 'withdrawn',
+      'promoted_user_id', null
+    );
+  END IF;
+
+  -- Mark user as withdrawn
+  UPDATE public.signups
+  SET status = 'withdrawn', updated_at = now()
+  WHERE id = v_signup_id;
+
+  -- Handle Waitlist Promotion only if they were on confirmed
+  v_promoted_user_id := NULL;
+  
+  IF v_old_status = 'confirmed' THEN
+    -- Double check current confirmed count to see if we have space
+    SELECT COUNT(*) INTO v_confirmed_count
+    FROM public.signups
+    WHERE event_id = p_event_id AND status = 'confirmed';
+
+    -- If capacity is unlimited (NULL) OR we are now below capacity
+    IF v_capacity IS NULL OR v_confirmed_count < v_capacity THEN
+      -- Find the next person on the waitlist (ordered by created_at)
+      SELECT user_id INTO v_promoted_user_id
+      FROM public.signups
+      WHERE event_id = p_event_id AND status = 'waitlisted'
+      ORDER BY created_at ASC
+      LIMIT 1
+      FOR UPDATE; -- Lock the row we are about to promote
+
+      IF v_promoted_user_id IS NOT NULL THEN
+        UPDATE public.signups
+        SET status = 'confirmed', updated_at = now()
+        WHERE user_id = v_promoted_user_id AND event_id = p_event_id;
+      END IF;
+    END IF;
+  END IF;
+
+  -- 5. Return result
+  RETURN jsonb_build_object(
+    'signup_id', v_signup_id,
+    'old_status', v_old_status,
+    'new_status', 'withdrawn',
+    'promoted_user_id', v_promoted_user_id
+  );
+END;
+$$;
