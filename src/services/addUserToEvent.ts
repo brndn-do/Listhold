@@ -39,7 +39,7 @@ export const addUserToEvent = async (
           throw new ServiceError('internal');
       }
     }
-    throw new ServiceError('internal')
+    throw new ServiceError('internal');
   }
 
   if (!data || !['confirmed', 'waitlisted'].includes(data.status)) {

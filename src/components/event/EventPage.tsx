@@ -64,9 +64,7 @@ const EventPage = () => {
     try {
       const res = await removeUserFromEvent(eventId, userId);
       // set a cooldown to make sure users can't spam
-      setCooldownMessage(
-        res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.',
-      );
+      setCooldownMessage(res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.');
       setTimeout(() => {
         setCooldownMessage(null);
       }, COOLDOWN_TIME);

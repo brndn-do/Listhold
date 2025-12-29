@@ -9,7 +9,7 @@ type SignupStatus = Database['public']['Enums']['signup_status_enum'];
  * Removes a user from an event
  * @param eventId - the event ID
  * @param userId - the UID of the user being removed
- * @returns the old status of the signup. 
+ * @returns the old status of the signup.
  * @throws if the serverless function errors.
  */
 export const removeUserFromEvent = async (
@@ -37,7 +37,7 @@ export const removeUserFromEvent = async (
           throw new ServiceError('internal');
       }
     }
-    throw new ServiceError('internal')
+    throw new ServiceError('internal');
   }
 
   if (!data || data.status !== 'withdrawn') {

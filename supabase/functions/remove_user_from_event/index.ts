@@ -98,7 +98,7 @@ Deno.serve(async (req): Promise<Response> => {
     // Send email if someone was promoted
     if (data.promoted_user_id) {
       const { data: userData } = await supabase.auth.admin.getUserById(data.promoted_user_id);
-      
+
       const appDomain = Deno.env.get('APP_DOMAIN');
       if (!appDomain) {
         console.warn('APP_DOMAIN not set, skipping email');

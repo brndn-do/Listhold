@@ -25,7 +25,7 @@ export const getEventProviderProps = async (
       `,
     )
     .eq('slug', slug)
-    .order('display_order', {referencedTable: 'prompts', ascending: true})
+    .order('display_order', { referencedTable: 'prompts', ascending: true })
     .maybeSingle();
 
   if (error || !data) {
@@ -49,7 +49,7 @@ export const getEventProviderProps = async (
         text: prompt.prompt_text,
         required: prompt.is_required,
         private: prompt.is_private,
-      }
-    })
+      };
+    }),
   };
 };

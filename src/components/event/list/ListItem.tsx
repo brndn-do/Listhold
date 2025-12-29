@@ -1,21 +1,20 @@
 'use client';
 
 import { useAuth } from '@/context/AuthProvider';
+import { SignupData } from '@/services/fetchInitialList';
 // import { useEvent } from '@/context/EventProvider';
-import { SignupData } from '@/types/signupData';
-import { WithId } from '@/types/withId';
 import { formatDate } from '@/utils/timeFormatter';
 import Image from 'next/image';
 // import { useMemo, useState } from 'react';
 
 interface ListItemProps {
-  signup: WithId<SignupData>;
+  signup: SignupData;
 }
 
 const ListItem = ({ signup }: ListItemProps) => {
   const { user } = useAuth();
   // const { prompts } = useEvent();
-  const { formattedDate, formattedTime } = formatDate(signup.signupTime);
+  const { formattedDate, formattedTime } = formatDate(signup.createdAt);
   // const [isExpanded, setIsExpanded] = useState(false);
 
   // const publicAnswers = useMemo(() => {
@@ -50,7 +49,7 @@ const ListItem = ({ signup }: ListItemProps) => {
       <div className='flex items-center w-full gap-2'>
         <Image
           alt={`${signup.displayName}'s profile photo`}
-          src={signup.photoURL || '/default-avatar.jpg'}
+          src={signup.avatarURL || '/default-avatar.jpg'}
           width={26}
           height={26}
           className={`border-2 border-purple-700 dark:border-purple-600 h-[26px] w-[26px] rounded-full`}

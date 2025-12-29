@@ -1,4 +1,9 @@
-export type ServiceErrorMessage = 'internal' | 'already-exists' |'not-found' | 'unauthorized' | 'misc';
+export type ServiceErrorMessage =
+  | 'internal'
+  | 'already-exists'
+  | 'not-found'
+  | 'unauthorized'
+  | 'misc';
 
 export class ServiceError extends Error {
   constructor(message: ServiceErrorMessage) {

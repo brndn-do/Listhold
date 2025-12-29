@@ -25,30 +25,21 @@ const EventButton = ({
   handleLeave,
 }: EventButtonProps) => {
   const { user } = useAuth();
-  const {
-    capacity,
-    signups,
-    signupsLoading,
-    signupsError,
-    signupIds,
-    waitlistLoading,
-    waitlistError,
-    waitlistIds,
-    prompts,
-  } = useEvent();
+  const { capacity, confirmedList, confirmedIds, waitlistIds, listLoading, listError, prompts } =
+    useEvent();
 
   // did the user already join either the signups list or the waitlist?
   const alreadyJoined: boolean = useMemo(() => {
-    return !!(user && (signupIds?.has(user.uid) || waitlistIds?.has(user.uid)));
-  }, [user, signupIds, waitlistIds]);
+    return !!(user && (confirmedIds?.has(user.uid) || waitlistIds?.has(user.uid)));
+  }, [user, confirmedIds, waitlistIds]);
 
   // are there spots open on the main list?
   const spotsOpen: boolean = useMemo(() => {
-    return !!((capacity ?? 0) > signups.length);
-  }, [capacity, signups]);
+    return !!((capacity ?? 0) > confirmedList.length);
+  }, [capacity, confirmedList]);
 
   // We do not have enough information about event to allow the user to join/leave
-  if (signupsLoading || signupsError || waitlistLoading || waitlistError) {
+  if (listLoading || listError) {
     return null;
   }
 

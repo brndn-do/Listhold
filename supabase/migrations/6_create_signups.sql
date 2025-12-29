@@ -23,12 +23,15 @@ CREATE TABLE public.signups (
 );
 
 CREATE OR REPLACE FUNCTION set_last_updated()
-RETURNS trigger AS $$
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
 BEGIN
   NEW.last_updated = now();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 CREATE TRIGGER signups_last_updated
 BEFORE UPDATE ON public.signups
@@ -43,4 +46,4 @@ ALTER TABLE public.signups ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Signups: public read access"
   ON public.signups
   FOR SELECT
-  USING(true);
+  USING (true);
