@@ -46,7 +46,6 @@ export type Database = {
           location: string
           organization_id: string
           photo_url: string | null
-          signups_count: number
           slug: string
           start_time: string
         }
@@ -61,7 +60,6 @@ export type Database = {
           location: string
           organization_id: string
           photo_url?: string | null
-          signups_count?: number
           slug: string
           start_time: string
         }
@@ -76,7 +74,6 @@ export type Database = {
           location?: string
           organization_id?: string
           photo_url?: string | null
-          signups_count?: number
           slug?: string
           start_time?: string
         }

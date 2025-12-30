@@ -19,9 +19,6 @@ CREATE TABLE public.events (
   -- The maximum number of signups this event can have. Must be between 1 and 300 inclusive.
   capacity integer NOT NULL CHECK (capacity BETWEEN 1 AND 300),
 
-  -- The current number of signups this event has. Defaults to 0 when created.
-  signups_count integer NOT NULL DEFAULT 0,
-
   -- An optional description of the event. Must be between 1 and 1000 characters inclusive.
   description text CHECK (length(description) BETWEEN 1 AND 1000),
 
