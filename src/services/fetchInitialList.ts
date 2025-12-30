@@ -3,6 +3,7 @@ import { ServiceError } from '@/types/serviceError';
 
 export interface SignupData {
   id: string;
+  userId: string;
   displayName: string | null;
   avatarURL: string | null;
   status: 'confirmed' | 'waitlisted' | 'withdrawn';
@@ -21,12 +22,10 @@ export const fetchInitialList = async (eventId: string): Promise<SignupData[]> =
     throw new ServiceError('internal');
   }
 
-  console.log(eventId)
-  console.log(data);
-
   return data.map((row) => {
     return {
       id: row.signup_id!,
+      userId: row.user_id!,
       displayName: row.display_name,
       avatarURL: row.avatar_url,
       status: row.status!,

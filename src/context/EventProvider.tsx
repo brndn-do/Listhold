@@ -2,7 +2,7 @@
 
 import { Prompt } from '@/components/event/signup/PromptView';
 import { fetchInitialList, SignupData } from '@/services/fetchInitialList';
-import { WithId } from '@/types/withId';
+import { subscribeToList } from '@/services/subscribeToList';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 /**
@@ -29,20 +29,20 @@ interface EventContextType {
    * Each signup includes its ID.
    * Sorted by `createdAt` in ascending order.
    */
-  readonly confirmedList: ReadonlyArray<WithId<SignupData>>;
+  readonly confirmedList: ReadonlyArray<SignupData>;
 
   /**
    * Array of waitlisted signups.
    * Each signup includes its ID.
    * Sorted by `createdAt` in ascending order.
    */
-  readonly waitlist: ReadonlyArray<WithId<SignupData>>;
+  readonly waitlist: ReadonlyArray<SignupData>;
 
   /** Set of user IDs corresponding to all confirmed signups. */
-  readonly confirmedIds: ReadonlySet<string>;
+  readonly confirmedUserIds: ReadonlySet<string>;
 
   /** Set of user IDs corresponding to all waitlisted signups. */
-  readonly waitlistIds: ReadonlySet<string>;
+  readonly waitlistUserIds: ReadonlySet<string>;
 
   /** Whether the initial list is currently loading. */
   readonly listLoading: boolean;
@@ -92,8 +92,7 @@ export const EventProvider = ({
   const [listError, setListError] = useState<Error | null>(null);
 
   useEffect(() => {
-    // async fetch initial list
-    (async () => {
+    const fetchList = async () => {
       try {
         const result = await fetchInitialList(eventId);
         setConfirmedList(result.filter((val) => val.status === 'confirmed'));
@@ -107,17 +106,21 @@ export const EventProvider = ({
       } finally {
         setListLoading(false);
       }
-    })();
-    // set up listeners
-    
+    };
+    const unsub = subscribeToList(eventId, fetchList);
+    fetchList();
+
+    return () => {
+      unsub();
+    }
   }, [eventId]);
 
-  const confirmedIds: Set<string> = useMemo(() => {
-    return new Set(confirmedList.map((s) => s.id));
+  const confirmedUserIds: Set<string> = useMemo(() => {
+    return new Set(confirmedList.map((s) => s.userId));
   }, [confirmedList]);
 
-  const waitlistIds: Set<string> = useMemo(() => {
-    return new Set(waitlist.map((s) => s.id));
+  const waitlistUserIds: Set<string> = useMemo(() => {
+    return new Set(waitlist.map((s) => s.userId));
   }, [waitlist]);
 
   const value = useMemo(() => {
@@ -133,9 +136,9 @@ export const EventProvider = ({
       capacity,
       prompts,
       confirmedList: confirmedList,
-      confirmedIds: confirmedIds,
+      confirmedUserIds: confirmedUserIds,
       waitlist: waitlist,
-      waitlistIds: waitlistIds,
+      waitlistUserIds: waitlistUserIds,
       listLoading: listLoading,
       listError: listError,
     };
@@ -151,9 +154,9 @@ export const EventProvider = ({
     capacity,
     prompts,
     confirmedList,
-    confirmedIds,
+    confirmedUserIds,
     waitlist,
-    waitlistIds,
+    waitlistUserIds,
     listLoading,
     listError,
   ]);

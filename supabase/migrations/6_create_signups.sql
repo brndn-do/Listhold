@@ -47,3 +47,5 @@ CREATE POLICY "Signups: public read access"
   ON public.signups
   FOR SELECT
   USING (true);
+
+alter publication supabase_realtime add table public.signups;
