@@ -1,37 +1,35 @@
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { AuthUser } from '@/types/authUser';
-import { signInWithPopup, signOut, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
+import { ServiceError } from '@/types/serviceError';
 
 /**
- * Signs the user in using Google's OAuth popup flow.
- *
- * Opens a Google authentication popup window. After a successful login,
- * resolves with the authenticated Firebase `User` object.
- *
- * @returns A `Promise` that resolves with a Firebase `User` object.
- * @throws If the Google sign-in popup fails or is blocked.
+ * Signs the user in using Google.
  */
-export const signInWithGoogle = async (): Promise<AuthUser> => {
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
-  const result = await signInWithPopup(auth, provider);
-  const user = result.user;
-  return {
-    uid: user.uid,
-    displayName: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
-  };
+export const signInWithGoogle = (): void => {
+  const currentPath = window.location.pathname + window.location.search;
+
+  supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(currentPath)}`,
+      queryParams: {
+        // Forces the Google account picker every time
+        prompt: 'select_account',
+      },
+    },
+  });
 };
 
 /**
- * Signs the current user out of Firebase Authentication.
+ * Signs the current user out.
  *
- * @returns A `Promise` that resolves once the user is signed out.
- * @throws If sign-out fails.
+ * @throws A `ServiceError` if sign-out fails.
  */
-export const signOutUser = async (): Promise<void> => {
-  await signOut(auth);
+export const signOut = async (): Promise<void> => {
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw new ServiceError('misc');
+  }
 };
 
 /**
@@ -41,5 +39,28 @@ export const signOutUser = async (): Promise<void> => {
  * @returns Unsubscribe function to stop listening
  */
 export const subscribeToAuthState = (callback: (user: AuthUser | null) => void): (() => void) => {
-  return onAuthStateChanged(auth, callback);
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    if (!session) {
+      callback(null);
+    } else {
+      const user: AuthUser = {
+        uid: session?.user.id,
+        displayName: session?.user.user_metadata.full_name ?? null,
+        email: session?.user.email ?? null,
+        photoURL: session?.user.user_metadata.avatar_url ?? null,
+      };
+      callback(user);
+    }
+  });
+
+  return () => {
+    data.subscription.unsubscribe();
+  };
+};
+
+/**
+ * Loads and syncs the current authentication session.
+ */
+export const getSession = async (): Promise<void> => {
+  await supabase.auth.getSession();
 };

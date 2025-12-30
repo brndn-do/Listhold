@@ -1,28 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { WithId } from '@/types/withId';
-import { EventData } from '@/types/eventData';
 import SpotsCounter from '@/components/event/SpotsCounter';
 import EventTime from '@/components/event/EventTime';
+import { useEvent } from '@/context/EventProvider';
 
-interface EventInfoProps {
-  eventData: WithId<EventData>;
-}
+const EventInfo = () => {
+  const { name, orgSlug, orgName, start, end, location, capacity } = useEvent();
 
-const EventInfo = ({ eventData }: EventInfoProps) => {
   return (
     <div className='flex flex-col items-center gap-[1px]'>
-      <h1 className='text-xl text-center font-bold'>{eventData.name}</h1>
+      <h1 className='text-xl text-center font-bold'>{name}</h1>
       <Link
-        href={`/organizations/${eventData.organizationId}`}
+        href={`/organizations/${orgSlug}`}
         className='pb-1 text-sm text-center font-bold text-purple-700 dark:text-purple-500 underline'
       >
-        {eventData.organizationName} →
+        {orgName} →
       </Link>
-      <EventTime start={eventData.start} end={eventData.end} />
-      <p className='text-[0.8rem] text-center'>{`📍 ${eventData?.location}`}</p>
-      <SpotsCounter capacity={eventData.capacity} />
+      <EventTime start={start} end={end} />
+      <p className='text-[0.8rem] text-center'>{`📍 ${location}`}</p>
+      <SpotsCounter capacity={capacity} />
     </div>
   );
 };

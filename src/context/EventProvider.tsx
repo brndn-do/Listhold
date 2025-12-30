@@ -1,61 +1,72 @@
 'use client';
 
-import { subscribeToSignups, subscribeToWaitlist } from '@/services/subscribeToList';
-import { EventData } from '@/types/eventData';
-import { PromptData } from '@/types/promptData';
-import { SignupData } from '@/types/signupData';
-import { WithId } from '@/types/withId';
+import { Prompt } from '@/components/event/signup/PromptView';
+import { fetchInitialList, SignupData } from '@/services/fetchInitialList';
+import { subscribeToList } from '@/services/subscribeToList';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 /**
  * Shape of the Event context, providing all relevant data for a single event.
  */
 interface EventContextType {
-  /**
-   * The main event data, including ID.
-   */
-  readonly eventData: WithId<EventData>;
+  readonly eventId: string;
+  readonly name: string;
+  readonly description?: string;
+  readonly orgSlug: string;
+  readonly orgName: string;
+  readonly start: Date;
+  readonly end?: Date;
+  readonly location: string;
+  readonly capacity: number;
 
   /**
-   * Map of prompt IDs to prompt data.
+   * Order array of the event's prompts.
    */
-  readonly prompts: Readonly<Record<string, PromptData>>;
+  readonly prompts: ReadonlyArray<Prompt>;
 
   /**
-   * Array of signups in the main list.
+   * Array of confirmed signups.
    * Each signup includes its ID.
-   * Sorted by `signupTime` timestamp.
+   * Sorted by `createdAt` in ascending order.
    */
-  readonly signups: ReadonlyArray<WithId<SignupData>>;
-
-  /** Set of user IDs corresponding to all signups in the main list. */
-  readonly signupIds: ReadonlySet<string>;
-
-  /** Whether the main signup list is currently loading. */
-  readonly signupsLoading: boolean;
-
-  /** Error encountered while loading the main signup list, if any. */
-  readonly signupsError: Error | null;
+  readonly confirmedList: ReadonlyArray<SignupData>;
 
   /**
-   * Array of signups in the waitlist.
+   * Array of waitlisted signups.
    * Each signup includes its ID.
-   * Sorted by `signupTime` timestamp.
+   * Sorted by `createdAt` in ascending order.
    */
-  readonly waitlist: ReadonlyArray<WithId<SignupData>>;
+  readonly waitlist: ReadonlyArray<SignupData>;
 
-  /** Set of user IDs corresponding to all signups in the waitlist. */
-  readonly waitlistIds: ReadonlySet<string>;
+  /** Set of user IDs corresponding to all confirmed signups. */
+  readonly confirmedUserIds: ReadonlySet<string>;
 
-  /** Whether the waitlist is currently loading. */
-  readonly waitlistLoading: boolean;
+  /** Set of user IDs corresponding to all waitlisted signups. */
+  readonly waitlistUserIds: ReadonlySet<string>;
 
-  /** Error encountered while loading the waitlist, if any. */
-  readonly waitlistError: Error | null;
+  /** Whether the initial list is currently loading. */
+  readonly listLoading: boolean;
+
+  /** Error encountered while loading the initial list, if any. */
+  readonly listError: Error | null;
 }
 
 /** React context for providing event data throughout the app */
 const EventContext = createContext<EventContextType | undefined>(undefined);
+
+export interface EventProviderProps {
+  eventId: string;
+  name: string;
+  description?: string;
+  orgSlug: string;
+  orgName: string;
+  start: Date;
+  end?: Date;
+  location: string;
+  capacity: number;
+  prompts: Prompt[];
+  children: ReactNode;
+}
 
 /**
  * Provides event-related data (event, signups, waitlist, prompts) via context.
@@ -63,87 +74,91 @@ const EventContext = createContext<EventContextType | undefined>(undefined);
  * @param props.children - React children to wrap with this provider
  */
 export const EventProvider = ({
-  eventData,
+  eventId,
+  name,
+  orgSlug,
+  orgName,
+  description,
+  start,
+  end,
+  location,
+  capacity,
   prompts,
   children,
-}: {
-  eventData: WithId<EventData>;
-  prompts: Record<string, PromptData>;
-  children: ReactNode;
-}) => {
-  const eventId = eventData.id;
-
-  const [signups, setSignups] = useState<WithId<SignupData>[]>([]);
-  const [signupsLoading, setSignupsLoading] = useState(true);
-  const [signupsError, setSignupsError] = useState<Error | null>(null);
-
-  const [waitlist, setWaitlist] = useState<WithId<SignupData>[]>([]);
-  const [waitlistLoading, setWaitlistLoading] = useState(true);
-  const [waitlistError, setWaitlistError] = useState<Error | null>(null);
+}: EventProviderProps) => {
+  const [confirmedList, setConfirmedList] = useState<SignupData[]>([]);
+  const [waitlist, setWaitlist] = useState<SignupData[]>([]);
+  const [listLoading, setListLoading] = useState(true);
+  const [listError, setListError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const unsubSignups = subscribeToSignups(
-      eventId,
-      (data) => {
-        setSignups(data);
-        setSignupsLoading(false);
-      },
-      (error) => {
-        setSignupsError(error);
-        setSignupsLoading(false);
-      },
-    );
-
-    const unsubWaitlist = subscribeToWaitlist(
-      eventId,
-      (data) => {
-        setWaitlist(data);
-        setWaitlistLoading(false);
-      },
-      (error) => {
-        setWaitlistError(error);
-        setWaitlistLoading(false);
-      },
-    );
+    const fetchList = async () => {
+      try {
+        const result = await fetchInitialList(eventId);
+        setConfirmedList(result.filter((val) => val.status === 'confirmed'));
+        setWaitlist(result.filter((val) => val.status === 'waitlisted'));
+      } catch (err) {
+        if (err instanceof Error) {
+          setListError(err);
+        } else {
+          setListError(new Error(String(err)));
+        }
+      } finally {
+        setListLoading(false);
+      }
+    };
+    const unsub = subscribeToList(eventId, fetchList);
+    fetchList();
 
     return () => {
-      unsubSignups();
-      unsubWaitlist();
-    };
+      unsub();
+    }
   }, [eventId]);
 
-  const signupIds: Set<string> = useMemo(() => {
-    return new Set(signups.map((s) => s.id));
-  }, [signups]);
+  const confirmedUserIds: Set<string> = useMemo(() => {
+    return new Set(confirmedList.map((s) => s.userId));
+  }, [confirmedList]);
 
-  const waitlistIds: Set<string> = useMemo(() => {
-    return new Set(waitlist.map((w) => w.id));
+  const waitlistUserIds: Set<string> = useMemo(() => {
+    return new Set(waitlist.map((s) => s.userId));
   }, [waitlist]);
 
   const value = useMemo(() => {
     return {
-      eventData,
+      eventId,
+      name,
+      orgSlug,
+      orgName,
+      description,
+      start,
+      end,
+      location,
+      capacity,
       prompts,
-      signups,
-      signupIds,
-      signupsLoading,
-      signupsError,
-      waitlist,
-      waitlistIds,
-      waitlistLoading,
-      waitlistError,
+      confirmedList: confirmedList,
+      confirmedUserIds: confirmedUserIds,
+      waitlist: waitlist,
+      waitlistUserIds: waitlistUserIds,
+      listLoading: listLoading,
+      listError: listError,
     };
   }, [
-    eventData,
+    eventId,
+    name,
+    orgSlug,
+    orgName,
+    description,
+    start,
+    end,
+    location,
+    capacity,
     prompts,
-    signups,
-    signupIds,
-    signupsLoading,
-    signupsError,
+    confirmedList,
+    confirmedUserIds,
     waitlist,
-    waitlistIds,
-    waitlistLoading,
-    waitlistError,
+    waitlistUserIds,
+    listLoading,
+    listError,
   ]);
   return <EventContext.Provider value={value}>{children}</EventContext.Provider>;
 };

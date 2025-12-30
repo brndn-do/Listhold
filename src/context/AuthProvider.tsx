@@ -1,6 +1,6 @@
 'use client';
 
-import { signInWithGoogle, signOutUser, subscribeToAuthState } from '@/services/authService';
+import { subscribeToAuthState } from '@/services/authService';
 import { AuthUser } from '@/types/authUser';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -10,7 +10,7 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
  * - `loading`: Whether the authentication state is still loading.
  */
 interface AuthContextType {
-  readonly user: AuthUser | null | undefined;
+  readonly user: AuthUser | null;
   readonly loading: boolean;
 }
 
@@ -51,27 +51,4 @@ export const useAuth = (): AuthContextType => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-};
-
-/**
- * Signs the user in using Google's OAuth popup flow.
- *
- * Opens a Google authentication popup window. After a successful login,
- * resolves with an `AuthUser` object.
- *
- * @returns A `Promise` that resolves with an `AuthUser` object.
- * @throws If the Google sign-in popup fails or is blocked.
- */
-export const handleSignIn = async (): Promise<AuthUser> => {
-  return await signInWithGoogle();
-};
-
-/**
- * Signs the current user out.
- *
- * @returns A `Promise` that resolves once the user is signed out.
- * @throws If sign-out fails.
- */
-export const handleSignOut = async (): Promise<void> => {
-  await signOutUser();
 };

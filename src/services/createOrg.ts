@@ -1,34 +1,42 @@
-import { functions } from '@/lib/firebase';
-import { FunctionsError, httpsCallable } from 'firebase/functions';
+import { supabase } from '@/lib/supabase';
+import { ServiceError } from '@/types/serviceError';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
 interface CreateOrgRequest {
   name: string;
-  id?: string;
+  slug?: string;
 }
-
-interface CreateOrgResult {
-  organizationId: string;
-  message: string;
-}
-
-const cloudFunction = httpsCallable<CreateOrgRequest, CreateOrgResult>(
-  functions,
-  'createOrganization',
-);
 
 /**
  * Creates an organization.
  * @param request - An object including the request details.
- * @returns The id of the newly created organization.
- * @throws if the cloud function errors.
+ * @returns The slug of the newly created organization.
+ * @throws A `ServiceError` if the organization could not be created.
  */
 export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
-  try {
-    const result = await cloudFunction(request);
-    const data = result.data;
-    return data.organizationId;
-  } catch (err: unknown) {
-    const firebaseError = err as FunctionsError;
-    throw new Error(firebaseError.code);
+  const toSend = {
+    name: request.name,
+    slug: request.slug,
+  };
+
+  const { data, error } = await supabase.functions.invoke('create_organization', {
+    body: toSend,
+  });
+
+  if (error) {
+    const functionsError = error as FunctionsHttpError;
+    const status = functionsError.context.status;
+    if (status === 409) {
+      throw new ServiceError('already-exists');
+    }
+    throw new ServiceError('internal');
   }
+
+  if (!data) {
+    throw new ServiceError('internal');
+  }
+
+  const { slug } = data;
+
+  return slug;
 };

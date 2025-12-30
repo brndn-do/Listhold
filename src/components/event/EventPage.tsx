@@ -16,9 +16,8 @@ const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventPage = () => {
   const { user } = useAuth();
-  const { eventData } = useEvent();
+  const { eventId } = useEvent();
   const userId = user?.uid;
-  const eventId = eventData?.id;
 
   const [cooldownMessage, setCooldownMessage] = useState<string | null>(null);
   const [requestLoading, setRequestLoading] = useState(false); // whether the request to join/leave is loading
@@ -43,7 +42,7 @@ const EventPage = () => {
     try {
       const res = await addUserToEvent(eventId, userId, answers);
       // set a cooldown to make sure users can't spam
-      setCooldownMessage(res === 'added' ? 'You joined the list!' : 'You joined the waitlist!');
+      setCooldownMessage(res === 'confirmed' ? "You're on the list!" : "You're on the waitlist!");
       setTimeout(() => {
         setCooldownMessage(null);
       }, COOLDOWN_TIME);
@@ -65,9 +64,7 @@ const EventPage = () => {
     try {
       const res = await removeUserFromEvent(eventId, userId);
       // set a cooldown to make sure users can't spam
-      setCooldownMessage(
-        res === 'removedFromEvent' ? 'You left the list.' : 'You left the waitlist.',
-      );
+      setCooldownMessage(res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.');
       setTimeout(() => {
         setCooldownMessage(null);
       }, COOLDOWN_TIME);
@@ -83,7 +80,7 @@ const EventPage = () => {
 
   return (
     <div className='flex flex-col gap-1 items-center w-full md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:w-[25%]'>
-      <EventInfo eventData={eventData} />
+      <EventInfo />
 
       <Line style='dashed' />
 

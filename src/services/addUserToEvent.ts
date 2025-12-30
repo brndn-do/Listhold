@@ -1,22 +1,8 @@
-import { functions } from '@/lib/firebase';
-import { httpsCallable } from 'firebase/functions';
+import { supabase } from '@/lib/supabase';
+import { ServiceError } from '@/types/serviceError';
+import { FunctionsHttpError } from '@supabase/supabase-js';
 
-type Status = 'added' | 'waitlisted';
-
-interface AddUserResult {
-  status: 'signedUp' | 'waitlisted';
-  message: string;
-}
-
-const cloudFunction = httpsCallable<
-  {
-    warmup: boolean;
-    eventId: string;
-    userId: string;
-    answers: Record<string, boolean | null>;
-  },
-  AddUserResult
->(functions, 'addUserToEvent');
+type Status = 'confirmed' | 'waitlisted';
 
 /**
  * Adds a user to an event
@@ -31,10 +17,34 @@ export const addUserToEvent = async (
   userId: string,
   answers: Record<string, boolean | null>,
 ): Promise<Status> => {
-  const res = await cloudFunction({ warmup: false, eventId, userId, answers });
-  const data: AddUserResult = res.data;
-  if (data.status === 'signedUp') {
-    return 'added';
+  const { data, error } = await supabase.functions.invoke('add_user_to_event', {
+    body: {
+      userId,
+      eventId,
+      answers,
+    },
+  });
+
+  if (error) {
+    // Check if it is a specific HTTP error from the edge function
+    if (error instanceof FunctionsHttpError) {
+      const status = error.context?.status;
+      switch (status) {
+        case 401:
+        case 403:
+          throw new ServiceError('unauthorized');
+        case 404:
+          throw new ServiceError('not-found');
+        default:
+          throw new ServiceError('internal');
+      }
+    }
+    throw new ServiceError('internal');
   }
+
+  if (!data || !['confirmed', 'waitlisted'].includes(data.status)) {
+    throw new ServiceError('misc');
+  }
+
   return data.status;
 };

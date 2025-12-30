@@ -5,30 +5,27 @@ import ListItem from './ListItem';
 import Dots from '@/components/ui/Dots';
 
 interface EventListProps {
-  viewingWaitlist: boolean
+  viewingWaitlist: boolean;
 }
 
 const EventList = ({ viewingWaitlist }: EventListProps) => {
-  const { signups, signupsLoading, signupsError, waitlist, waitlistLoading, waitlistError } =
-    useEvent();
+  const { confirmedList, waitlist, listLoading, listError } = useEvent();
 
   // does the user want to view the waitlist?
-  const selection = viewingWaitlist ? waitlist : signups;
-  const selectionLoading = viewingWaitlist ? waitlistLoading : signupsLoading;
-  const selectionError = viewingWaitlist ? waitlistError : signupsError;
+  const selection = viewingWaitlist ? waitlist : confirmedList;
 
   // helper for handling loading state, error states, empty list, and non-empty list
   const content = () => {
-    if (selectionLoading) {
+    if (listLoading) {
       return (
         <div className='p-36'>
-          <Dots size={3}/>
+          <Dots size={3} />
         </div>
-      )
+      );
     }
 
-    if (selectionError) {
-      return <p>Error: {selectionError.message}</p>;
+    if (listError) {
+      return <p>Error: {listError.message}</p>;
     }
 
     if (selection?.length === 0) {
