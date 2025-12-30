@@ -25,13 +25,29 @@ const createEventSchema = z.object({
 
 type EventsInsert = Database['public']['Tables']['events']['Insert'];
 
+export const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 Deno.serve(async (req): Promise<Response> => {
-  const reqData = await req.json();
+  // Handle CORS Preflight Request
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  let reqData;
+
+  try {
+    reqData = await req.json();
+  } catch {
+    return new Response('Invalid JSON body', { status: 400, headers: corsHeaders });
+  }
 
   const parsed = createEventSchema.safeParse(reqData);
 
   if (!parsed.success) {
-    return new Response('Invalid form data', { status: 400 });
+    return new Response('Invalid form data', { status: 400, headers: corsHeaders });
   }
 
   const { name, orgSlug, slug, description, location, capacity, start, end } = parsed.data;
@@ -48,7 +64,7 @@ Deno.serve(async (req): Promise<Response> => {
   } = await supabase.auth.getUser(token);
 
   if (authError || !user) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response('Unauthorized', { status: 401, headers: corsHeaders });
   }
 
   // get org ID based on org slug
@@ -60,7 +76,7 @@ Deno.serve(async (req): Promise<Response> => {
 
   if (orgError || !orgData) {
     console.error('ERROR FETCHING ORG ID FROM SLUG:', orgError.message);
-    return new Response('Internal', { status: 500 });
+    return new Response('Internal', { status: 500, headers: corsHeaders });
   }
 
   const orgId = orgData.id;
@@ -85,12 +101,12 @@ Deno.serve(async (req): Promise<Response> => {
     if (error.code === '23505') {
       return new Response(`An event with slug ${finalSlug} already exists`, { status: 409 });
     }
-    return new Response('Internal', { status: 500 });
+    return new Response('Internal', { status: 500, headers: corsHeaders });
   }
 
   if (!data) {
     console.error('ERROR INSERTING: row was not returned');
-    return new Response('Internal', { status: 500 });
+    return new Response('Internal', { status: 500, headers: corsHeaders });
   }
 
   return new Response(
@@ -98,6 +114,6 @@ Deno.serve(async (req): Promise<Response> => {
       success: true,
       slug: data.slug,
     }),
-    { status: 201, headers: { 'Content-Type': 'application/json' } },
+    { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   );
 });

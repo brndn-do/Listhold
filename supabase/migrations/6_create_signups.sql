@@ -1,7 +1,7 @@
 CREATE TYPE signup_status_enum AS ENUM ('confirmed', 'waitlisted', 'withdrawn');
 
 CREATE TABLE public.signups (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 

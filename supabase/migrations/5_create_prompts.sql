@@ -1,7 +1,7 @@
 CREATE TYPE prompt_type_enum AS ENUM ('yes/no', 'notice');
 
 CREATE TABLE public.prompts (
-  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   event_id uuid NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
 
