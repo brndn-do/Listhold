@@ -7,6 +7,7 @@ export interface SignupData {
   displayName: string | null;
   avatarURL: string | null;
   status: 'confirmed' | 'waitlisted' | 'withdrawn';
+  publicAnswers: Record<string, string | boolean>;
   createdAt: Date;
 }
 
@@ -29,6 +30,7 @@ export const fetchInitialList = async (eventId: string): Promise<SignupData[]> =
       displayName: row.display_name,
       avatarURL: row.avatar_url,
       status: row.status!,
+      publicAnswers: {},
       createdAt: new Date(row.created_at!),
     };
   });
