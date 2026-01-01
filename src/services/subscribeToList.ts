@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { REALTIME_SUBSCRIBE_STATES } from '@supabase/supabase-js';
-import { throttle } from 'lodash';
+import { throttle, debounce } from 'lodash';
 
 export const subscribeToList = (
   eventId: string,
@@ -8,6 +8,7 @@ export const subscribeToList = (
   setConnectionState: (connected: boolean) => void,
 ) => {
   const throttledSetListState = throttle(setListState, 500);
+  const debouncedSetConnectionState = debounce(setConnectionState, 3000);
   const channel = supabase
     .channel(`event_${eventId}_signup_changes`)
     .on(
@@ -25,15 +26,20 @@ export const subscribeToList = (
     .subscribe((status: REALTIME_SUBSCRIBE_STATES) => {
       if (status === 'SUBSCRIBED') {
         throttledSetListState();
+        debouncedSetConnectionState.cancel();
         setConnectionState(true);
-      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      } else if (status === 'TIMED_OUT' || status === 'CLOSED') {
+        debouncedSetConnectionState.cancel();
         setConnectionState(false);
-      } 
-      // ignore CLOSED state
+      } else if (status === 'CHANNEL_ERROR') {
+        debouncedSetConnectionState.cancel();
+        debouncedSetConnectionState(false);
+      }
     });
 
   return () => {
     throttledSetListState.cancel();
+    debouncedSetConnectionState.cancel();
     supabase.removeChannel(channel);
   };
 };
