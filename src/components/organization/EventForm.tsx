@@ -229,11 +229,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
         <div className='relative z-0 w-full mb-3 group'>
           <label className='block mb-2.5 text-sm font-medium text-heading'>Start Date & Time</label>
           <div className='flex gap-2'>
-            <div className='flex-1'>
+            <div className='flex-1 min-w-0'>
               <input
                 type='date'
                 {...register('startDate', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className=' min-w-0 w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.startDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -241,11 +241,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 </div>
               )}
             </div>
-            <div className='flex-1'>
+            <div className='flex-1 min-w-0'>
               <input
                 type='time'
                 {...register('startTime', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.startTime && (
                 <div className='w-full pl-2 mt-1'>
@@ -260,11 +260,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
         <div className='relative z-0 w-full mb-3 group'>
           <label className='block mb-2.5 text-sm font-medium text-heading'>End Date & Time</label>
           <div className='flex gap-2'>
-            <div className='flex-1'>
+            <div className='flex-1 min-w-0'>
               <input
                 type='date'
                 {...register('endDate', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.endDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -272,11 +272,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 </div>
               )}
             </div>
-            <div className='flex-1'>
+            <div className='flex-1 min-w-0'>
               <input
                 type='time'
                 {...register('endTime', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.endTime && (
                 <div className='w-full pl-2 mt-1'>
