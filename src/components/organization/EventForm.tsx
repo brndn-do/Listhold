@@ -80,15 +80,18 @@ const eventSchema = z
       .string()
       .transform((s) => s.trim())
       .transform((s) => (s === '' ? undefined : s))
-      .refine((s) => !s || s.length <= 1000, { message: 'Description cannot exceed 1000 characters.' })
+      .refine((s) => !s || s.length <= 1000, {
+        message: 'Description cannot exceed 1000 characters.',
+      })
       .optional(),
+    custom: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     const start = new Date(`${data.startDate}T${data.startTime}`);
     const end = new Date(`${data.endDate}T${data.endTime}`);
     if (start >= end) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'End date and time must be after start date and time',
         path: ['endTime'],
       });
@@ -230,7 +233,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='date'
                 {...register('startDate', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2 [&::-webkit-calendar-picker-indicator]:hidden'
+                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.startDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -242,7 +245,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('startTime', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2 [&::-webkit-calendar-picker-indicator]:hidden'
+                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.startTime && (
                 <div className='w-full pl-2 mt-1'>
@@ -261,7 +264,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='date'
                 {...register('endDate', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2 [&::-webkit-calendar-picker-indicator]:hidden'
+                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.endDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -273,7 +276,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('endTime', { required: true })}
-                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2 [&::-webkit-calendar-picker-indicator]:hidden'
+                className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
               />
               {errors.endTime && (
                 <div className='w-full pl-2 mt-1'>

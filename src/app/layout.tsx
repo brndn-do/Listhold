@@ -37,7 +37,7 @@ const RootLayout = ({
           </header>
           <main className='flex-1 flex flex-col items-center pt-6 px-4'>{children}</main>
           <footer className='p-2 flex flex-col text-xs'>
-            <p className='opacity-70 ml-4'>&copy; 2026 Listhold</p>
+            <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
         </body>
       </AuthProvider>

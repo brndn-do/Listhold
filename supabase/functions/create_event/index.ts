@@ -2,26 +2,36 @@ import { supabase } from './supabase.ts';
 import { z } from 'zod';
 import type { Database } from '../../../types/supabaseTypes.ts';
 
-const createEventSchema = z.object({
-  name: z.string().min(1).max(50),
-  orgSlug: z
-    .string()
-    .min(3)
-    .max(36)
-    .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/),
-  slug: z
-    .string()
-    .min(3)
-    .max(36)
-    .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/)
-    .optional(),
-  location: z.string().min(1).max(200),
-  capacity: z.number().min(1).max(300),
-  start: z.iso.datetime(),
-  end: z.iso.datetime().optional(),
-  description: z.string().min(1).max(1000).optional(),
-  photo: z.string().min(1).max(1000).optional(), // Base64
-});
+const createEventSchema = z
+  .object({
+    name: z.string().min(1).max(50),
+    orgSlug: z
+      .string()
+      .min(3)
+      .max(36)
+      .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/),
+    slug: z
+      .string()
+      .min(3)
+      .max(36)
+      .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/)
+      .optional(),
+    location: z.string().min(1).max(200),
+    capacity: z.number().min(1).max(300),
+    start: z.iso.datetime(),
+    end: z.iso.datetime().optional(),
+    description: z.string().min(1).max(1000).optional(),
+    photo: z.string().min(1).max(1000).optional(), // Base64
+  })
+  .superRefine((data, ctx) => {
+    if (data.end && new Date(data.start) >= new Date(data.end)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'End time must be after start time',
+        path: ['end'],
+      });
+    }
+  });
 
 type EventsInsert = Database['public']['Tables']['events']['Insert'];
 
