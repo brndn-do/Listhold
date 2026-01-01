@@ -2,6 +2,14 @@ import { supabase } from './supabase.ts';
 import { z } from 'zod';
 import type { Database } from '../../../types/supabaseTypes.ts';
 
+const promptSchema = z.object({
+  displayOrder: z.number().min(1),
+  promptType: z.enum(['yes/no', 'notice']),
+  promptText: z.string().min(1).max(100),
+  isRequired: z.boolean().default(true),
+  isPrivate: z.boolean().default(true),
+});
+
 const createEventSchema = z
   .object({
     name: z.string().min(1).max(50),
@@ -22,6 +30,7 @@ const createEventSchema = z
     end: z.iso.datetime().optional(),
     description: z.string().min(1).max(1000).optional(),
     photo: z.string().min(1).max(1000).optional(), // Base64
+    prompts: z.array(promptSchema).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.end && new Date(data.start) >= new Date(data.end)) {
@@ -34,6 +43,7 @@ const createEventSchema = z
   });
 
 type EventsInsert = Database['public']['Tables']['events']['Insert'];
+type PromptsInsert = Database['public']['Tables']['prompts']['Insert'];
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,7 +70,7 @@ Deno.serve(async (req): Promise<Response> => {
     return new Response('Invalid form data', { status: 400, headers: corsHeaders });
   }
 
-  const { name, orgSlug, slug, description, location, capacity, start, end } = parsed.data;
+  const { name, orgSlug, slug, description, location, capacity, start, end, prompts } = parsed.data;
 
   // generate random event slug if not specified
   const finalSlug = slug ?? crypto.randomUUID();
@@ -104,7 +114,11 @@ Deno.serve(async (req): Promise<Response> => {
   };
 
   // create event
-  const { data, error } = await supabase.from('events').insert(toInsert).select('slug').single();
+  const { data, error } = await supabase
+    .from('events')
+    .insert(toInsert)
+    .select('id, slug')
+    .single();
 
   if (error) {
     console.error('ERROR INSERTING:', error.message);
@@ -117,6 +131,30 @@ Deno.serve(async (req): Promise<Response> => {
   if (!data) {
     console.error('ERROR INSERTING: row was not returned');
     return new Response('Internal', { status: 500, headers: corsHeaders });
+  }
+
+  // Insert prompts if provided
+  if (prompts && prompts.length > 0) {
+    const promptsToInsert: PromptsInsert[] = prompts.map((prompt) => ({
+      event_id: data.id,
+      display_order: prompt.displayOrder,
+      prompt_type: prompt.promptType,
+      prompt_text: prompt.promptText,
+      is_required: prompt.isRequired,
+      is_private: prompt.isPrivate,
+    }));
+
+    const { error: promptsError } = await supabase.from('prompts').insert(promptsToInsert);
+
+    if (promptsError) {
+      console.error('ERROR INSERTING PROMPTS:', promptsError.message);
+      // Delete the event to maintain consistency
+      await supabase.from('events').delete().eq('id', data.id);
+      return new Response('Failed to create event with prompts', {
+        status: 500,
+        headers: corsHeaders,
+      });
+    }
   }
 
   return new Response(

@@ -79,7 +79,7 @@ const OrgForm = () => {
       const error = err as ServiceError;
       const msg = error.message as ServiceErrorMessage;
       if (msg === 'already-exists') {
-        setFunctionError('An organization with that id already exists. Try again in a bit.');
+        setFunctionError('An organization with that slug already exists. Try again in a bit.');
       } else if (msg === 'unauthorized') {
         setFunctionError('Unauthorized. Are you signed in?')
       } 

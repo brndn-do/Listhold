@@ -2,6 +2,14 @@ import { supabase } from '@/lib/supabase';
 import { ServiceError } from '@/types/serviceError';
 import { FunctionsHttpError } from '@supabase/supabase-js';
 
+interface Prompt {
+  displayOrder: number;
+  promptType: 'yes/no' | 'notice',
+  promptText: string;
+  isRequired: boolean;
+  isPrivate: boolean;
+}
+
 export interface CreateEventRequest {
   name: string;
   orgSlug: string;
@@ -12,6 +20,7 @@ export interface CreateEventRequest {
   end?: string;
   description?: string;
   photo?: File;
+  prompts?: Prompt[]
 }
 
 /**
@@ -30,6 +39,7 @@ export const createEvent = async (request: CreateEventRequest): Promise<string> 
     start: request.start,
     end: request.end,
     description: request.description,
+    prompts: request.prompts,
   };
 
   const { data, error } = await supabase.functions.invoke('create_event', {

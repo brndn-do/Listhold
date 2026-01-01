@@ -8,9 +8,24 @@ import Spinner from '../ui/Spinner';
 
 import { z } from 'zod';
 import { createEvent } from '@/services/createEvent';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+
+const promptSchema = z.object({
+  displayOrder: z.number().min(1),
+  promptType: z.enum(['yes/no', 'notice']),
+  promptText: z
+    .string()
+    .min(1, {
+      message: 'Text cannot be empty.',
+    })
+    .max(100, {
+      message: 'Text cannot exceed 100 characters.',
+    }),
+  isRequired: z.boolean(),
+  isPrivate: z.boolean(),
+});
 
 const eventSchema = z
   .object({
@@ -84,7 +99,7 @@ const eventSchema = z
         message: 'Description cannot exceed 1000 characters.',
       })
       .optional(),
-    custom: z.string().optional(),
+    prompts: z.array(promptSchema).optional(),
   })
   .superRefine((data, ctx) => {
     const start = new Date(`${data.startDate}T${data.startTime}`);
@@ -114,12 +129,32 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
     register,
     formState: { errors, isValid, isDirty },
     watch,
+    control,
   } = useForm<eventSchemaType>({
     resolver: zodResolver(eventSchema),
     mode: 'onChange',
+    defaultValues: {
+      prompts: [],
+    },
   });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'prompts',
+  });
+
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addPrompt = () => {
+    append({
+      displayOrder: fields.length + 1,
+      promptType: 'yes/no',
+      promptText: '',
+      isRequired: true,
+      isPrivate: true,
+    });
+  };
 
   /**
    * react-hook-form does not work well with the superRefine check for start < end
@@ -139,14 +174,14 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
       const end = new Date(`${endDate}T${endTime}`);
 
       if (start >= end) {
-        setCustomError('End date and time must be after start date and time')
+        setCustomError('End date and time must be after start date and time');
       } else {
         setCustomError(null);
       }
     } else {
       setCustomError(null);
     }
-  }, [startDate, startTime, endDate, endTime])
+  }, [startDate, startTime, endDate, endTime]);
 
   const submitForm: SubmitHandler<eventSchemaType> = async (validatedData) => {
     if (!user) return;
@@ -167,7 +202,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
       if (error.message === 'permission-denied') {
         setFunctionError('You do not have permission to create events for this organization.');
       } else if (error.message === 'already-exists') {
-        setFunctionError('An event with that ID already exists. Try again in a bit.');
+        setFunctionError('An event with that slug already exists. Try again in a bit.');
       } else {
         setFunctionError('An unexpected error occurred. Please try again.');
       }
@@ -194,7 +229,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
-      className='w-full md:w-[70%] lg:w-[50%] xl:w-[30%] 2xl:w-[25%]'
+      className='w-full md:w-[70%] lg:w-[45%] xl:w-[40%] 2xl:w-[30%]'
     >
       <div>
         {/* Name */}
@@ -205,7 +240,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
           <input
             {...register('name', { required: true })}
             placeholder='My Event'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -224,7 +259,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
           <input
             {...register('slug', { required: false })}
             placeholder='my-event-123'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -243,7 +278,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
           <input
             {...register('location', { required: true })}
             placeholder='123 Example St'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -262,7 +297,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='date'
                 {...register('startDate', { required: true })}
-                className=' min-w-0 w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className=' min-w-0 w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startDate && (
@@ -275,7 +310,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('startTime', { required: true })}
-                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startTime && (
@@ -295,7 +330,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='date'
                 {...register('endDate', { required: true })}
-                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endDate && (
@@ -308,7 +343,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('endTime', { required: true })}
-                className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endTime && (
@@ -334,7 +369,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
             type='number'
             {...register('capacity', { required: true })}
             placeholder='20'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -343,6 +378,133 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <ErrorMessage size='xs' justify='start' content={errors.capacity.message} />
             </div>
           )}
+        </div>
+
+        {/* Description */}
+        <div className='relative z-0 w-full mb-3 group'>
+          <label htmlFor='description' className='block mb-2.5 text-sm font-medium text-heading'>
+            Description (optional)
+          </label>
+          <textarea
+            {...register('description', { required: false })}
+            placeholder='Event description...'
+            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            rows={4}
+            spellCheck={false}
+            autoComplete='off'
+          />
+          {errors.description && (
+            <div className='w-full pl-2 mt-1'>
+              <ErrorMessage size='xs' justify='start' content={errors.description.message} />
+            </div>
+          )}
+        </div>
+
+        {/* Prompts Section */}
+        <div className='mt-3 pt-3 border-t border-gray-300'>
+          <h3 className='text-heading mb-2'>Signup Prompts (Optional)</h3>
+          <p className='text-xs text-gray-500 mb-4'>
+            Add custom questions or notices for attendees when they sign up.
+          </p>
+
+          {fields.length > 0 && (
+            <div className='space-y-4 mb-2'>
+              {fields.map((field, index) => (
+                <div key={field.id} className='p-4 border dark:border-gray-500 rounded-lg'>
+                  <div className='flex justify-between items-center mb-3'>
+                    <h4 className='font-medium text-heading'>Prompt {index + 1}</h4>
+                    <button
+                      type='button'
+                      onClick={() => remove(index)}
+                      className='text-sm text-red-700 dark:text-red-600 hover:cursor-pointer'
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  {/* Prompt Type */}
+                  <div className='mb-2'>
+                    <label className='block mb-2 text-sm font-medium text-heading'>Type</label>
+                    <select
+                      {...register(`prompts.${index}.promptType`)}
+                      className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2 bg-background text-foreground'
+                    >
+                      <option value='yes/no'>Yes/No Question</option>
+                      <option value='notice'>Notice (users click &quot;I understand&quot;)</option>
+                    </select>
+                    {errors.prompts?.[index]?.promptType && (
+                      <div className='w-full pl-2 mt-1'>
+                        <ErrorMessage
+                          size='xs'
+                          justify='start'
+                          content={errors.prompts[index]?.promptType?.message}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Prompt Text */}
+                  <div className='mb-4'>
+                    <label className='block mb-2 text-sm font-medium text-heading'>Text</label>
+                    <input
+                      {...register(`prompts.${index}.promptText`)}
+                      placeholder='e.g., Will you need parking?'
+                      className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                      spellCheck={false}
+                      autoComplete='off'
+                    />
+                    {errors.prompts?.[index]?.promptText && (
+                      <div className='w-full pl-2 mt-1'>
+                        <ErrorMessage
+                          size='xs'
+                          justify='start'
+                          content={errors.prompts[index]?.promptText?.message}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Checkboxes */}
+                  <div className='flex gap-4'>
+                    <label className='flex items-center gap-2 cursor-pointer'>
+                      <input
+                        type='checkbox'
+                        {...register(`prompts.${index}.isRequired`)}
+                        className='w-4 h-4 cursor-pointer'
+                      />
+                      <span className='text-sm text-heading'>Required</span>
+                    </label>
+                    {watch(`prompts.${index}.promptType`) !== 'notice' && (
+                      <label className='flex items-center gap-2 cursor-pointer'>
+                        <input
+                          type='checkbox'
+                          {...register(`prompts.${index}.isPrivate`)}
+                          className='w-4 h-4 cursor-pointer'
+                        />
+                        <span className='text-sm text-heading'>
+                          Private (only you and admins can see responses)
+                        </span>
+                      </label>
+                    )}
+                  </div>
+
+                  {/* Hidden displayOrder field */}
+                  <input
+                    type='hidden'
+                    {...register(`prompts.${index}.displayOrder`, { valueAsNumber: true })}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            type='button'
+            onClick={addPrompt}
+            className='text-sm text-purple-700 dark:text-purple-600 hover:cursor-pointer'
+          >
+            + Add Prompt
+          </button>
         </div>
       </div>
       <div className='max-w-full flex flex-col gap-4 mt-4'>
