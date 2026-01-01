@@ -13,7 +13,7 @@ const Home = () => {
         Listhold
       </h1>
       <p className='mt-4 text-lg text-center text-slate-700 dark:text-slate-400'>
-        {"Manage your organization's event rosters—with ease."}
+        {"Manage your organization's event lists—with ease."}
       </p>
       <Link
         href='/organizations/new'

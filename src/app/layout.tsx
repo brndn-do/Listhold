@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Listhold',
-  description: 'Automate event signups, rosters, and waitlists.',
+  description: 'Automate your event lists.',
 };
 
 const RootLayout = ({

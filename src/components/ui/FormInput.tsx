@@ -1,11 +1,11 @@
+import { useForm } from 'react-hook-form';
+
 interface FormInputProps {
   id: string;
   type?: 'text' | 'number' | 'datetime-local';
   name?: string;
   required: boolean;
   label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   spellCheck?: boolean;
   autoComplete?: boolean;
@@ -23,35 +23,26 @@ interface FormInputProps {
 const FormInput = ({
   id,
   type = 'text',
-  name,
   required,
   label,
-  value,
-  onChange,
   placeholder = ' ',
   spellCheck = false,
   autoComplete = false,
 }: FormInputProps) => {
+  const { register } = useForm();
   return (
     <div className='relative z-0 w-full mb-5 group'>
+      <label htmlFor={id} className='block mb-2.5 text-sm font-medium text-heading'>
+        {label}
+      </label>
       <input
         type={type}
-        id={id}
-        name={name || id}
-        required={required}
-        value={value}
-        onChange={onChange}
+        {...register(id, { required })}
         placeholder={placeholder}
-        className='block py-2.5 px-0 w-full text-sm text-heading bg-transparent border-0 border-b-2 border-default-medium appearance-none focus:outline-none focus:ring-0 focus:border-brand peer'
+        className='border border-gray-500 text-heading text-sm rounded-lg focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body'
         spellCheck={spellCheck}
         autoComplete={autoComplete ? 'on' : 'off'}
       />
-      <label
-        htmlFor={id}
-        className='absolute text-sm text-body duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-fg-brand peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto'
-      >
-        {label}
-      </label>
     </div>
   );
 };

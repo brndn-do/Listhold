@@ -17,6 +17,7 @@
     "issues": "gh issue list --repo brndn-do/listhold --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > issues.json"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@opentelemetry/api": "^1.9.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.1",
@@ -29,6 +30,7 @@
     "postcss": "^8.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hook-form": "^7.69.0",
     "server-only": "^0.0.1",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.1.14",

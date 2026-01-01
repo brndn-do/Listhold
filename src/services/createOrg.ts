@@ -5,6 +5,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 interface CreateOrgRequest {
   name: string;
   slug?: string;
+  description?: string;
 }
 
 /**
@@ -17,6 +18,7 @@ export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
   const toSend = {
     name: request.name,
     slug: request.slug,
+    description: request.description,
   };
 
   const { data, error } = await supabase.functions.invoke('create_organization', {
@@ -28,6 +30,9 @@ export const createOrg = async (request: CreateOrgRequest): Promise<string> => {
     const status = functionsError.context.status;
     if (status === 409) {
       throw new ServiceError('already-exists');
+    }
+    if (status === 401) {
+      throw new ServiceError('unauthorized');
     }
     throw new ServiceError('internal');
   }
