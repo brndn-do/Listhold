@@ -5,7 +5,7 @@
 ### Home
 
 - **`/`**
-  - **Description:** Landing page with a brief introduction to Rosterize and a link to create an organization.
+  - **Description:** Landing page with a brief introduction to Listhold and a link to create an organization.
 
 ### Dashboard
 

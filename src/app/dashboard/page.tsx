@@ -13,7 +13,7 @@ import { Metadata } from 'next';
 export const revalidate = false;
 
 export const metadata: Metadata = {
-  title: 'Dashboard—Rosterize',
+  title: 'Dashboard — Listhold',
   description: 'View your organizations and events',
 };
 

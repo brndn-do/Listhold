@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Rosterize',
+  title: 'Listhold',
   description: 'Automate event signups, rosters, and waitlists.',
 };
 
@@ -36,7 +36,7 @@ const RootLayout = ({
           </header>
           <main className='flex-1 flex flex-col items-center pt-6 px-4'>{children}</main>
           <footer className='p-2 flex flex-col text-xs'>
-            <p className='opacity-70 ml-4'>&copy; 2025 Rosterize</p>
+            <p className='opacity-70 ml-4'>&copy; 2026 Listhold</p>
           </footer>
         </body>
       </AuthProvider>

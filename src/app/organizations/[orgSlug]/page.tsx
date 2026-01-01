@@ -13,17 +13,17 @@ export const generateMetadata = async ({
     const props = await getOrgPageProps(orgSlug);
     if (!props) {
       return {
-        title: 'Organization Not Found — Rosterize',
+        title: 'Organization Not Found — Listhold',
         description: 'The requested organization could not be found.',
       };
     }
     return {
-      title: `${props.name} — Rosterize`,
-      description: props.description || `View ${props.name} on Rosterize.`,
+      title: `${props.name} — Listhold`,
+      description: props.description || `View ${props.name} on Listhold.`,
     };
   } catch (err: unknown) {
     return {
-      title: 'Error — Rosterize',
+      title: 'Error — Listhold',
     };
   }
 };

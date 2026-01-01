@@ -11,10 +11,10 @@ const errorResponse = (message: string, status: number) => {
 
 const sendEmail = async (to: string, subject: string, html: string) => {
   const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
-  const FROM_EMAIL = Deno.env.get('FROM_EMAIL') || 'noreply@rosterize.com';
+  const FROM_EMAIL = Deno.env.get('FROM_EMAIL');
 
-  if (!SENDGRID_API_KEY) {
-    console.warn('SENDGRID_API_KEY not set, skipping email');
+  if (!SENDGRID_API_KEY || !FROM_EMAIL) {
+    console.warn('SENDGRID_API_KEY or FROM_EMAIL not set, skipping email');
     return;
   }
 

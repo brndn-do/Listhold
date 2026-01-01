@@ -1,4 +1,4 @@
-# Rosterize
+# Listhold
 
 A full-stack, serverless event management and sign-up platform built with Next.js + Supabase.
 
@@ -102,8 +102,8 @@ For design and implementation details see:
 1.  Clone the repository:
 
     ```bash
-    git clone https://github.com/brndn-do/rosterize.git
-    cd rosterize
+    git clone https://github.com/brndn-do/listhold.git
+    cd listhold
     ```
 
 2.  Install dependencies:

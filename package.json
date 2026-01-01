@@ -1,5 +1,5 @@
 {
-  "name": "rosterize",
+  "name": "listhold",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "deploy:firebase": "./deploy-firebase.sh",
     "deploy:next": "./deploy-next.sh",
     "types": "npx supabase start && npx supabase gen types --local > types/supabaseTypes.ts",
-    "issues": "gh issue list --repo brndn-do/rosterize --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > issues.json"
+    "issues": "gh issue list --repo brndn-do/listhold --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > issues.json"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.9.0",

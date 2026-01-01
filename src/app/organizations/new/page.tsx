@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: 'Create Organization—Rosterize',
+  title: 'Create Organization — Listhold',
   description: 'Create a new organization to manage events',
 };
 

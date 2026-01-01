@@ -14,18 +14,18 @@ export const generateMetadata = async ({
     const props = await getEventProviderProps(eventSlug);
     if (!props) {
       return {
-        title: 'Event Not Found — Rosterize',
+        title: 'Event Not Found — Listhold',
         description: 'The requested event could not be found.',
       };
     }
 
     return {
-      title: `${props.name} — Rosterize`,
-      description: props.description || 'Join this event on Rosterize.',
+      title: `${props.name} — Listhold`,
+      description: props.description || 'Join this event on Listhold.',
     };
   } catch (err) {
     return {
-      title: 'Error — Rosterize',
+      title: 'Error — Listhold',
       description: 'There was an error fetching the event.',
     };
   }

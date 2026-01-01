@@ -1,6 +1,6 @@
 # Firestore Database Schema
 
-This document outlines the database schema for Rosterize, designed for Firestore.
+This document outlines the database schema for Listhold, designed for Firestore.
 
 > **Note:** This schema includes both **implemented features** and **planned future functionality**. Fields and features marked as "Not yet implemented" are part of the roadmap. See `src/types.ts` for the current implementation state.
 
