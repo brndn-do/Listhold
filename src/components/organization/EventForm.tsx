@@ -234,6 +234,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 type='date'
                 {...register('startDate', { required: true })}
                 className=' min-w-0 w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+                style={{ WebkitAppearance: 'none' }}
               />
               {errors.startDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -246,6 +247,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 type='time'
                 {...register('startTime', { required: true })}
                 className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                style={{ WebkitAppearance: 'none' }}
               />
               {errors.startTime && (
                 <div className='w-full pl-2 mt-1'>
@@ -265,6 +267,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 type='date'
                 {...register('endDate', { required: true })}
                 className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                style={{ WebkitAppearance: 'none' }}
               />
               {errors.endDate && (
                 <div className='w-full pl-2 mt-1'>
@@ -277,6 +280,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                 type='time'
                 {...register('endTime', { required: true })}
                 className='w-full min-w-0 border border-gray-500 text-sm rounded-lg px-3 py-2'
+                style={{ WebkitAppearance: 'none' }}
               />
               {errors.endTime && (
                 <div className='w-full pl-2 mt-1'>
