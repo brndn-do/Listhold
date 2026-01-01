@@ -14,7 +14,7 @@ import { createOrg } from '@/services/createOrg';
 import { ServiceError, ServiceErrorMessage } from '@/types/serviceError';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 
-const organizationSchema = z.object({
+const orgSchema = z.object({
   name: z
     .string()
     .transform((s) => s.trim())
@@ -44,14 +44,13 @@ const organizationSchema = z.object({
   description: z
     .string()
     .transform((s) => s.trim())
-    .refine((s) => s.length <= 1000, { message: 'Description cannot exceed 1000 characters.' })
+    .transform((s) => (s === '' ? undefined : s))
+    .refine((s) => !s || s.length <= 1000, { message: 'Description cannot exceed 1000 characters.' })
     .optional(),
-});
-
-// schema defined by zod and expected by our cloud function
-type CreateOrganizationRequest = z.infer<typeof organizationSchema>;
-const ERROR_TIME = 5000; // how long to display error before allowing retries
-
+  });
+  type orgSchemaType = z.infer<typeof orgSchema>;
+  const ERROR_TIME = 5000; // how long to display error before allowing retries
+  
 const OrgForm = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -59,15 +58,15 @@ const OrgForm = () => {
     handleSubmit,
     register,
     formState: { errors, isValid, isDirty },
-  } = useForm<CreateOrganizationRequest>({
-    resolver: zodResolver(organizationSchema),
+  } = useForm<orgSchemaType>({
+    resolver: zodResolver(orgSchema),
     mode: 'onChange',
   });
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitForm: SubmitHandler<CreateOrganizationRequest> = async (
-    validatedData: CreateOrganizationRequest,
+  const submitForm: SubmitHandler<orgSchemaType> = async (
+    validatedData: orgSchemaType,
   ) => {
     if (!user) return;
 
@@ -97,7 +96,7 @@ const OrgForm = () => {
   return (
     <form
       onSubmit={handleSubmit(submitForm)}
-      className='w-full md:w-[50%] lg:w-[50%] xl:w-[30%] 2xl:w-[25%]'
+      className='w-full md:w-[70%] lg:w-[50%] xl:w-[30%] 2xl:w-[25%]'
     >
       <div>
         {/* Name */}

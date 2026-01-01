@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { ServiceError } from '@/types/serviceError';
 import { FunctionsHttpError } from '@supabase/supabase-js';
 
-interface CreateEventRequest {
+export interface CreateEventRequest {
   name: string;
   orgSlug: string;
   slug?: string;
