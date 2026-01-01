@@ -1,7 +1,7 @@
 'use client';
 
 import { Prompt } from '@/components/event/signup/PromptView';
-import { fetchInitialList, SignupData } from '@/services/fetchInitialList';
+import { fetchList, SignupData } from '@/services/fetchList';
 import { subscribeToList } from '@/services/subscribeToList';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -47,8 +47,14 @@ interface EventContextType {
   /** Whether the initial list is currently loading. */
   readonly listLoading: boolean;
 
-  /** Error encountered while loading the initial list, if any. */
-  readonly listError: Error | null;
+  /** Error encountered while making a fetches to the list, if any. */
+  readonly fetchError: Error | null;
+
+  /** Whether at least one successful fetch was made. */
+  readonly successfulFetch: boolean;
+
+  /** True if not connected to realtime channel or a fetch fails after a successful fetch */
+  readonly disconnected: boolean;
 }
 
 /** React context for providing event data throughout the app */
@@ -89,30 +95,50 @@ export const EventProvider = ({
   const [confirmedList, setConfirmedList] = useState<SignupData[]>([]);
   const [waitlist, setWaitlist] = useState<SignupData[]>([]);
   const [listLoading, setListLoading] = useState(true);
-  const [listError, setListError] = useState<Error | null>(null);
+  const [fetchError, setFetchError] = useState<Error | null>(null);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
+  // true if there was at least one successful fetch. Used to display outdated data.
+  const [successfulFetch, setSuccessfulFetch] = useState(true);
+
+  const disconnected = useMemo(() => {
+    // if the list is still loading, we don't say the client has been "disconnected"
+    if (listLoading || !successfulFetch) {
+      return false;
+    }
+    // if there hasn't been a successful fetch in the first place,
+    // we don't say the client has been "disconnected"
+    if (!successfulFetch) {
+      return false;
+    }
+    if (!realtimeConnected || fetchError) {
+      return true;
+    }
+    return false;
+  }, [listLoading, realtimeConnected, fetchError, successfulFetch]);
 
   useEffect(() => {
-    const fetchList = async () => {
+    const setListState = async () => {
       try {
-        const result = await fetchInitialList(eventId);
+        const result = await fetchList(eventId);
         setConfirmedList(result.filter((val) => val.status === 'confirmed'));
         setWaitlist(result.filter((val) => val.status === 'waitlisted'));
+        setSuccessfulFetch(true);
       } catch (err) {
         if (err instanceof Error) {
-          setListError(err);
+          setFetchError(err);
         } else {
-          setListError(new Error(String(err)));
+          setFetchError(new Error(String(err)));
         }
       } finally {
         setListLoading(false);
       }
     };
-    const unsub = subscribeToList(eventId, fetchList);
-    fetchList();
+
+    const unsub = subscribeToList(eventId, setListState, setRealtimeConnected);
 
     return () => {
       unsub();
-    }
+    };
   }, [eventId]);
 
   const confirmedUserIds: Set<string> = useMemo(() => {
@@ -135,12 +161,14 @@ export const EventProvider = ({
       location,
       capacity,
       prompts,
-      confirmedList: confirmedList,
-      confirmedUserIds: confirmedUserIds,
-      waitlist: waitlist,
-      waitlistUserIds: waitlistUserIds,
-      listLoading: listLoading,
-      listError: listError,
+      confirmedList,
+      confirmedUserIds,
+      waitlist,
+      waitlistUserIds,
+      listLoading,
+      fetchError,
+      successfulFetch,
+      disconnected,
     };
   }, [
     eventId,
@@ -158,7 +186,9 @@ export const EventProvider = ({
     waitlist,
     waitlistUserIds,
     listLoading,
-    listError,
+    fetchError,
+    successfulFetch,
+    disconnected,
   ]);
   return <EventContext.Provider value={value}>{children}</EventContext.Provider>;
 };

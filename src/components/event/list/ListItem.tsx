@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthProvider';
-import { SignupData } from '@/services/fetchInitialList';
+import { SignupData } from '@/services/fetchList';
 import { formatDate } from '@/utils/timeFormatter';
 import Image from 'next/image';
 

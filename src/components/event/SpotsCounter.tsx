@@ -1,7 +1,6 @@
 'use client';
 
 import Dots from '@/components/ui/Dots';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import { useEvent } from '@/context/EventProvider';
 import { useMemo } from 'react';
 
@@ -10,20 +9,29 @@ interface SpotsCounterProps {
 }
 
 const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
-  const { confirmedList, listLoading, listError } = useEvent();
-  const signupsCount = useMemo(() => {
+  const { confirmedList, listLoading, fetchError, successfulFetch } = useEvent();
+  const signupsCount = useMemo<number>(() => {
+    if (fetchError && !successfulFetch) {
+      return -1;
+    }
     return confirmedList.length;
-  }, [confirmedList]);
+  }, [confirmedList, fetchError, successfulFetch]);
+
+  const content = () => {
+    if (listLoading) {
+      return <Dots size={1} />
+    }
+
+    if (signupsCount === -1) {
+      return <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ?/${capacity}`}</p>
+    }
+
+    return <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
+  }
 
   return (
     <div className='h-4 flex items-center'>
-      {listLoading && <Dots size={1} />}
-      {listError && (
-        <ErrorMessage size='sm' content={`Couldn't load signups. Try refreshing the page.`} />
-      )}
-      {!listLoading && !listError && (
-        <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
-      )}
+      {content()}
     </div>
   );
 };

@@ -25,7 +25,7 @@ const EventButton = ({
   handleLeave,
 }: EventButtonProps) => {
   const { user } = useAuth();
-  const { capacity, confirmedList, confirmedUserIds, waitlistUserIds, listLoading, listError, prompts } =
+  const { capacity, confirmedList, confirmedUserIds, waitlistUserIds, listLoading, fetchError, disconnected, prompts } =
     useEvent();
 
   // did the user already join either the signups list or the waitlist?
@@ -39,7 +39,12 @@ const EventButton = ({
   }, [capacity, confirmedList]);
 
   // We do not have enough information about event to allow the user to join/leave
-  if (listLoading || listError) {
+  if (listLoading || fetchError) {
+    return null;
+  }
+
+  // Disable if disconnected
+  if (disconnected) {
     return null;
   }
 

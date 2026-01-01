@@ -11,7 +11,7 @@ export interface SignupData {
   createdAt: Date;
 }
 
-export const fetchInitialList = async (eventId: string): Promise<SignupData[]> => {
+export const fetchList = async (eventId: string): Promise<SignupData[]> => {
   const { data, error } = await supabase
     .from('event_list')
     .select('*')
