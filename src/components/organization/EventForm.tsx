@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '../ui/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { useRouter } from 'next/navigation';
 import Spinner from '../ui/Spinner';
@@ -93,7 +93,7 @@ const eventSchema = z
       ctx.addIssue({
         code: 'custom',
         message: 'End date and time must be after start date and time',
-        path: ['endTime'],
+        path: [],
       });
     }
   });
@@ -113,12 +113,41 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
     handleSubmit,
     register,
     formState: { errors, isValid, isDirty },
+    watch,
   } = useForm<eventSchemaType>({
     resolver: zodResolver(eventSchema),
     mode: 'onChange',
   });
   const [functionError, setFunctionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  /**
+   * react-hook-form does not work well with the superRefine check for start < end
+   * that we defined in our zod schema, so we will just do this part manually
+   * with watch() and useEffect()
+   */
+  const [customError, setCustomError] = useState<string | null>(null);
+  // watch the date/time fields
+  const startDate = watch('startDate');
+  const startTime = watch('startTime');
+  const endDate = watch('endDate');
+  const endTime = watch('endTime');
+
+  useEffect(() => {
+    if (startDate && startTime && endDate && endTime) {
+      const start = new Date(`${startDate}T${startTime}`);
+      const end = new Date(`${endDate}T${endTime}`);
+
+      if (start >= end) {
+        setCustomError('End date and time must be after start date and time')
+      } else {
+        setCustomError(null);
+      }
+    } else {
+      setCustomError(null);
+    }
+  }, [startDate, startTime, endDate, endTime])
+
   const submitForm: SubmitHandler<eventSchemaType> = async (validatedData) => {
     if (!user) return;
 
@@ -289,6 +318,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               )}
             </div>
           </div>
+          {customError && (
+            <div className='w-full pl-2 mt-1'>
+              <ErrorMessage size='xs' justify='start' content={customError} />
+            </div>
+          )}
         </div>
 
         {/* Capacity */}
