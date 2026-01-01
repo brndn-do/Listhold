@@ -101,13 +101,13 @@ const OrgForm = () => {
       <div>
         {/* Name */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='name' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='name' className='block mb-2.5 font-medium text-heading'>
             Organization Name
           </label>
           <input
             {...register('name', { required: true })}
             placeholder='My Organization'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -120,13 +120,13 @@ const OrgForm = () => {
 
         {/* Slug */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='slug' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='slug' className='block mb-2.5 font-medium text-heading'>
             A unique slug (optional)
           </label>
           <input
             {...register('slug', { required: false })}
             placeholder='my-org-123'
-            className='w-full border border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -139,12 +139,12 @@ const OrgForm = () => {
 
         {/* Description */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='description' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='description' className='block mb-2.5 font-medium text-heading'>
             Description (optional)
           </label>
           <textarea
             {...register('description', { required: false })}
-            className='h-48 w-full border border-gray-500 text-sm rounded-lg px-3 py-2 scrollbar scrollbar-thin resize-none'
+            className='h-48 w-full border border-gray-500 rounded-lg px-3 py-2 scrollbar scrollbar-thin resize-none'
             spellCheck={false}
             autoComplete='off'
           />
@@ -156,7 +156,7 @@ const OrgForm = () => {
         </div>
       </div>
       <div className='max-w-full flex flex-col gap-4'>
-        {functionError && <p className='max-w-full text-sm text-red-600'>{functionError}</p>}
+        {functionError && <ErrorMessage justify={'start'} content={functionError}/>}
         {!functionError && (
           <div>
             <Button

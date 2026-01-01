@@ -44,25 +44,22 @@ const Auth = () => {
 
   return (
     <div className='flex flex-col items-center gap-1'>
-      <div className='flex items-center gap-3 h-8'>
+      <div className='flex items-center gap-6 h-8'>
         {user ? (
-          <>
-            <Image
-              alt='Your profile photo'
-              src={user.photoURL || '/default-avatar.jpg'}
-              width={32}
-              height={32}
-              className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
-            ></Image>
-            <h2 className='text-lg'>{user.displayName}</h2>
-          </>
+          <Image
+            alt='Your profile photo'
+            src={user.photoURL || '/default-avatar.jpg'}
+            width={32}
+            height={32}
+            className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
+          ></Image>
         ) : (
           <></>
         )}
         {!error && (
           <Button
             onClick={user ? handleSignOut : handleSignIn}
-            content={user ? 'Sign out' : 'Sign in with Google'}
+            content={user ? 'Sign out' : 'Sign in'}
             disabled={loading}
           />
         )}

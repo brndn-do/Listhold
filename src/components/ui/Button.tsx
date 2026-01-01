@@ -21,7 +21,7 @@ const Button = ({ type = 'button', onClick, content, disabled }: ButtonProps) =>
       type={type}
       onClick={onClick}
       disabled={!!disabled}
-      className={`${disabled ? 'opacity-35' : 'hover:cursor-pointer hover:bg-purple-800 dark:hover:bg-purple-700'} inline-flex text-sm text-white bg-purple-700 font-medium rounded-lg text-sm px-3.5 py-1.75 dark:bg-purple-600 dark:focus:ring-purple-900`}
+      className={`${disabled ? 'bg-purple-400 dark:bg-purple-900 text-white dark:text-gray-400' : 'text-white bg-purple-700 dark:bg-purple-600 hover:cursor-pointer hover:bg-purple-800 dark:hover:bg-purple-700'} inline-flex text-sm font-medium rounded-xl px-3.5 py-1.75`}
     >
       {content}
     </button>

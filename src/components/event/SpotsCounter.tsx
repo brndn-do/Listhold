@@ -23,10 +23,10 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
     }
 
     if (signupsCount === -1) {
-      return <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ?/${capacity}`}</p>
+      return <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ?/${capacity}`}</p>
     }
 
-    return <p className='text-[0.8rem] text-center font-bold text-purple-700 dark:text-purple-500'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
+    return <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
   }
 
   return (

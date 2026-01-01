@@ -23,7 +23,7 @@ const ListItem = ({ signup }: ListItemProps) => {
           height={26}
           className={`border-2 border-purple-700 dark:border-purple-600 h-[26px] w-[26px] rounded-full`}
         ></Image>
-        <p className={user?.uid === signup.userId ? 'text-purple-700 dark:text-purple-500' : ''}>
+        <p className={user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''}>
           {`${signup.displayName}`}
         </p>
         <p className={`ml-auto text-[.65rem] text-right opacity-80`}>

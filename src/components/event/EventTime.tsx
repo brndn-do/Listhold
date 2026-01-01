@@ -17,10 +17,10 @@ const EventTime = ({ start, end }: EventTimeProps) => {
   }, []);
 
   return (
-    <div className='h-4 flex items-center'>
+    <div className='w-full flex items-center pt-1'>
       {!mounted && <Dots size={1} />}
       {mounted && (
-        <p className='text-[0.8rem] text-center'>{`📅 ${formatEventTiming(start, end)}`}</p>
+        <p>{`${formatEventTiming(start, end)}`}</p>
       )}
     </div>
   );

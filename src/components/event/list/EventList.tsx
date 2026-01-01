@@ -28,8 +28,8 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
     if (selection?.length === 0) {
       return (
-        <div className='flex flex-col items-center justify-center w-full h-full'>
-          <p className='text-md font-bold'>It&apos;s empty...</p>
+        <div className='mx-auto mt-[15%]'>
+          <p className='font-bold'>No one yet...</p>
         </div>
       );
     }
@@ -44,7 +44,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   };
 
   return (
-    <div className='relative border-1 border-gray-500 rounded-2xl py-2 px-1 flex flex-col items-center w-full h-90'>
+    <div className='relative flex flex-col items-center w-full h-112 border-1 border-gray-500 rounded-2xl py-2 px-1'>
       {content()}
       {disconnected && (
         <div className='absolute inset-0 z-[-1] flex items-center justify-center'>

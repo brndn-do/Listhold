@@ -23,7 +23,7 @@ const OrgPage = ({ slug, name, description, ownerId, events }: OrgPageProps) => 
   return (
     <div className='w-full flex flex-col gap-4 items-center'>
       <div className='flex flex-col gap-1 items-center'>
-        <h1 className='text-2xl text-center font-bold'>{name}</h1>
+        <h1 className='text-3xl text-center font-bold'>{name}</h1>
         {description && <p className='text-md text-center'>{description}</p>}
       </div>
 

@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthProvider';
 import Auth from '@/components/auth/Auth';
-import Script from 'next/script';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,7 +34,7 @@ const RootLayout = ({
               <Auth />
             </nav>
           </header>
-          <main className='flex-1 flex flex-col items-center pt-6 px-4'>{children}</main>
+          <main className='flex-1 flex flex-col pt-12 lg:pt-20 px-4'>{children}</main>
           <footer className='p-2 flex flex-col text-xs'>
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>

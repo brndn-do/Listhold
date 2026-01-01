@@ -234,13 +234,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
       <div>
         {/* Name */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='name' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='name' className='block mb-2.5'>
             Event Name
           </label>
           <input
             {...register('name', { required: true })}
             placeholder='My Event'
-            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -253,13 +253,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Slug */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='slug' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='slug' className='block mb-2.5'>
             A unique slug (optional)
           </label>
           <input
             {...register('slug', { required: false })}
             placeholder='my-event-123'
-            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -272,13 +272,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Location */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='location' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='location' className='block mb-2.5'>
             Location
           </label>
           <input
             {...register('location', { required: true })}
             placeholder='123 Example St'
-            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -291,13 +291,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Start Date & Time */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label className='block mb-2.5 text-sm font-medium text-heading'>Start Date & Time</label>
+          <label className='block mb-2.5'>Start Date & Time</label>
           <div className='flex gap-2'>
             <div className='flex-1 min-w-0'>
               <input
                 type='date'
                 {...register('startDate', { required: true })}
-                className=' min-w-0 w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                className=' min-w-0 w-full border dark:border-gray-500 rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startDate && (
@@ -310,7 +310,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('startTime', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startTime && (
@@ -324,13 +324,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* End Date & Time */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label className='block mb-2.5 text-sm font-medium text-heading'>End Date & Time</label>
+          <label className='block mb-2.5'>End Date & Time</label>
           <div className='flex gap-2'>
             <div className='flex-1 min-w-0'>
               <input
                 type='date'
                 {...register('endDate', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endDate && (
@@ -343,7 +343,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               <input
                 type='time'
                 {...register('endTime', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endTime && (
@@ -362,14 +362,14 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Capacity */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='capacity' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='capacity' className='block mb-2.5'>
             Capacity
           </label>
           <input
             type='number'
             {...register('capacity', { required: true })}
             placeholder='20'
-            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
@@ -382,13 +382,13 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Description */}
         <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='description' className='block mb-2.5 text-sm font-medium text-heading'>
+          <label htmlFor='description' className='block mb-2.5'>
             Description (optional)
           </label>
           <textarea
             {...register('description', { required: false })}
             placeholder='Event description...'
-            className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
             rows={4}
             spellCheck={false}
             autoComplete='off'
@@ -402,7 +402,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
         {/* Prompts Section */}
         <div className='mt-3 pt-3 border-t border-gray-300'>
-          <h3 className='text-heading mb-2'>Signup Prompts (Optional)</h3>
+          <h3 className='mb-2'>Signup Prompts (Optional)</h3>
           <p className='text-xs text-gray-500 mb-4'>
             Add custom questions or notices for attendees when they sign up.
           </p>
@@ -412,11 +412,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
               {fields.map((field, index) => (
                 <div key={field.id} className='p-4 border dark:border-gray-500 rounded-lg'>
                   <div className='flex justify-between items-center mb-3'>
-                    <h4 className='font-medium text-heading'>Prompt {index + 1}</h4>
+                    <h4 className='font-medium'>Prompt {index + 1}</h4>
                     <button
                       type='button'
                       onClick={() => remove(index)}
-                      className='text-sm text-red-700 dark:text-red-600 hover:cursor-pointer'
+                      className='text-red-700 dark:text-red-600 hover:cursor-pointer'
                     >
                       Remove
                     </button>
@@ -424,10 +424,10 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
                   {/* Prompt Type */}
                   <div className='mb-2'>
-                    <label className='block mb-2 text-sm font-medium text-heading'>Type</label>
+                    <label className='block mb-2'>Type</label>
                     <select
                       {...register(`prompts.${index}.promptType`)}
-                      className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2 bg-background text-foreground'
+                      className='w-full border dark:border-gray-500 rounded-lg px-3 py-2 bg-background text-foreground'
                     >
                       <option value='yes/no'>Yes/No Question</option>
                       <option value='notice'>Notice (users click &quot;I understand&quot;)</option>
@@ -445,11 +445,11 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
 
                   {/* Prompt Text */}
                   <div className='mb-4'>
-                    <label className='block mb-2 text-sm font-medium text-heading'>Text</label>
+                    <label className='block mb-2'>Text</label>
                     <input
                       {...register(`prompts.${index}.promptText`)}
                       placeholder='e.g., Will you need parking?'
-                      className='w-full border dark:border-gray-500 text-sm rounded-lg px-3 py-2'
+                      className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
                       spellCheck={false}
                       autoComplete='off'
                     />
@@ -472,7 +472,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                         {...register(`prompts.${index}.isRequired`)}
                         className='w-4 h-4 cursor-pointer'
                       />
-                      <span className='text-sm text-heading'>Required</span>
+                      <span className='text-sm'>Required</span>
                     </label>
                     {watch(`prompts.${index}.promptType`) !== 'notice' && (
                       <label className='flex items-center gap-2 cursor-pointer'>
@@ -481,7 +481,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
                           {...register(`prompts.${index}.isPrivate`)}
                           className='w-4 h-4 cursor-pointer'
                         />
-                        <span className='text-sm text-heading'>
+                        <span className='text-sm'>
                           Private (only you and admins can see responses)
                         </span>
                       </label>
@@ -501,14 +501,14 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
           <button
             type='button'
             onClick={addPrompt}
-            className='text-sm text-purple-700 dark:text-purple-600 hover:cursor-pointer'
+            className='text-purple-700 dark:text-purple-600 hover:cursor-pointer'
           >
             + Add Prompt
           </button>
         </div>
       </div>
       <div className='max-w-full flex flex-col gap-4 mt-4'>
-        {functionError && <p className='max-w-full text-sm text-red-600'>{functionError}</p>}
+        {functionError && <p className='max-w-full text-red-600'>{functionError}</p>}
         {!functionError && (
           <div>
             <Button
