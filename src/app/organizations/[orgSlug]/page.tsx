@@ -1,3 +1,4 @@
+import NotFound from '@/app/not-found';
 import OrgPage from '@/components/organization/OrgPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { getOrgPageProps } from '@/services/getOrgPageProps';
@@ -33,7 +34,7 @@ const Organization = async ({ params }: { params: Promise<{ orgSlug: string }> }
   try {
     const props = await getOrgPageProps(orgSlug);
     if (!props) {
-      return <p>Not found</p>;
+      return <NotFound />
     }
     return <OrgPage {...props} />;
   } catch (err: unknown) {

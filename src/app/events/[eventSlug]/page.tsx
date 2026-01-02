@@ -1,3 +1,4 @@
+import NotFound from '@/app/not-found';
 import EventPage from '@/components/event/EventPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
@@ -36,7 +37,7 @@ const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => 
   try {
     const props = await getEventProviderProps(eventSlug);
     if (!props) {
-      return <p>Not found</p>;
+      return <NotFound />
     }
     return (
       <EventProvider {...props}>

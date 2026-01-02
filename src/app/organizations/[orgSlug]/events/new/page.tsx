@@ -1,3 +1,4 @@
+import NotFound from '@/app/not-found';
 import CreateEventPage from '@/components/organization/CreateEventPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { getOrgPageProps } from '@/services/getOrgPageProps';
@@ -14,7 +15,7 @@ const CreateEvent = async ({ params }: { params: Promise<{ orgSlug: string }> })
   try {
     const orgData = await getOrgPageProps(orgSlug);
     if (!orgData) {
-      return <p>Organization Not found</p>;
+      return <NotFound />;
     }
     return (
       <CreateEventPage orgSlug={orgData.slug} orgName={orgData.name} orgOwnerId={orgData.ownerId} />
