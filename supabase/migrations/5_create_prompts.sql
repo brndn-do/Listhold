@@ -12,7 +12,7 @@ CREATE TABLE public.prompts (
   prompt_type prompt_type_enum NOT NULL,
 
   -- The prompt label (e.g. "Are you a new member?")
-  prompt_text text NOT NULL CHECK (prompt_text.length BETWEEN 1 AND 100),
+  prompt_text text NOT NULL CHECK (length(prompt_text) BETWEEN 1 AND 100),
 
   -- Whether the user must answer this prompt
   is_required boolean NOT NULL DEFAULT true,

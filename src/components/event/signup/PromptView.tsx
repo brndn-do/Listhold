@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 export interface Prompt {
   id: string;
   type: 'yes/no' | 'notice';
@@ -16,58 +18,93 @@ interface PromptViewProps {
     required: boolean;
     private: boolean;
   };
-  handleNext: (answer: boolean | null) => void;
+  currentAnswer?: boolean | null;
+  onAnswerChange: (answer: boolean | null) => void;
 }
 
-const PromptView = ({ prompt, handleNext }: PromptViewProps) => {
+const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) => {
+  const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(currentAnswer ?? null);
+
+  // Update local state when navigating back to a previously answered question
+  useEffect(() => {
+    setSelectedAnswer(currentAnswer ?? null);
+  }, [currentAnswer, prompt.id]);
+
+  // Notify parent of answer changes
+  useEffect(() => {
+    onAnswerChange(selectedAnswer);
+  }, [selectedAnswer, onAnswerChange]);
+
   return (
-    <div className='text-lg max-h-86 w-86 flex flex-col items-center text-center gap-4'>
-      {/* Scrollable text area */}
-      <div className='h-full overflow-y-auto'>
-        <p className='text-xl'>{prompt.text}</p>
+    <div className='flex flex-col items-center gap-2'>
+      {/* Question text */}
+      <div className='max-h-48 overflow-y-auto scrollbar-thin w-full'>
+        <p className='text-2xl font-semibold text-center text-gray-800 dark:text-gray-200'>
+          {prompt.text}
+        </p>
       </div>
 
-      {/* A notice for users on visibility */}
+      {/* Privacy notice */}
       {prompt.type !== 'notice' && (
-        <p className='text-sm opacity-65'>
+        <p className='text-sm text-gray-600 dark:text-gray-400 text-center max-w-md'>
           {prompt.private
             ? 'Your answer will not be publicly displayed, but will be visible to event organizers.'
             : 'Your answer may be displayed to others'}
         </p>
       )}
 
-      {/* Separator */}
-      <div className='w-full border-b opacity-50'></div>
-
-      {/* Render "I understand" */}
-      {prompt.type === 'notice' && (
-        <div>
-          <button
-            onClick={() => handleNext(null)}
-            className='text-xl hover:cursor-pointer text-purple-500 underline'
-          >
-            I understand
-          </button>
-        </div>
+      {/* Required indicator */}
+      {prompt.required && prompt.type !== 'notice' && (
+        <p className='mt-1 text-xs text-red-600 dark:text-red-400'>* Required</p>
       )}
 
-      {/* Render "Yes" and "No" */}
-      {prompt.type === 'yes/no' && (
-        <div className='flex gap-20 '>
-          <button
-            onClick={() => handleNext(true)}
-            className='text-xl hover:cursor-pointer text-purple-500 underline'
-          >
-            Yes
-          </button>
-          <button
-            onClick={() => handleNext(false)}
-            className='text-xl hover:cursor-pointer text-purple-500 underline'
-          >
-            No
-          </button>
-        </div>
-      )}
+      {/* Answer options */}
+      <div className='mt-1 w-full flex flex-col items-center gap-4'>
+        {prompt.type === 'notice' ? (
+          <label className='flex items-center gap-2 cursor-pointer group'>
+            <input
+              type='checkbox'
+              checked={selectedAnswer === true}
+              onChange={(e) => setSelectedAnswer(e.target.checked ? true : null)}
+              className='w-4 h-4 cursor-pointer accent-purple-600'
+            />
+            <span className='text-lg font-medium text-gray-700 dark:text-gray-300'>
+              I understand
+            </span>
+          </label>
+        ) : (
+          <>
+            {/* Yes/No radio buttons */}
+            <div className='flex gap-8'>
+              <label className='flex items-center gap-3 cursor-pointer group'>
+                <input
+                  type='radio'
+                  name='answer'
+                  checked={selectedAnswer === true}
+                  onChange={() => setSelectedAnswer(true)}
+                  className='w-5 h-5 cursor-pointer accent-purple-600'
+                />
+                <span className='text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                  Yes
+                </span>
+              </label>
+
+              <label className='flex items-center gap-3 cursor-pointer group'>
+                <input
+                  type='radio'
+                  name='answer'
+                  checked={selectedAnswer === false}
+                  onChange={() => setSelectedAnswer(false)}
+                  className='w-5 h-5 cursor-pointer accent-purple-600'
+                />
+                <span className='text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                  No
+                </span>
+              </label>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

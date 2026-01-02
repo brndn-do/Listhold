@@ -53,10 +53,14 @@ const EventPage = () => {
     setShowFlow(true);
   };
 
-  const handleFlowClose = (answers: Record<string, boolean | null>) => {
+  const handleSubmit = (answers: Record<string, boolean | null>) => {
     setShowFlow(false);
     handleSignup(answers);
   };
+
+  const handleCancel = () => {
+    setShowFlow(false);
+  }
 
   const handleSignup = async (answers: Record<string, boolean | null>) => {
     if (!eventId || !userId) {
@@ -186,7 +190,7 @@ const EventPage = () => {
       </div>
 
       {/* Dialog for sign-up flow */}
-      {showFlow && <SignupFlow handleFlowClose={handleFlowClose} />}
+      {showFlow && <SignupFlow handleSubmit={handleSubmit} handleCancel={handleCancel} />}
     </div>
   );
 };
