@@ -6,12 +6,14 @@ import { useMemo } from 'react';
 import Button from '@/components/ui/Button';
 
 interface EventButtonProps {
+  showButton: boolean;
   handleFlowOpen: () => void;
   handleSignup: (answers: Record<string, boolean | null>) => void;
   handleLeave: () => void;
 }
 
 const EventButton = ({
+  showButton,
   handleFlowOpen,
   handleSignup,
   handleLeave,
@@ -34,6 +36,10 @@ const EventButton = ({
   const spotsOpen: boolean = useMemo(() => {
     return !!((capacity ?? 0) > confirmedList.length);
   }, [capacity, confirmedList]);
+
+  if (!showButton) {
+    return null;
+  }
 
   // must sign in first to do anything
   if (!user) {

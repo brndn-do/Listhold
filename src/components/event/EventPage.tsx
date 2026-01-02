@@ -11,6 +11,7 @@ import { addUserToEvent } from '@/services/addUserToEvent';
 import { removeUserFromEvent } from '@/services/removeUserFromEvent';
 import Dots from '@/components/ui/Dots';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import Button from '@/components/ui/Button';
 
 const COOLDOWN_TIME = 3000; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
@@ -25,6 +26,15 @@ const EventPage = () => {
   const [requestError, setRequestError] = useState<string | null>(null); // whether the request to join/leave errored
   const [viewingWaitlist, setViewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
   const [showFlow, setShowFlow] = useState(false); // whether to display the sign-up wizard/flow
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
+
+  const handleShare = async () => {
+    await navigator.clipboard.writeText(window.location.href);
+    setShareMessage('Link copied!');
+    setTimeout(() => {
+      setShareMessage(null);
+    }, 2000);
+  };
 
   const showButton = useMemo(() => {
     if (
@@ -60,7 +70,7 @@ const EventPage = () => {
 
   const handleCancel = () => {
     setShowFlow(false);
-  }
+  };
 
   const handleSignup = async (answers: Record<string, boolean | null>) => {
     if (!eventId || !userId) {
@@ -148,26 +158,61 @@ const EventPage = () => {
         </div>
 
         {/* Desktop Action Button */}
-        {showButton && (
-          <div className='hidden lg:flex w-full flex justify-end pr-6'>
+        <div className='hidden lg:flex w-full gap-4 justify-end pr-6'>
+          <Button
+            onClick={handleShare}
+            content={
+              <div className='flex gap-2'>
+                <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
+                  />
+                </svg>
+              </div>
+            }
+          />
+          <EventButton
+            showButton={showButton}
+            handleFlowOpen={handleFlowOpen}
+            handleSignup={handleSignup}
+            handleLeave={handleLeave}
+          />
+        </div>
+
+        {/* Mobile fixed action button */}
+        <div className='w-full fixed bottom-0 lg:hidden z-50'>
+          <div className='w-full flex gap-4 justify-end pb-6 pr-6'>
+            <Button
+              onClick={handleShare}
+              content={
+                <div className='flex gap-2'>
+                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
+                    />
+                  </svg>
+                </div>
+              }
+            />
             <EventButton
+              showButton={showButton}
               handleFlowOpen={handleFlowOpen}
               handleSignup={handleSignup}
               handleLeave={handleLeave}
             />
           </div>
-        )}
+        </div>
 
-        {/* Mobile fixed action button */}
-        {showButton && (
-          <div className='w-full fixed bottom-0 lg:hidden z-50'>
-            <div className='w-full flex justify-end pb-6 pr-6'>
-              <EventButton
-                handleFlowOpen={handleFlowOpen}
-                handleSignup={handleSignup}
-                handleLeave={handleLeave}
-              />
-            </div>
+        {/* Share feedback message */}
+        {shareMessage && (
+          <div className='fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-lg shadow-lg text-sm'>
+            {shareMessage}
           </div>
         )}
 

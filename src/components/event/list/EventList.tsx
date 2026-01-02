@@ -19,7 +19,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   const content = () => {
     if (listLoading) {
       return (
-        <div className='p-36'>
+        <div className='w-full flex justify-center mt-16'>
           <Dots size={3} />
         </div>
       );
