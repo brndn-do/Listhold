@@ -12,7 +12,7 @@ interface Prompt {
 
 export interface CreateEventRequest {
   name: string;
-  orgSlug: string;
+  orgSlug?: string;
   slug?: string;
   location: string;
   capacity: number;

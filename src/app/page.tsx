@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Listhold',
@@ -13,14 +12,8 @@ const Home = () => {
         Listhold
       </h1>
       <p className='mt-4 text-lg text-center text-slate-700 dark:text-slate-400'>
-        {"Manage your organization's event lists—with ease."}
+        {"Manage your event lists with ease."}
       </p>
-      <Link
-        href='/organizations/new'
-        className='mt-4 text-lg text-center text-purple-700 dark:text-purple-500 underline'
-      >
-        Create an organization to get started.
-      </Link>
     </div>
   );
 };

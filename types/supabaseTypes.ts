@@ -44,7 +44,7 @@ export type Database = {
           event_name: string
           id: string
           location: string
-          organization_id: string
+          organization_id: string | null
           photo_url: string | null
           slug: string
           start_time: string
@@ -58,7 +58,7 @@ export type Database = {
           event_name: string
           id?: string
           location: string
-          organization_id: string
+          organization_id?: string | null
           photo_url?: string | null
           slug: string
           start_time: string
@@ -72,7 +72,7 @@ export type Database = {
           event_name?: string
           id?: string
           location?: string
-          organization_id?: string
+          organization_id?: string | null
           photo_url?: string | null
           slug?: string
           start_time?: string

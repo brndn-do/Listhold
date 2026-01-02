@@ -8,7 +8,7 @@ CREATE TABLE public.events (
   creator_id uuid NOT NULL REFERENCES auth.users(id),
 
   -- The ID of the organization this event belongs to.
-  organization_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+  organization_id uuid DEFAULT NULL REFERENCES public.organizations(id) ON DELETE SET NULL,
 
   -- The organization name. Must be between 1 and 50 characters inclusive.
   event_name text NOT NULL CHECK (length(event_name) BETWEEN 1 AND 50),

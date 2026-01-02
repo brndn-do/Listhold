@@ -1,6 +1,5 @@
 'use client';
 
-import CreateEventLink from '@/components/organization/CreateEventLink';
 import EventsList from '@/components/organization/EventsList';
 import Line from '@/components/ui/Line';
 
@@ -19,7 +18,7 @@ export interface OrgPageProps {
   events: OrgPageEvent[];
 }
 
-const OrgPage = ({ slug, name, description, ownerId, events }: OrgPageProps) => {
+const OrgPage = ({ name, description, events }: OrgPageProps) => {
   return (
     <div className='w-full flex flex-col gap-4 items-center'>
       <div className='flex flex-col gap-1 items-center'>
@@ -31,7 +30,6 @@ const OrgPage = ({ slug, name, description, ownerId, events }: OrgPageProps) => 
 
       <div className='flex flex-col gap-2 items-center'>
         <h1 className='text-xl font-bold'>Upcoming Events:</h1>
-        <CreateEventLink orgSlug={slug} ownerId={ownerId} />
         <EventsList events={events} />
       </div>
     </div>

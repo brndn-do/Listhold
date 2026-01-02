@@ -114,16 +114,11 @@ const eventSchema = z
   });
 type eventSchemaType = z.infer<typeof eventSchema>;
 
-interface EventFormProps {
-  orgSlug: string;
-  ownerId: string;
-}
-
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
-const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
+const EventForm = () => {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const {
     handleSubmit,
     register,
@@ -193,7 +188,7 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
       const start = new Date(`${startDate}T${startTime}`).toISOString();
       const end = new Date(`${endDate}T${endTime}`).toISOString();
       const newValidatedData = { capacity: parseInt(capacity), start, end, ...rest };
-      const toSend = { ...newValidatedData, orgSlug };
+      const toSend = { ...newValidatedData };
       const slug = await createEvent(toSend);
       router.push(`/events/${encodeURIComponent(slug)}`);
     } catch (err: unknown) {
@@ -211,20 +206,6 @@ const EventForm = ({ orgSlug, ownerId }: EventFormProps) => {
       }, ERROR_TIME);
     }
   };
-
-  if (loading) {
-    return <Spinner />;
-  }
-
-  if (user?.uid !== ownerId) {
-    return (
-      <p className='text-center'>
-        You are not authorized to create an event on behalf of this organization.
-        <br />
-        If you are the owner, please sign in with the account you used to create this organization.
-      </p>
-    );
-  }
 
   return (
     <form

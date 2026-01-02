@@ -14,22 +14,24 @@ const EventInfo = () => {
         {/* Header Section */}
         <div>
           <h1 className='text-5xl text-gray-800 dark:text-foreground font-bold mb-2'>{name}</h1>
-          <div className='flex'>
-            <Link
-              href={`/organizations/${orgSlug}`}
-              className='inline-flex items-center gap-1 font-semibold text-purple-600 dark:text-purple-400 hover:translate-y-[-2px] transition-all duration-300'
-            >
-              <span className='underline'>{orgName}</span>
-              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M9 5l7 7-7 7'
-                />
-              </svg>
-            </Link>
-          </div>
+          {orgSlug && (
+            <div className='flex'>
+              <Link
+                href={`/organizations/${orgSlug}`}
+                className='inline-flex items-center gap-1 font-semibold text-purple-600 dark:text-purple-400 hover:translate-y-[-2px] transition-all duration-300'
+              >
+                <span className='underline'>{orgName}</span>
+                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M9 5l7 7-7 7'
+                  />
+                </svg>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Time Section */}
@@ -74,9 +76,7 @@ const EventInfo = () => {
                 d='M15 11a3 3 0 11-6 0 3 3 0 016 0z'
               />
             </svg>
-            <p>
-              {location}
-            </p>
+            <p>{location}</p>
           </div>
         </div>
 

@@ -12,8 +12,8 @@ interface EventContextType {
   readonly eventId: string;
   readonly name: string;
   readonly description?: string;
-  readonly orgSlug: string;
-  readonly orgName: string;
+  readonly orgSlug?: string;
+  readonly orgName?: string;
   readonly start: Date;
   readonly end?: Date;
   readonly location: string;
@@ -64,8 +64,8 @@ export interface EventProviderProps {
   eventId: string;
   name: string;
   description?: string;
-  orgSlug: string;
-  orgName: string;
+  orgSlug?: string;
+  orgName?: string;
   start: Date;
   end?: Date;
   location: string;

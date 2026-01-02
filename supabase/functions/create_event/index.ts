@@ -17,7 +17,8 @@ const createEventSchema = z
       .string()
       .min(3)
       .max(36)
-      .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/),
+      .regex(/^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$/)
+      .optional(),
     slug: z
       .string()
       .min(3)
@@ -87,19 +88,21 @@ Deno.serve(async (req): Promise<Response> => {
     return new Response('Unauthorized', { status: 401, headers: corsHeaders });
   }
 
-  // get org ID based on org slug
-  const { data: orgData, error: orgError } = await supabase
-    .from('organizations')
-    .select('id')
-    .eq('slug', orgSlug)
-    .single();
+  let orgId: string | null = null;
+  if (orgSlug) {
+    // get org ID based on org slug
+    const { data: orgData, error: orgError } = await supabase
+      .from('organizations')
+      .select('id')
+      .eq('slug', orgSlug)
+      .single();
 
-  if (orgError || !orgData) {
-    console.error('ERROR FETCHING ORG ID FROM SLUG:', orgError.message);
-    return new Response('Internal', { status: 500, headers: corsHeaders });
+    if (orgError || !orgData) {
+      console.error('ERROR FETCHING ORG ID FROM SLUG:', orgError.message);
+      return new Response('Internal', { status: 500, headers: corsHeaders });
+    }
+    orgId = orgData.id;
   }
-
-  const orgId = orgData.id;
 
   const toInsert: EventsInsert = {
     event_name: name,

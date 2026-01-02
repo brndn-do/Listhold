@@ -45,7 +45,15 @@ const Auth = () => {
   return (
     <div className='flex flex-col items-center gap-1'>
       <div className='flex items-center gap-6 h-8'>
-        {user ? (
+        {!error && (
+          <Button
+          onClick={user? handleSignOut : handleSignIn}
+          content={user ? 'Sign out' : 'Sign in'}
+          disabled={loading}
+          />
+        )}
+        {error && <ErrorMessage content={'Try again.'} />}
+        {user && (
           <Image
             alt='Your profile photo'
             src={user.photoURL || '/default-avatar.jpg'}
@@ -53,17 +61,7 @@ const Auth = () => {
             height={32}
             className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
           ></Image>
-        ) : (
-          <></>
         )}
-        {!error && (
-          <Button
-            onClick={user ? handleSignOut : handleSignIn}
-            content={user ? 'Sign out' : 'Sign in'}
-            disabled={loading}
-          />
-        )}
-        {error && <ErrorMessage content={'Try again.'} />}
       </div>
     </div>
   );

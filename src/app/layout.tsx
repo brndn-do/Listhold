@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthProvider';
 import Auth from '@/components/auth/Auth';
+import Link from 'next/link';
+import Button from '@/components/ui/Button';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,8 +31,30 @@ const RootLayout = ({
       <AuthProvider>
         {/* body should always take the entire viewport height */}
         <body className='min-h-[100dvh] m-0 flex flex-col'>
-          <header className='pt-4 pr-4'>
-            <nav className='flex justify-end'>
+          <header className='pt-4 pr-8'>
+            <nav className='flex justify-end items-center gap-6'>
+              <Link href={'/events/new'}>
+                <Button
+                  content={
+                    <div className='flex items-center gap-2'>
+                      <svg
+                        className='w-4 h-4'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2.5}
+                          d='M12 4v16m8-8H4'
+                        />
+                      </svg>
+                      Create
+                    </div>
+                  }
+                />
+              </Link>
               <Auth />
             </nav>
           </header>
