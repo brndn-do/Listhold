@@ -98,7 +98,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
           </button>
           <button
             onClick={handleNext}
-            disabled={currentAnswer === null}
+            disabled={(prompts[curIndex].required && currentAnswer === null)}
             className='px-6 py-2 font-bold text-purple-700 dark:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
           >
             {curIndex === prompts.length - 1 ? 'Submit' : 'Next'} →

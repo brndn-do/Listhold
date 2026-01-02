@@ -174,7 +174,7 @@ const EventPage = () => {
         {/* Full-screen Overlays */}
         {requestLoading && (
           <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
-            <Dots size={6} />
+            <Dots size={4} />
           </div>
         )}
         {requestError && (
