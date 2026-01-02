@@ -19,21 +19,25 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
 
   const content = () => {
     if (listLoading) {
-      return <Dots size={1} />
+      return (
+        <div className='pl-[3px] pt-[2px]'>
+          <Dots size={1} />
+        </div>
+      );
     }
 
     if (signupsCount === -1) {
-      return <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ?/${capacity}`}</p>
+      return (
+        <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ?/${capacity}`}</p>
+      );
     }
 
-    return <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
-  }
+    return (
+      <p className='font-bold text-purple-600 dark:text-purple-400'>{`Spots Left: ${capacity - signupsCount}/${capacity}`}</p>
+    );
+  };
 
-  return (
-    <div className='h-4 flex items-center'>
-      {content()}
-    </div>
-  );
+  return <div className='h-4 flex items-center'>{content()}</div>;
 };
 
 export default SpotsCounter;
