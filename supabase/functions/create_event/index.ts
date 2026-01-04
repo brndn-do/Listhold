@@ -124,9 +124,12 @@ Deno.serve(async (req): Promise<Response> => {
     .single();
 
   if (error) {
-    console.error('ERROR INSERTING:', error.message);
+    console.error('ERROR INSERTING:', error.code, error.message);
     if (error.code === '23505') {
       return new Response(`An event with slug ${finalSlug} already exists`, { status: 409 });
+    }
+    if (error.code === '23514') {
+      return new Response(`Slug ${finalSlug} is reserved`, { status: 409 });
     }
     return new Response('Internal', { status: 500, headers: corsHeaders });
   }

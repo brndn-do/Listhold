@@ -199,6 +199,8 @@ const EventForm = () => {
         setCreateError('You do not have permission to create events for this organization.');
       } else if (error.message === 'already-exists') {
         setCreateError('An event with that slug already exists. Try again in a bit.');
+      } else if (error.message === 'reserved') {
+        setCreateError('Sorry, that slug is reserved. Try again in a bit.');
       } else {
         setCreateError('An unexpected error occurred. Please try again.');
       }
@@ -504,24 +506,22 @@ const EventForm = () => {
           </div>
         </div>
       </div>
-      <div className='mt-4'>
-        {createError && <p className='max-w-full text-red-600'>{createError}</p>}
+      <div className='flex max-w-full justify-end mt-4'>
+        {createError && <p className='text-red-600'>{createError}</p>}
         {!createError && (
-          <div className='flex justify-end'>
-            <Button
-              type='submit'
-              content={
-                isLoading ? (
-                  <>
-                    <Spinner />
-                    Loading...
-                  </>
-                ) : (
-                  'Create Event'
-                )
-              }
-            />
-          </div>
+          <Button
+            type='submit'
+            content={
+              isLoading ? (
+                <>
+                  <Spinner />
+                  Loading...
+                </>
+              ) : (
+                'Create Event'
+              )
+            }
+          />
         )}
       </div>
     </form>

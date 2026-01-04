@@ -4,7 +4,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 
 interface Prompt {
   displayOrder: number;
-  promptType: 'yes/no' | 'notice',
+  promptType: 'yes/no' | 'notice';
   promptText: string;
   isRequired: boolean;
   isPrivate: boolean;
@@ -20,7 +20,7 @@ export interface CreateEventRequest {
   end?: string;
   description?: string;
   photo?: File;
-  prompts?: Prompt[]
+  prompts?: Prompt[];
 }
 
 /**
@@ -49,7 +49,12 @@ export const createEvent = async (request: CreateEventRequest): Promise<string> 
   if (error) {
     const functionsError = error as FunctionsHttpError;
     const status = functionsError.context.status;
+    const errorMessage = await functionsError.context.text();
+
     if (status === 409) {
+      if (errorMessage.includes('reserved')) {
+        throw new ServiceError('reserved');
+      }
       throw new ServiceError('already-exists');
     }
     throw new ServiceError('internal');

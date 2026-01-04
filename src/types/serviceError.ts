@@ -1,6 +1,7 @@
 export type ServiceErrorMessage =
   | 'internal'
   | 'already-exists'
+  | 'reserved'
   | 'not-found'
   | 'unauthorized'
   | 'misc';
