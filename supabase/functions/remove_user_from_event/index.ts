@@ -10,43 +10,31 @@ const errorResponse = (message: string, status: number) => {
 };
 
 const sendEmail = async (to: string, subject: string, html: string) => {
-  const MAILJET_API_KEY = Deno.env.get('MAILJET_API_KEY');
-  const MAILJET_SECRET_KEY = Deno.env.get('MAILJET_SECRET_KEY');
+  const SMTP2GO_API_KEY = Deno.env.get('SMTP2GO_API_KEY');
   const FROM_EMAIL = Deno.env.get('FROM_EMAIL');
 
-  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY || !FROM_EMAIL) {
-    console.warn('MAILJET_API_KEY, MAILJET_SECRET_KEY, or FROM_EMAIL not set, skipping email');
+  if (!SMTP2GO_API_KEY || !FROM_EMAIL) {
+    console.warn('SMTP2GO_API_KEY or FROM_EMAIL not set, skipping email');
     return;
   }
 
   try {
-    const res = await fetch('https://api.mailjet.com/v3.1/send', {
+    const res = await fetch('https://api.smtp2go.com/v3/email/send', {
       method: 'POST',
       headers: {
-        Authorization: `Basic ${btoa(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        Messages: [
-          {
-            From: {
-              Email: FROM_EMAIL,
-              Name: 'ListHold',
-            },
-            To: [
-              {
-                Email: to,
-              },
-            ],
-            Subject: subject,
-            HTMLPart: html,
-          },
-        ],
+        api_key: SMTP2GO_API_KEY,
+        sender: `Listhold <${FROM_EMAIL}>`,
+        to: [to],
+        subject: subject,
+        html_body: html,
       }),
     });
 
     if (!res.ok) {
-      console.error('Mailjet error:', await res.text());
+      console.error('SMTP2GO error:', await res.text());
     }
   } catch (e) {
     console.error('Failed to send email:', e);
@@ -126,25 +114,48 @@ Deno.serve(async (req): Promise<Response> => {
 
     // Send email if someone was promoted
     if (data.promoted_user_id) {
-      const { data: userData } = await supabase.auth.admin.getUserById(data.promoted_user_id);
+      const emailTask = async () => {
+        try {
+          const { data: userData } = await supabase.auth.admin.getUserById(data.promoted_user_id);
 
-      const appDomain = Deno.env.get('APP_DOMAIN');
-      if (!appDomain) {
-        console.warn('APP_DOMAIN not set, skipping email');
-      }
+          const appDomain = Deno.env.get('APP_DOMAIN');
+          if (!appDomain) {
+            console.warn('APP_DOMAIN not set, skipping email');
+          }
 
-      if (appDomain && userData && userData.user && userData.user.email) {
-        const eventName = eventData.event_name;
-        const eventSlug = eventData.slug;
+          if (appDomain && userData && userData.user && userData.user.email) {
+            const eventName = eventData.event_name;
+            const eventSlug = eventData.slug;
 
-        const subject = `You're off the waitlist for ${eventName}!`;
-        const html = `
-          <p>Good news! A spot opened up for the event: <strong>${eventName}</strong> and you have been moved to the main list!</p>
+            const subject = `You're off the waitlist for ${eventName}!`;
+            const html = `
+          <p>Good news! A spot opened up for the event: <b>${eventName}</b> and you have been moved to the main list!</p>
           <p>No further action is needed.</p>
           <p>You can view the event details <a href="${appDomain}/events/${eventSlug}">here</a>.</p>
+          <br/>
+          <hr/>
+          <p style="font-size: 12px; color: #666;">
+            You received this email because you joined the waitlist for <b>${eventName}</b>. 
+            This is a one-time notification regarding your status change. 
+            Your email has not been added to any marketing lists.
+          </p>
         `;
 
-        await sendEmail(userData.user.email, subject, html);
+            await sendEmail(userData.user.email, subject, html);
+          }
+        } catch (emailErr) {
+          console.error('Background email task failed:', emailErr);
+        }
+      };
+
+      // Use EdgeRuntime.waitUntil to run in background without blocking response
+      // @ts-ignore: EdgeRuntime is available in the Supabase Edge Functions environment
+      if (typeof EdgeRuntime !== 'undefined' && 'waitUntil' in EdgeRuntime) {
+        // @ts-ignore: EdgeRuntime is available in the Supabase Edge Functions environment
+        EdgeRuntime.waitUntil(emailTask());
+      } else {
+        // Fallback for local testing or environments without EdgeRuntime
+        await emailTask();
       }
     }
 
