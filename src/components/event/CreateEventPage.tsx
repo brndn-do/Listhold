@@ -22,7 +22,7 @@ const CreateEventPage = () => {
         </p>
         <Button
           onClick={signInWithGoogle}
-          content='Sign In'
+          content='Sign In With Google'
         />
       </div>
     );

@@ -34,6 +34,52 @@ export type Database = {
   }
   public: {
     Tables: {
+      answers: {
+        Row: {
+          answer: Json
+          created_at: string
+          id: string
+          prompt_id: string
+          signup_id: string
+        }
+        Insert: {
+          answer: Json
+          created_at?: string
+          id?: string
+          prompt_id: string
+          signup_id: string
+        }
+        Update: {
+          answer?: Json
+          created_at?: string
+          id?: string
+          prompt_id?: string
+          signup_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "prompts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "answers_signup_id_fkey"
+            columns: ["signup_id"]
+            isOneToOne: false
+            referencedRelation: "public_signups_view"
+            referencedColumns: ["signup_id"]
+          },
+          {
+            foreignKeyName: "answers_signup_id_fkey"
+            columns: ["signup_id"]
+            isOneToOne: false
+            referencedRelation: "signups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           capacity: number
@@ -193,7 +239,6 @@ export type Database = {
       }
       signups: {
         Row: {
-          answers: Json
           created_at: string
           event_id: string
           id: string
@@ -202,7 +247,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          answers?: Json
           created_at?: string
           event_id: string
           id?: string
@@ -211,7 +255,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          answers?: Json
           created_at?: string
           event_id?: string
           id?: string
@@ -231,13 +274,14 @@ export type Database = {
       }
     }
     Views: {
-      event_list: {
+      public_signups_view: {
         Row: {
           avatar_url: string | null
           created_at: string | null
           display_name: string | null
           event_id: string | null
           last_updated: string | null
+          public_answers: Json | null
           signup_id: string | null
           status: Database["public"]["Enums"]["signup_status_enum"] | null
           user_id: string | null

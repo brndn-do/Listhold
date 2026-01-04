@@ -12,7 +12,7 @@ interface ListItemProps {
 
 const ListItem = ({ signup, idx }: ListItemProps) => {
   const { user } = useAuth();
-  const { capacity } = useEvent();
+  const { capacity} = useEvent();
 
   return (
     <li className='flex items-center w-full px-2 pb-1.25 border-b border-dashed border-gray-700 dark:border-gray-500'>

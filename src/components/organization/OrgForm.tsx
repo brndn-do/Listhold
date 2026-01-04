@@ -25,12 +25,6 @@ const orgSchema = z.object({
     .transform((s) => s.trim())
     .transform((s) => s.toLowerCase())
     .transform((s) => (s === '' ? undefined : s))
-    .refine((s) => !s || s.length >= 4, {
-      message: 'Slug must be at least 4 characters',
-    })
-    .refine((s) => !s || s.length <= 36, {
-      message: 'Slug cannot exceed 36 characters',
-    })
     .refine((s) => !s || /^[a-z0-9-]+$/.test(s), {
       message: 'Slug must contain only letters, numbers, and hyphens (-).',
     })
@@ -39,6 +33,12 @@ const orgSchema = z.object({
     })
     .refine((s) => !s || /^(?!.*--).*/.test(s), {
       message: 'Slug cannot have more than one hyphen in a row.',
+    })
+    .refine((s) => !s || s.length >= 4, {
+      message: 'Slug must be at least 4 characters',
+    })
+    .refine((s) => !s || s.length <= 36, {
+      message: 'Slug cannot exceed 36 characters',
     })
     .optional(),
   description: z
@@ -62,7 +62,7 @@ const OrgForm = () => {
     resolver: zodResolver(orgSchema),
     mode: 'onChange',
   });
-  const [functionError, setFunctionError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const submitForm: SubmitHandler<orgSchemaType> = async (
@@ -70,7 +70,7 @@ const OrgForm = () => {
   ) => {
     if (!user) return;
 
-    setFunctionError(null);
+    setCreateError(null);
     setIsLoading(true);
     try {
       const orgSlug = await createOrg(validatedData);
@@ -79,15 +79,15 @@ const OrgForm = () => {
       const error = err as ServiceError;
       const msg = error.message as ServiceErrorMessage;
       if (msg === 'already-exists') {
-        setFunctionError('An organization with that slug already exists. Try again in a bit.');
+        setCreateError('An organization with that slug already exists. Try again in a bit.');
       } else if (msg === 'unauthorized') {
-        setFunctionError('Unauthorized. Are you signed in?')
+        setCreateError('Unauthorized. Are you signed in?')
       } 
       else {
-        setFunctionError('An unexpected error occured. Try again in a bit.');
+        setCreateError('An unexpected error occured. Try again in a bit.');
       }
       setTimeout(() => {
-        setFunctionError(null);
+        setCreateError(null);
       }, ERROR_TIME);
       setIsLoading(false);
     }
@@ -156,8 +156,8 @@ const OrgForm = () => {
         </div>
       </div>
       <div className='max-w-full flex flex-col gap-4'>
-        {functionError && <ErrorMessage justify={'start'} content={functionError}/>}
-        {!functionError && (
+        {createError && <ErrorMessage justify={'start'} content={createError}/>}
+        {!createError && (
           <div>
             <Button
               type='submit'

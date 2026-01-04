@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { signInWithGoogle, signOut } from '@/services/authService';
-import { saveProfile } from '@/services/saveProfile';
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
@@ -12,17 +11,8 @@ const ERROR_TIME = 3000;
 
 const Auth = () => {
   const { user } = useAuth();
-  const [profileSaved, setProfileSaved] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  // save the user to the database once, when authenticated
-  useEffect(() => {
-    if (user && !profileSaved) {
-      saveProfile(user);
-      setProfileSaved(true);
-    }
-  }, [user, profileSaved]);
 
   const handleSignIn = () => {
     signInWithGoogle();
@@ -55,7 +45,7 @@ const Auth = () => {
         {user && (
           <Image
             alt='Your profile photo'
-            src={user.photoURL || '/default-avatar.jpg'}
+            src={user.avatarURL || '/default-avatar.jpg'}
             width={32}
             height={32}
             className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'

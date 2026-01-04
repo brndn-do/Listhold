@@ -1,7 +1,8 @@
 'use client';
 
 import { subscribeToAuthState } from '@/services/authService';
-import { AuthUser } from '@/types/authUser';
+import { fetchProfile, ProfileData } from '@/services/fetchProfile';
+import { saveProfile } from '@/services/saveProfile';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 /**
@@ -10,7 +11,7 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState } fr
  * - `loading`: Whether the authentication state is still loading.
  */
 interface AuthContextType {
-  readonly user: AuthUser | null;
+  readonly user: ProfileData | null;
   readonly loading: boolean;
 }
 
@@ -21,12 +22,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
  * Provides authentication context to all child components
  */
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubAuthState = subscribeToAuthState((data) => {
-      setUser(data);
+    const unsubAuthState = subscribeToAuthState(async (data) => {
+      if (data) {
+        await saveProfile(data)
+        const user = await fetchProfile(data.uid);
+        setUser(user);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 

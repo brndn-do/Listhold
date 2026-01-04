@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { AuthUser } from '@/types/authUser';
+import { ProfileData } from '@/services/fetchProfile';
 import { ServiceError } from '@/types/serviceError';
 
 /**
@@ -38,16 +38,15 @@ export const signOut = async (): Promise<void> => {
  * @param callback - Function called with the current user (or null) whenever auth state changes
  * @returns Unsubscribe function to stop listening
  */
-export const subscribeToAuthState = (callback: (user: AuthUser | null) => void): (() => void) => {
+export const subscribeToAuthState = (callback: (user: ProfileData | null) => void): (() => void) => {
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     if (!session) {
       callback(null);
     } else {
-      const user: AuthUser = {
+      const user: ProfileData = {
         uid: session?.user.id,
         displayName: session?.user.user_metadata.full_name ?? null,
-        email: session?.user.email ?? null,
-        photoURL: session?.user.user_metadata.avatar_url ?? null,
+        avatarURL: session?.user.user_metadata.avatar_url ?? null,
       };
       callback(user);
     }

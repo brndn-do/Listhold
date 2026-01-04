@@ -53,20 +53,32 @@ BEGIN
   
   IF v_signup_id IS NOT NULL THEN
     -- User was previously withdrawn, so update their record.
+    -- First, clear all their answers
+    DELETE FROM public.answers WHERE signup_id = v_signup_id;
+    
     -- Reset created_at to now() so they go to the back of the waitlist if applicable.
     UPDATE public.signups
     SET status = v_status,
-        answers = COALESCE(p_answers, '{}'::jsonb),
         created_at = now(),
         last_updated = now()
     WHERE id = v_signup_id;
   ELSE
     -- New signup
-    INSERT INTO public.signups (user_id, event_id, status, answers)
-    VALUES (p_user_id, p_event_id, v_status, COALESCE(p_answers, '{}'::jsonb))
+    INSERT INTO public.signups (user_id, event_id, status)
+    VALUES (p_user_id, p_event_id, v_status)
     RETURNING id INTO v_signup_id;
+  END IF;
+
+  -- Insert answers into the answers table
+  IF p_answers IS NOT NULL THEN
+    INSERT INTO public.answers (signup_id, prompt_id, answer)
+    SELECT v_signup_id, key::uuid, value
+    FROM jsonb_each(p_answers);
   END IF;
 
   RETURN jsonb_build_object('id', v_signup_id, 'status', v_status);
 END;
 $$;
+
+REVOKE EXECUTE ON FUNCTION public.add_user_to_event FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.add_user_to_event TO service_role;

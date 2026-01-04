@@ -9,11 +9,6 @@ CREATE TABLE public.signups (
 
   status signup_status_enum NOT NULL,
 
-  -- Stores answers to prompts.
-  -- Keys are prompt IDs (uuid), Values are the answers.
-  -- Example: { "uuid-1": "Yes", "uuid-2": ["A", "B"] }
-  answers jsonb NOT NULL DEFAULT '{}'::jsonb,
-
   last_updated timestamptz NOT NULL DEFAULT now(),
 
   created_at timestamptz NOT NULL DEFAULT now(),
@@ -48,4 +43,4 @@ CREATE POLICY "Signups: public read access"
   FOR SELECT
   USING (true);
 
-alter publication supabase_realtime add table public.signups;
+ALTER publication supabase_realtime ADD TABLE public.signups;

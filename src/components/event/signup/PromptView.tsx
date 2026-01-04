@@ -48,7 +48,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       {prompt.type !== 'notice' && (
         <p className='text-sm text-gray-600 dark:text-gray-400 text-center max-w-md'>
           {prompt.private
-            ? 'Your answer will be visible to event organizers.'
+            ? 'Your answer will only be visible to event organizers.'
             : 'Your answer may be displayed to others'}
         </p>
       )}

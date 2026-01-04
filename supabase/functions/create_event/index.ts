@@ -5,7 +5,7 @@ import type { Database } from '../../../types/supabaseTypes.ts';
 const promptSchema = z.object({
   displayOrder: z.number().min(1),
   promptType: z.enum(['yes/no', 'notice']),
-  promptText: z.string().min(1).max(100),
+  promptText: z.string().min(1).max(300),
   isRequired: z.boolean().default(true),
   isPrivate: z.boolean().default(true),
 });

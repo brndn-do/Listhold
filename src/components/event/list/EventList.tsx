@@ -144,7 +144,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
       {disconnected && (
         <div className='absolute inset-0 z-[-1] flex items-center justify-center'>
           <div>
-            <ErrorMessage content={<p>You are disconnected</p>} />
+            <ErrorMessage content={'You are disconnected'} />
           </div>
         </div>
       )}

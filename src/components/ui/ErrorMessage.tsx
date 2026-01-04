@@ -1,7 +1,5 @@
-import { JSX } from 'react';
-
 interface ErrorMessageProps {
-  content?: JSX.Element | string;
+  content?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   justify?: 'center' | 'start' | 'end';
 }
@@ -18,7 +16,7 @@ const ErrorMessage = ({
   size = 'md',
   justify= 'center',
 }: ErrorMessageProps) => {
-  return <p className={`w-full text-${justify} text-${size} text-red-600 dark:text-red-500`}>{content}</p>;
+  return <p className={`w-full text-${justify} text-${size} text-red-600 dark:text-red-400`}>{content}</p>;
 };
 
 export default ErrorMessage;
