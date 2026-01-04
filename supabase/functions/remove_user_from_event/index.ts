@@ -10,31 +10,43 @@ const errorResponse = (message: string, status: number) => {
 };
 
 const sendEmail = async (to: string, subject: string, html: string) => {
-  const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
+  const MAILJET_API_KEY = Deno.env.get('MAILJET_API_KEY');
+  const MAILJET_SECRET_KEY = Deno.env.get('MAILJET_SECRET_KEY');
   const FROM_EMAIL = Deno.env.get('FROM_EMAIL');
 
-  if (!SENDGRID_API_KEY || !FROM_EMAIL) {
-    console.warn('SENDGRID_API_KEY or FROM_EMAIL not set, skipping email');
+  if (!MAILJET_API_KEY || !MAILJET_SECRET_KEY || !FROM_EMAIL) {
+    console.warn('MAILJET_API_KEY, MAILJET_SECRET_KEY, or FROM_EMAIL not set, skipping email');
     return;
   }
 
   try {
-    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    const res = await fetch('https://api.mailjet.com/v3.1/send', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${SENDGRID_API_KEY}`,
+        Authorization: `Basic ${btoa(`${MAILJET_API_KEY}:${MAILJET_SECRET_KEY}`)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        personalizations: [{ to: [{ email: to }] }],
-        from: { email: FROM_EMAIL },
-        subject: subject,
-        content: [{ type: 'text/html', value: html }],
+        Messages: [
+          {
+            From: {
+              Email: FROM_EMAIL,
+              Name: 'ListHold',
+            },
+            To: [
+              {
+                Email: to,
+              },
+            ],
+            Subject: subject,
+            HTMLPart: html,
+          },
+        ],
       }),
     });
 
     if (!res.ok) {
-      console.error('SendGrid error:', await res.text());
+      console.error('Mailjet error:', await res.text());
     }
   } catch (e) {
     console.error('Failed to send email:', e);
@@ -132,8 +144,7 @@ Deno.serve(async (req): Promise<Response> => {
           <p>You can view the event details <a href="${appDomain}/events/${eventSlug}">here</a>.</p>
         `;
 
-        // Run in background
-        sendEmail(userData.user.email, subject, html);
+        await sendEmail(userData.user.email, subject, html);
       }
     }
 
