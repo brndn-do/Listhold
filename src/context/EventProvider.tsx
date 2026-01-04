@@ -120,6 +120,7 @@ export const EventProvider = ({
     const setListState = async () => {
       try {
         const result = await fetchList(eventId);
+
         setConfirmedList(result.filter((val) => val.status === 'confirmed'));
         setWaitlist(result.filter((val) => val.status === 'waitlisted'));
         setSuccessfulFetch(true);
