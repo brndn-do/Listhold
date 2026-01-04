@@ -32,7 +32,7 @@ const EventsList = ({ events }: EventsListProps) => {
               <p className='text-xs text-center'>{`📍 ${event.location}`}</p>
             </div>
 
-            <p className='md:hidden mt-auto self-end text-center text-xs font-medium text-purple-600 dark:text-purple-500'>
+            <p className='md:hidden mt-auto self-end text-center text-xs font-medium text-purple-600 dark:text-purple-400'>
               Tap to view →
             </p>
           </Link>

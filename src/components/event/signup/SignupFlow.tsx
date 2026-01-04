@@ -45,12 +45,12 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
     <div
       role='dialog'
       aria-modal='true'
-      className={`fixed inset-0 bg-white/60 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300 ${
+      className={`fixed inset-0 bg-white/60 dark:bg-black/60 backdrop-blur flex items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
       <div
-        className={`bg-background rounded-4xl w-full max-w-2xl p-8 transition-all duration-300 ease-in ${
+        className={`bg-gray-200/50 dark:bg-background/70 rounded-4xl w-full max-w-2xl p-8 transition-all duration-200 ease-in ${
           isVisible ? 'scale-100 opacity-100' : 'scale-25 opacity-0'
         }`}
       >
@@ -92,14 +92,14 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
           <button
             onClick={handleBack}
             disabled={curIndex === 0}
-            className='px-6 py-2 font-bold text-purple-700 dark:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
+            className='px-6 py-2 font-bold text-purple-600 dark:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
           >
             ← Back
           </button>
           <button
             onClick={handleNext}
             disabled={(prompts[curIndex].required && currentAnswer === null)}
-            className='px-6 py-2 font-bold text-purple-700 dark:text-purple-500 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
+            className='px-6 py-2 font-bold text-purple-600 dark:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
           >
             {curIndex === prompts.length - 1 ? 'Submit' : 'Next'} →
           </button>

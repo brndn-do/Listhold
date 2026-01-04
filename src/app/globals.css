@@ -4,7 +4,7 @@
 
 /* Define base variables for light mode */
 :root {
-  --background: #ffffffff; /* Light mode background */
+  --background: #ffffff; /* Light mode background */
   --foreground: #1e1e1e; /* Light mode foreground */
 }
 

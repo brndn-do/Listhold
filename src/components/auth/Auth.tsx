@@ -43,12 +43,11 @@ const Auth = () => {
   };
 
   return (
-    <div className='flex flex-col items-center gap-1'>
-      <div className='flex items-center gap-6 h-8'>
+      <div className='flex items-center gap-4 h-8'>
         {!error && (
           <Button
           onClick={user? handleSignOut : handleSignIn}
-          content={user ? 'Sign out' : 'Sign in'}
+          content={user ? 'Sign out' : 'Sign in with Google'}
           disabled={loading}
           />
         )}
@@ -63,7 +62,6 @@ const Auth = () => {
           ></Image>
         )}
       </div>
-    </div>
   );
 };
 

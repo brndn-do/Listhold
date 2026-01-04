@@ -12,11 +12,8 @@ interface EventListProps {
 const EventList = ({ viewingWaitlist }: EventListProps) => {
   const { confirmedList, waitlist, listLoading, disconnected } = useEvent();
 
-  // does the user want to view the waitlist?
-  const selection = viewingWaitlist ? waitlist : confirmedList;
-
-  // helper for handling loading state, error states, empty list, and non-empty list
-  const content = () => {
+  // helper for rendering a list (confirmed or waitlist)
+  const renderList = (list: typeof confirmedList) => {
     if (listLoading) {
       return (
         <div className='w-full flex justify-center mt-16'>
@@ -25,7 +22,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
       );
     }
 
-    if (selection?.length === 0) {
+    if (list?.length === 0) {
       return (
         <div className='w-full flex justify-center mt-16'>
           <p className='font-bold'>No one yet...</p>
@@ -35,20 +32,37 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
     return (
       <ol className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'>
-        {selection.map((signup) => (
-          <ListItem signup={signup} key={signup.id} />
+        {list.map((signup, idx) => (
+          <ListItem signup={signup} idx={idx} key={signup.id} />
         ))}
       </ol>
     );
   };
 
   return (
-    <div className='relative flex flex-col items-center w-full h-112 border-1 border-gray-500 rounded-2xl py-2 px-1'>
-      <div className={`${disconnected ? 'opacity-30 ' : ''}w-full`}>{content()}</div>
+    <div className='relative flex flex-col items-center w-full h-[60dvh] border-1 border-gray-500 rounded-2xl py-2 px-1'>
+      {/* Confirmed List */}
+      <div 
+        className={`absolute inset-0 flex flex-col items-center py-2 px-1 transition-opacity duration-200 ${
+          !viewingWaitlist ? (disconnected ? 'opacity-30 z-10' : 'opacity-100 z-10') : 'opacity-0 z-0'
+        }`}
+      >
+        {renderList(confirmedList)}
+      </div>
+
+      {/* Waitlist */}
+      <div 
+        className={`absolute inset-0 flex flex-col items-center py-2 px-1 transition-opacity duration-200 ${
+          viewingWaitlist ? (disconnected ? 'opacity-30 z-10' : 'opacity-100 z-10') : 'opacity-0 z-0'
+        }`}
+      >
+        {renderList(waitlist)}
+      </div>
+
       {disconnected && (
         <div className='absolute inset-0 z-[-1] flex items-center justify-center'>
           <div>
-            <ErrorMessage content={'You are disconnected.'} />
+            <ErrorMessage content={<p>You are disconnected</p>} />
           </div>
         </div>
       )}

@@ -13,7 +13,7 @@ import Dots from '@/components/ui/Dots';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Button from '@/components/ui/Button';
 
-const COOLDOWN_TIME = 3000; // how long to disable button after successful join/leave
+const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
 const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventPage = () => {
@@ -27,6 +27,7 @@ const EventPage = () => {
   const [viewingWaitlist, setViewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
   const [showFlow, setShowFlow] = useState(false); // whether to display the sign-up wizard/flow
   const [shareMessage, setShareMessage] = useState<string | null>(null);
+  const [confirmLeave, setConfirmLeave] = useState(false);
 
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
@@ -36,7 +37,7 @@ const EventPage = () => {
     }, 2000);
   };
 
-  const showButton = useMemo(() => {
+  const disableButton = useMemo(() => {
     if (
       listLoading ||
       fetchError ||
@@ -46,9 +47,9 @@ const EventPage = () => {
       requestError ||
       showFlow
     ) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }, [
     listLoading,
     fetchError,
@@ -131,9 +132,9 @@ const EventPage = () => {
           <div className='flex w-[90%] mx-auto'>
             <button
               onClick={() => setViewingWaitlist(false)}
-              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background ${
+              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background transition-color duration-200 ${
                 !viewingWaitlist
-                  ? 'text-purple-700 dark:text-purple-400 border-purple-600 dark:border-purple-400'
+                  ? 'text-purple-600 dark:text-purple-400 border-purple-600 dark:border-purple-400'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:cursor-pointer'
               }`}
             >
@@ -141,9 +142,9 @@ const EventPage = () => {
             </button>
             <button
               onClick={() => setViewingWaitlist(true)}
-              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background ${
+              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background transition-color duration-200 ${
                 viewingWaitlist
-                  ? 'text-purple-700 dark:text-purple-400 border-purple-600 dark:border-purple-400'
+                  ? 'text-purple-600 dark:text-purple-400 border-purple-600 dark:border-purple-400'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:cursor-pointer'
               }`}
             >
@@ -175,10 +176,10 @@ const EventPage = () => {
             }
           />
           <EventButton
-            showButton={showButton}
+            disabled={disableButton}
             handleFlowOpen={handleFlowOpen}
             handleSignup={handleSignup}
-            handleLeave={handleLeave}
+            handleLeave={() => setConfirmLeave(true)}
           />
         </div>
 
@@ -201,10 +202,10 @@ const EventPage = () => {
               }
             />
             <EventButton
-              showButton={showButton}
+              disabled={disableButton}
               handleFlowOpen={handleFlowOpen}
               handleSignup={handleSignup}
-              handleLeave={handleLeave}
+              handleLeave={() => setConfirmLeave(true)}
             />
           </div>
         </div>
@@ -229,13 +230,29 @@ const EventPage = () => {
         )}
         {responseMessage && (
           <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
-            <p className='text-2xl'>{responseMessage}</p>
+            <p className='text-2xl font-bold'>{responseMessage}</p>
           </div>
         )}
       </div>
 
       {/* Dialog for sign-up flow */}
       {showFlow && <SignupFlow handleSubmit={handleSubmit} handleCancel={handleCancel} />}
+
+      {confirmLeave && (
+        <div className='fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
+          <p className='text-2xl font-bold'>Are you sure?</p>
+          <div className='flex gap-4'>
+            <Button
+              onClick={() => {
+                setConfirmLeave(false);
+                handleLeave();
+              }}
+              content={'Leave'}
+            />
+            <Button onClick={() => setConfirmLeave(false)} content={'Cancel'} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

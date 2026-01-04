@@ -397,7 +397,7 @@ const EventForm = () => {
                     <button
                       type='button'
                       onClick={() => remove(index)}
-                      className='text-red-700 dark:text-red-600 hover:cursor-pointer'
+                      className='text-red-600 dark:text-red-500 hover:cursor-pointer'
                     >
                       Remove
                     </button>
@@ -482,7 +482,7 @@ const EventForm = () => {
           <button
             type='button'
             onClick={addPrompt}
-            className='text-purple-700 dark:text-purple-600 hover:cursor-pointer'
+            className='text-purple-700 dark:text-purple-500 hover:cursor-pointer'
           >
             + Add Prompt
           </button>

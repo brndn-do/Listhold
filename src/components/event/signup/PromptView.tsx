@@ -39,7 +39,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
     <div className='flex flex-col items-center gap-2'>
       {/* Question text */}
       <div className='max-h-48 overflow-y-auto scrollbar-thin w-full'>
-        <p className='text-2xl font-semibold text-center text-gray-800 dark:text-gray-200'>
+        <p className='text-2xl font-semibold text-center'>
           {prompt.text}
         </p>
       </div>
@@ -48,7 +48,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       {prompt.type !== 'notice' && (
         <p className='text-sm text-gray-600 dark:text-gray-400 text-center max-w-md'>
           {prompt.private
-            ? 'Your answer will not be publicly displayed, but will be visible to event organizers.'
+            ? 'Your answer will be visible to event organizers.'
             : 'Your answer may be displayed to others'}
         </p>
       )}
@@ -59,7 +59,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       )}
 
       {/* Answer options */}
-      <div className='mt-1 w-full flex flex-col items-center gap-4'>
+      <div className='mt-2 w-full flex flex-col items-center gap-4'>
         {prompt.type === 'notice' ? (
           <label className='flex items-center gap-2 cursor-pointer group'>
             <input
