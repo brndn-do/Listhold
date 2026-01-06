@@ -9,9 +9,10 @@ import { useState } from 'react';
 interface ListItemProps {
   signup: SignupData;
   idx: number;
+  isWaitlist: boolean;
 }
 
-const ListItem = ({ signup, idx }: ListItemProps) => {
+const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
   const { user } = useAuth();
   const { capacity, prompts } = useEvent();
 
@@ -36,7 +37,9 @@ const ListItem = ({ signup, idx }: ListItemProps) => {
             height={26}
             className={`border-2 border-purple-700 dark:border-purple-600 h-[26px] w-[26px] rounded-full`}
           ></Image>
-          <p className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}>
+          <p
+            className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}
+          >
             {signup.displayName}
           </p>
           {orderedAnswers.length > 0 && (
@@ -66,15 +69,15 @@ const ListItem = ({ signup, idx }: ListItemProps) => {
             </div>
           )}
         </div>
-        <span className='text-purple-600 dark:text-purple-400 text-xs font-semibold'>
-          {idx + 1}/{capacity}
-        </span>
+        {!isWaitlist && (
+          <span className='text-purple-600 dark:text-purple-400 text-xs font-semibold'>
+            {idx + 1}/{capacity}
+          </span>
+        )}
       </div>
       <div
         className={`grid transition-all duration-200 ${
-          showAnswers && orderedAnswers.length > 0
-            ? 'grid-rows-[1fr] mb-2.5'
-            : 'grid-rows-[0fr]'
+          showAnswers && orderedAnswers.length > 0 ? 'grid-rows-[1fr] mb-2.5' : 'grid-rows-[0fr]'
         }`}
       >
         <div className='overflow-hidden'>

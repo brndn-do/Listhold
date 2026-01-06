@@ -21,7 +21,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
   // Check if confirmed list is scrollable and at bottom
   useEffect(() => {
-    const checkScrollable = () => {
+    const checkScrollable: () => void = () => {
       if (confirmedListRef.current) {
         const { scrollHeight, clientHeight, scrollTop } = confirmedListRef.current;
         setIsConfirmedScrollable(scrollHeight > clientHeight);
@@ -47,7 +47,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
   // Check if waitlist is scrollable and at bottom
   useEffect(() => {
-    const checkScrollable = () => {
+    const checkScrollable: () => void = () => {
       if (waitlistRef.current) {
         const { scrollHeight, clientHeight, scrollTop } = waitlistRef.current;
         setIsWaitlistScrollable(scrollHeight > clientHeight);
@@ -72,7 +72,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   }, [waitlist]);
 
   // helper for rendering a list (confirmed or waitlist)
-  const renderList = (list: typeof confirmedList, listRef: React.RefObject<HTMLOListElement | null>, isScrollable: boolean, isAtBottom: boolean) => {
+  const renderList = (list: typeof confirmedList, listRef: React.RefObject<HTMLOListElement | null>, isWaitlist: boolean, isScrollable: boolean, isAtBottom: boolean) => {
     if (listLoading) {
       return (
         <div className='w-full flex justify-center mt-16'>
@@ -93,7 +93,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
       <>
         <ol ref={listRef} className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'>
           {list.map((signup, idx) => (
-            <ListItem signup={signup} idx={idx} key={signup.id} />
+            <ListItem signup={signup} idx={idx} isWaitlist={isWaitlist} key={signup.id} />
           ))}
         </ol>
         {/* Down arrow indicator, conditionally rendered if the list is scrollable and not at bottom*/}
@@ -125,7 +125,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
             : 'opacity-0 z-0'
         }`}
       >
-        {renderList(confirmedList, confirmedListRef, isConfirmedScrollable, isConfirmedAtBottom)}
+        {renderList(confirmedList, confirmedListRef, false, isConfirmedScrollable, isConfirmedAtBottom)}
       </div>
 
       {/* Waitlist */}
@@ -138,7 +138,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
             : 'opacity-0 z-0'
         }`}
       >
-        {renderList(waitlist, waitlistRef, isWaitlistScrollable, isWaitlistAtBottom)}
+        {renderList(waitlist, waitlistRef, true, isWaitlistScrollable, isWaitlistAtBottom)}
       </div>
 
       {disconnected && (
