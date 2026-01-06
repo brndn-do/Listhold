@@ -511,6 +511,7 @@ const EventForm = () => {
         {!createError && (
           <Button
             type='submit'
+            disabled={isLoading}
             content={
               isLoading ? (
                 <>
