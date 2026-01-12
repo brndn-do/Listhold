@@ -34,7 +34,7 @@ const Organization = async ({ params }: { params: Promise<{ orgSlug: string }> }
   try {
     const props = await getOrgPageProps(orgSlug);
     if (!props) {
-      return <NotFound />
+      return <NotFound />;
     }
     return <OrgPage {...props} />;
   } catch (err: unknown) {

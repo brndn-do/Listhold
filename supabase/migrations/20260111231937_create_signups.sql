@@ -17,6 +17,9 @@ CREATE TABLE public.signups (
   UNIQUE (user_id, event_id)
 );
 
+CREATE INDEX signups_event_id_idx ON public.signups(event_id);
+CREATE INDEX signups_user_id_idx ON public.signups(user_id);
+
 CREATE OR REPLACE FUNCTION set_last_updated()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -33,9 +36,6 @@ BEFORE UPDATE ON public.signups
 FOR EACH ROW
 EXECUTE FUNCTION set_last_updated();
 
-CREATE INDEX signups_event_id_idx ON public.signups(event_id);
-CREATE INDEX signups_user_id_idx ON public.signups(user_id);
-
 ALTER TABLE public.signups ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Signups: public read access"
@@ -44,3 +44,6 @@ CREATE POLICY "Signups: public read access"
   USING (true);
 
 ALTER publication supabase_realtime ADD TABLE public.signups;
+
+REVOKE ALL ON public.signups FROM PUBLIC;
+GRANT SELECT ON public.signups TO PUBLIC;

@@ -28,15 +28,15 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
         setIsConfirmedAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
       }
     };
-    
+
     checkScrollable();
-    
+
     const listElement = confirmedListRef.current;
     if (listElement) {
       listElement.addEventListener('scroll', checkScrollable);
     }
     window.addEventListener('resize', checkScrollable);
-    
+
     return () => {
       if (listElement) {
         listElement.removeEventListener('scroll', checkScrollable);
@@ -54,15 +54,15 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
         setIsWaitlistAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
       }
     };
-    
+
     checkScrollable();
-    
+
     const listElement = waitlistRef.current;
     if (listElement) {
       listElement.addEventListener('scroll', checkScrollable);
     }
     window.addEventListener('resize', checkScrollable);
-    
+
     return () => {
       if (listElement) {
         listElement.removeEventListener('scroll', checkScrollable);
@@ -72,7 +72,13 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   }, [waitlist]);
 
   // helper for rendering a list (confirmed or waitlist)
-  const renderList = (list: typeof confirmedList, listRef: React.RefObject<HTMLOListElement | null>, isWaitlist: boolean, isScrollable: boolean, isAtBottom: boolean) => {
+  const renderList = (
+    list: typeof confirmedList,
+    listRef: React.RefObject<HTMLOListElement | null>,
+    isWaitlist: boolean,
+    isScrollable: boolean,
+    isAtBottom: boolean,
+  ) => {
     if (listLoading) {
       return (
         <div className='w-full flex justify-center mt-16'>
@@ -91,7 +97,10 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
     return (
       <>
-        <ol ref={listRef} className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'>
+        <ol
+          ref={listRef}
+          className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'
+        >
           {list.map((signup, idx) => (
             <ListItem signup={signup} idx={idx} isWaitlist={isWaitlist} key={signup.id} />
           ))}
@@ -105,7 +114,12 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
               stroke='currentColor'
               viewBox='0 0 24 24'
             >
-              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M19 9l-7 7-7-7'
+              />
             </svg>
           </div>
         )}
@@ -125,7 +139,13 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
             : 'opacity-0 z-0'
         }`}
       >
-        {renderList(confirmedList, confirmedListRef, false, isConfirmedScrollable, isConfirmedAtBottom)}
+        {renderList(
+          confirmedList,
+          confirmedListRef,
+          false,
+          isConfirmedScrollable,
+          isConfirmedAtBottom,
+        )}
       </div>
 
       {/* Waitlist */}

@@ -1,4 +1,4 @@
-import { supabase } from './supabase.ts';
+import { supabase } from '../_shared/supabase.ts';
 import { z } from 'zod';
 import type { Database } from '../../../types/supabaseTypes.ts';
 
@@ -107,7 +107,7 @@ Deno.serve(async (req): Promise<Response> => {
   const toInsert: EventsInsert = {
     event_name: name,
     organization_id: orgId,
-    creator_id: user.id,
+    owner_id: user.id,
     slug: finalSlug,
     description,
     capacity,

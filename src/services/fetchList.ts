@@ -7,13 +7,13 @@ export interface SignupData {
   displayName: string | null;
   avatarURL: string | null;
   status: 'confirmed' | 'waitlisted' | 'withdrawn';
-  publicAnswers: Record<string, string | boolean>;
+  answers: Record<string, string | boolean>;
   createdAt: Date;
 }
 
 export const fetchList = async (eventId: string): Promise<SignupData[]> => {
   const { data, error } = await supabase
-    .from('public_signups_view')
+    .from('event_list_view')
     .select('*')
     .eq('event_id', eventId)
     .in('status', ['confirmed', 'waitlisted'])
@@ -24,7 +24,7 @@ export const fetchList = async (eventId: string): Promise<SignupData[]> => {
   }
 
   if (!data) {
-    throw new ServiceError('not-found')
+    throw new ServiceError('not-found');
   }
 
   return data.map((row) => {
@@ -34,7 +34,7 @@ export const fetchList = async (eventId: string): Promise<SignupData[]> => {
       displayName: row.display_name,
       avatarURL: row.avatar_url,
       status: row.status!,
-      publicAnswers: row.public_answers as SignupData['publicAnswers'],
+      answers: row.answers as SignupData['answers'],
       createdAt: new Date(row.created_at!),
     };
   });

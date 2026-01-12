@@ -81,4 +81,3 @@ END;
 $$;
 
 REVOKE EXECUTE ON FUNCTION public.add_user_to_event FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.add_user_to_event TO service_role;

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Listhold',
-  description: 'Automate your event\'s signup list.',
+  description: "Automate your event's signup list.",
 };
 
 const Home = () => {
@@ -12,7 +12,7 @@ const Home = () => {
         Listhold
       </h1>
       <p className='mt-4 text-lg text-center text-slate-700 dark:text-slate-400'>
-        {"Manage your event lists with ease."}
+        {'Manage your event lists with ease.'}
       </p>
     </div>
   );

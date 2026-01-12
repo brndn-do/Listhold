@@ -426,7 +426,7 @@ const EventForm = () => {
                       className='w-full border dark:border-gray-500 rounded-lg px-3 py-2 bg-background text-foreground'
                     >
                       <option value='yes/no'>Yes/No Question</option>
-                      <option value='notice'>Notice (users click &quot;I understand&quot;)</option>
+                      <option value='notice'>Notice (users must acknowledge)</option>
                     </select>
                     {errors.prompts?.[index]?.promptType && (
                       <div className='w-full px-2 mt-1'>
@@ -444,7 +444,11 @@ const EventForm = () => {
                     <label className='block mb-2'>Text</label>
                     <textarea
                       {...register(`prompts.${index}.promptText`)}
-                      placeholder='e.g., Will you need parking?'
+                      placeholder={
+                        watch(`prompts.${index}.promptType`) === 'notice'
+                          ? 'e.g., By continuing, you agree to the community guidelines.'
+                          : 'e.g., Will you need parking?'
+                      }
                       className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
                       rows={4}
                       spellCheck={false}

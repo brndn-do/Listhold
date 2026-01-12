@@ -38,7 +38,9 @@ export const signOut = async (): Promise<void> => {
  * @param callback - Function called with the current user (or null) whenever auth state changes
  * @returns Unsubscribe function to stop listening
  */
-export const subscribeToAuthState = (callback: (user: ProfileData | null) => void): (() => void) => {
+export const subscribeToAuthState = (
+  callback: (user: ProfileData | null) => void,
+): (() => void) => {
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     if (!session) {
       callback(null);

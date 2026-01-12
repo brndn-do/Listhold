@@ -1,4 +1,4 @@
-import { supabase } from './supabase.ts';
+import { supabase } from '../_shared/supabase.ts';
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -6,7 +6,10 @@ export const corsHeaders = {
 };
 
 const errorResponse = (message: string, status: number) => {
-  return new Response(message, { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  return new Response(message, {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 };
 
 Deno.serve(async (req): Promise<Response> => {
@@ -24,7 +27,7 @@ Deno.serve(async (req): Promise<Response> => {
   }
 
   const { userId, eventId, answers } = reqData;
-  
+
   try {
     // check auth
     const authHeader = req.headers.get('Authorization') || '';
@@ -41,7 +44,7 @@ Deno.serve(async (req): Promise<Response> => {
     // get creator ID
     const { data: eventData, error: eventError } = await supabase
       .from('events')
-      .select('creator_id')
+      .select('owner_id')
       .eq('id', eventId)
       .maybeSingle();
 
@@ -53,15 +56,15 @@ Deno.serve(async (req): Promise<Response> => {
       return errorResponse('Event not found', 404);
     }
 
-    const creatorId = eventData.creator_id;
+    const ownerId = eventData.owner_id;
 
     // If the caller is not the user being added nor the creator of the event
-    if (caller.id !== userId && caller.id !== creatorId) {
+    if (caller.id !== userId && caller.id !== ownerId) {
       return errorResponse('Unauthorized', 403);
     }
 
     // authorized, call postgres function
-    const { data, error } = await supabase.rpc('add_user_to_event', {
+    const { data: rawData, error } = await supabase.rpc('add_user_to_event', {
       p_user_id: userId,
       p_event_id: eventId,
       p_answers: answers ?? {},
@@ -71,6 +74,11 @@ Deno.serve(async (req): Promise<Response> => {
       console.error('POSTGRES FUNCTION ERROR: ', error.message);
       return errorResponse('Internal', 500);
     }
+
+    const data = rawData as {
+      id?: string;
+      status?: string;
+    };
 
     if (!data || !data.id) {
       return errorResponse('Internal', 500);

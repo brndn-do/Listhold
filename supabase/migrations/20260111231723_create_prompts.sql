@@ -26,5 +26,12 @@ CREATE TABLE public.prompts (
   UNIQUE (event_id, display_order)
 );
 
--- Enable RLS
 ALTER TABLE public.prompts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Prompts: public read access"
+  ON public.prompts
+  FOR SELECT
+  USING(true);
+
+REVOKE ALL ON public.prompts FROM PUBLIC;
+GRANT SELECT ON public.prompts TO anon, authenticated;

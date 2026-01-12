@@ -8,9 +8,7 @@ export const metadata: Metadata = {
 };
 
 const CreateEvent = async () => {
-  return (
-    <CreateEventPage />
-  );
+  return <CreateEventPage />;
 };
 
 export default CreateEvent;

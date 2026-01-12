@@ -1,4 +1,4 @@
-import { supabase } from './supabase.ts';
+import { supabase } from '../_shared/supabase.ts';
 
 export const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -6,7 +6,10 @@ export const corsHeaders = {
 };
 
 const errorResponse = (message: string, status: number) => {
-  return new Response(message, { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  return new Response(message, {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 };
 
 const sendEmail = async (to: string, subject: string, html: string) => {
@@ -72,7 +75,7 @@ Deno.serve(async (req): Promise<Response> => {
     // get creator ID and event name
     const { data: eventData, error: eventError } = await supabase
       .from('events')
-      .select('creator_id, event_name, slug')
+      .select('owner_id, event_name, slug')
       .eq('id', eventId)
       .maybeSingle();
 
@@ -84,15 +87,15 @@ Deno.serve(async (req): Promise<Response> => {
       return errorResponse('Event not found', 404);
     }
 
-    const creatorId = eventData.creator_id;
+    const ownerId = eventData.owner_id;
 
     // If the caller is not the user being added nor the creator of the event
-    if (caller.id !== userId && caller.id !== creatorId) {
+    if (caller.id !== userId && caller.id !== ownerId) {
       return errorResponse('Unauthorized', 403);
     }
 
     // authorized, call postgres function
-    const { data, error } = await supabase.rpc('remove_user_from_event', {
+    const { data: rawData, error } = await supabase.rpc('remove_user_from_event', {
       p_user_id: userId,
       p_event_id: eventId,
     });
@@ -101,6 +104,14 @@ Deno.serve(async (req): Promise<Response> => {
       console.error('POSTGRES FUNCTION ERROR: ', error.message);
       return errorResponse('Internal', 500);
     }
+
+    const data = rawData as {
+      signup_id?: string;
+      new_status?: string;
+      old_status?: string;
+      promoted_user_id?: string;
+      error?: string;
+    };
 
     // Handle application-level errors returned by the function
     if (data && data.error) {
@@ -112,11 +123,13 @@ Deno.serve(async (req): Promise<Response> => {
       return errorResponse('Internal', 500);
     }
 
+    const promotedUserId = data.promoted_user_id;
+
     // Send email if someone was promoted
-    if (data.promoted_user_id) {
+    if (promotedUserId) {
       const emailTask = async () => {
         try {
-          const { data: userData } = await supabase.auth.admin.getUserById(data.promoted_user_id);
+          const { data: userData } = await supabase.auth.admin.getUserById(promotedUserId);
 
           const appDomain = Deno.env.get('APP_DOMAIN');
           if (!appDomain) {

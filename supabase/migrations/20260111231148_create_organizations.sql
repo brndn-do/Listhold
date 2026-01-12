@@ -18,9 +18,7 @@ CREATE TABLE public.organizations (
   created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_owner_id ON public.organizations(owner_id);
-
-ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
+CREATE INDEX organizations_owner_id_idx ON public.organizations(owner_id);
 
 -- Normalize to lower case
 CREATE OR REPLACE FUNCTION normalize_org_slug()
@@ -40,30 +38,6 @@ BEFORE INSERT OR UPDATE ON public.organizations
 FOR EACH ROW
 EXECUTE FUNCTION normalize_org_slug();
 
--- Reject reserved keywords as slugs (defined in public.reserved_slugs)
-CREATE OR REPLACE FUNCTION reject_reserved_organization_slugs()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $$
-BEGIN
-  -- Check if the new slug exists in the reserved_slugs table
-  IF EXISTS (
-    SELECT 1
-    FROM public.reserved_slugs
-    WHERE slug = NEW.slug
-  ) THEN
-    RAISE EXCEPTION 'Slug "%" is reserved', NEW.slug
-      USING ERRCODE = '23514';  -- check_violation
-  END IF;
+ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
 
-  RETURN NEW;
-END;
-$$;
-
--- Attach the trigger to organizations
-CREATE TRIGGER trg_reject_reserved_org_slugs
-BEFORE INSERT OR UPDATE ON public.organizations
-FOR EACH ROW
-EXECUTE FUNCTION reject_reserved_organization_slugs();
+REVOKE ALL ON public.organizations FROM PUBLIC;

@@ -45,12 +45,14 @@ const orgSchema = z.object({
     .string()
     .transform((s) => s.trim())
     .transform((s) => (s === '' ? undefined : s))
-    .refine((s) => !s || s.length <= 1000, { message: 'Description cannot exceed 1000 characters.' })
+    .refine((s) => !s || s.length <= 1000, {
+      message: 'Description cannot exceed 1000 characters.',
+    })
     .optional(),
-  });
-  type orgSchemaType = z.infer<typeof orgSchema>;
-  const ERROR_TIME = 5000; // how long to display error before allowing retries
-  
+});
+type orgSchemaType = z.infer<typeof orgSchema>;
+const ERROR_TIME = 5000; // how long to display error before allowing retries
+
 const OrgForm = () => {
   const router = useRouter();
   const { user } = useAuth();
@@ -65,9 +67,7 @@ const OrgForm = () => {
   const [createError, setCreateError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitForm: SubmitHandler<orgSchemaType> = async (
-    validatedData: orgSchemaType,
-  ) => {
+  const submitForm: SubmitHandler<orgSchemaType> = async (validatedData: orgSchemaType) => {
     if (!user) return;
 
     setCreateError(null);
@@ -81,9 +81,8 @@ const OrgForm = () => {
       if (msg === 'already-exists') {
         setCreateError('An organization with that slug already exists. Try again in a bit.');
       } else if (msg === 'unauthorized') {
-        setCreateError('Unauthorized. Are you signed in?')
-      } 
-      else {
+        setCreateError('Unauthorized. Are you signed in?');
+      } else {
         setCreateError('An unexpected error occured. Try again in a bit.');
       }
       setTimeout(() => {
@@ -156,7 +155,7 @@ const OrgForm = () => {
         </div>
       </div>
       <div className='max-w-full flex flex-col gap-4'>
-        {createError && <ErrorMessage justify={'start'} content={createError}/>}
+        {createError && <ErrorMessage justify={'start'} content={createError} />}
         {!createError && (
           <div>
             <Button

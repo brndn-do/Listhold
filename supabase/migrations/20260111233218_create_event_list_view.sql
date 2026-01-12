@@ -1,4 +1,5 @@
-CREATE OR REPLACE VIEW public.public_signups_view
+CREATE OR REPLACE VIEW public.event_list_view
+WITH (security_invoker = true)
 AS
 SELECT
   s.id AS signup_id,
@@ -13,11 +14,9 @@ SELECT
     (
       SELECT jsonb_object_agg(a.prompt_id, a.answer)
       FROM public.answers a
-      JOIN public.prompts pr ON a.prompt_id = pr.id
       WHERE a.signup_id = s.id
-      AND pr.is_private = false
     ),
   '{}'::jsonb
-  ) AS public_answers
+  ) AS answers
 FROM public.signups s
 JOIN public.profiles p ON s.user_id = p.id;

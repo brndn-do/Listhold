@@ -1,7 +1,7 @@
 'use client';
 
 import { subscribeToAuthState } from '@/services/authService';
-import { fetchProfile, ProfileData } from '@/services/fetchProfile';
+import { ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -28,9 +28,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubAuthState = subscribeToAuthState(async (data) => {
       if (data) {
-        await saveProfile(data)
-        const user = await fetchProfile(data.uid);
-        setUser(user);
+        try {
+          await saveProfile(data);
+          setUser(data);
+        } catch(err) {
+          setUser(null);
+        }
       } else {
         setUser(null);
       }

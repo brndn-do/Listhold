@@ -5,7 +5,7 @@ CREATE TABLE public.events (
   slug text UNIQUE NOT NULL CHECK (slug ~ '^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9]))*[a-z0-9]$' AND slug = lower(slug) AND length(slug) BETWEEN 3 AND 36),
 
   -- The user ID of the creator of this event.
-  creator_id uuid NOT NULL REFERENCES auth.users(id),
+  owner_id uuid NOT NULL REFERENCES auth.users(id),
 
   -- The ID of the organization this event belongs to.
   organization_id uuid DEFAULT NULL REFERENCES public.organizations(id) ON DELETE SET NULL,
@@ -34,10 +34,8 @@ CREATE TABLE public.events (
   created_at timestamptz NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_org_id ON public.events(organization_id);
-CREATE INDEX idx_creator_id ON public.events(creator_id);
-
-ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
+CREATE INDEX events_org_id_idx ON public.events(organization_id);
+CREATE INDEX events_owner_id_idx ON public.events(owner_id);
 
 -- Normalize to lower case
 CREATE OR REPLACE FUNCTION normalize_event_slug()
@@ -57,30 +55,12 @@ BEFORE INSERT OR UPDATE ON public.events
 FOR EACH ROW
 EXECUTE FUNCTION normalize_event_slug();
 
--- Reject reserved keywords as slugs (defined in public.reserved_slugs)
-CREATE OR REPLACE FUNCTION reject_reserved_event_slugs()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $$
-BEGIN
-  -- Check if the new slug exists in the reserved_slugs table
-  IF EXISTS (
-    SELECT 1
-    FROM public.reserved_slugs
-    WHERE slug = NEW.slug
-  ) THEN
-    RAISE EXCEPTION 'Slug "%" is reserved', NEW.slug
-      USING ERRCODE = '23514';  -- check_violation
-  END IF;
+ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
 
-  RETURN NEW;
-END;
-$$;
+CREATE POLICY "Events: read access for owner"
+  ON public.events
+  FOR SELECT
+  USING((SELECT auth.uid()) = owner_id);
 
--- Attach the trigger to events
-CREATE TRIGGER trg_reject_reserved_event_slugs
-BEFORE INSERT OR UPDATE ON public.events
-FOR EACH ROW
-EXECUTE FUNCTION reject_reserved_event_slugs();
+REVOKE ALL ON public.events FROM PUBLIC;
+GRANT SELECT ON public.events TO authenticated;

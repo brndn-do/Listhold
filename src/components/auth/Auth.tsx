@@ -33,25 +33,25 @@ const Auth = () => {
   };
 
   return (
-      <div className='flex items-center gap-4 h-8'>
-        {!error && (
-          <Button
-          onClick={user? handleSignOut : handleSignIn}
+    <div className='flex items-center gap-4 h-8'>
+      {!error && (
+        <Button
+          onClick={user ? handleSignOut : handleSignIn}
           content={user ? 'Sign out' : 'Sign in with Google'}
           disabled={loading}
-          />
-        )}
-        {error && <ErrorMessage content={'Try again.'} />}
-        {user && (
-          <Image
-            alt='Your profile photo'
-            src={user.avatarURL || '/default-avatar.jpg'}
-            width={32}
-            height={32}
-            className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
-          ></Image>
-        )}
-      </div>
+        />
+      )}
+      {error && <ErrorMessage content={'Try again.'} />}
+      {user && (
+        <Image
+          alt='Your profile photo'
+          src={user.avatarURL || '/default-avatar.jpg'}
+          width={32}
+          height={32}
+          className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
+        ></Image>
+      )}
+    </div>
   );
 };
 

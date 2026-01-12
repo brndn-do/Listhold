@@ -37,7 +37,7 @@ const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => 
   try {
     const props = await getEventProviderProps(eventSlug);
     if (!props) {
-      return <NotFound />
+      return <NotFound />;
     }
     return (
       <EventProvider {...props}>

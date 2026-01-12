@@ -7,10 +7,10 @@ import { useAuth } from '@/context/AuthProvider';
 import { signInWithGoogle } from '@/services/authService';
 
 const CreateEventPage = () => {
-  const {user, loading} = useAuth()
+  const { user, loading } = useAuth();
 
   if (loading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (!user) {
@@ -20,10 +20,7 @@ const CreateEventPage = () => {
         <p className='text-gray-600 dark:text-gray-400 text-center max-w-md'>
           Sign in to create an event
         </p>
-        <Button
-          onClick={signInWithGoogle}
-          content='Sign In With Google'
-        />
+        <Button onClick={signInWithGoogle} content='Sign In With Google' />
       </div>
     );
   }

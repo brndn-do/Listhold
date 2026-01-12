@@ -19,9 +19,7 @@ const EventTime = ({ start, end }: EventTimeProps) => {
   return (
     <div className='w-full flex items-center pt-1'>
       {!mounted && <Dots size={1} />}
-      {mounted && (
-        <p>{`${formatEventTiming(start, end)}`}</p>
-      )}
+      {mounted && <p>{`${formatEventTiming(start, end)}`}</p>}
     </div>
   );
 };

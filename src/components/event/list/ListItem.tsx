@@ -22,7 +22,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
     return prompts.findIndex((p) => p.id === id);
   };
 
-  const orderedAnswers = Object.entries(signup.publicAnswers).sort(
+  const orderedAnswers = Object.entries(signup.answers).sort(
     (a, b) => getDisplayOrder(a[0]) - getDisplayOrder(b[0]),
   );
 
@@ -69,11 +69,9 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
             </div>
           )}
         </div>
-        {!isWaitlist && (
-          <span className='text-purple-600 dark:text-purple-400 text-xs font-semibold'>
-            {idx + 1}/{capacity}
-          </span>
-        )}
+        <span className='text-purple-600 dark:text-purple-400 text-xs font-semibold'>
+          {isWaitlist ? idx + 1 : `${idx + 1}/${capacity}`}
+        </span>
       </div>
       <div
         className={`grid transition-all duration-200 ${

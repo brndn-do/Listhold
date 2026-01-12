@@ -14,9 +14,13 @@ interface ErrorMessageProps {
 const ErrorMessage = ({
   content = 'An unexpected error occured.',
   size = 'md',
-  justify= 'center',
+  justify = 'center',
 }: ErrorMessageProps) => {
-  return <p className={`w-full text-${justify} text-${size} text-red-600 dark:text-red-400`}>{content}</p>;
+  return (
+    <p className={`w-full text-${justify} text-${size} text-red-600 dark:text-red-400`}>
+      {content}
+    </p>
+  );
 };
 
 export default ErrorMessage;

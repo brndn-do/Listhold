@@ -22,10 +22,14 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
   }, []);
 
   const handleNext = () => {
-    // Store user's answer
-    const curPromptId = prompts[curIndex].id;
-    const updatedAnswers = { ...answers, [curPromptId]: currentAnswer };
-    setAnswers(updatedAnswers);
+    // Store user's answer if not notice
+    const curPrompt = prompts[curIndex];
+    let updatedAnswers = answers;
+
+    if (curPrompt.type !== 'notice') {
+      updatedAnswers = { ...answers, [curPrompt.id]: currentAnswer };
+      setAnswers(updatedAnswers);
+    }
 
     if (curIndex + 1 < prompts.length) {
       setCurIndex(curIndex + 1);
@@ -98,7 +102,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
           </button>
           <button
             onClick={handleNext}
-            disabled={(prompts[curIndex].required && currentAnswer === null)}
+            disabled={prompts[curIndex].required && currentAnswer === null}
             className='px-6 py-2 font-bold text-purple-600 dark:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
           >
             {curIndex === prompts.length - 1 ? 'Submit' : 'Next'} →

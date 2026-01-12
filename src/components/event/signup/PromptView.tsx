@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export interface Prompt {
   id: string;
@@ -24,6 +24,39 @@ interface PromptViewProps {
 
 const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<boolean | null>(currentAnswer ?? null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const [isScrollable, setIsScrollable] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Check if text is scrollable and at bottom
+  useEffect(() => {
+    const checkScrollable = () => {
+      if (textRef.current) {
+        const { scrollHeight, clientHeight, scrollTop } = textRef.current;
+        setIsScrollable(scrollHeight > clientHeight);
+        // Use a small threshold (1px) for float inconsistencies
+        setIsAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
+      }
+    };
+
+    // Check immediately and after a short delay to allow for layout updates
+    checkScrollable();
+    const timeoutId = setTimeout(checkScrollable, 0);
+
+    const element = textRef.current;
+    if (element) {
+      element.addEventListener('scroll', checkScrollable);
+    }
+    window.addEventListener('resize', checkScrollable);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (element) {
+        element.removeEventListener('scroll', checkScrollable);
+      }
+      window.removeEventListener('resize', checkScrollable);
+    };
+  }, [prompt.text]);
 
   // Update local state when navigating back to a previously answered question
   useEffect(() => {
@@ -36,12 +69,34 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
   }, [selectedAnswer, onAnswerChange]);
 
   return (
-    <div className='flex flex-col items-center gap-2'>
+    <div className='flex flex-col items-center gap-2 w-full'>
       {/* Question text */}
-      <div className='max-h-48 overflow-y-auto scrollbar-thin w-full'>
-        <p className='text-2xl font-semibold text-center'>
-          {prompt.text}
-        </p>
+      <div className='relative w-full max-h-48'>
+        <div 
+          ref={textRef}
+          className='max-h-48 overflow-y-auto scrollbar-thin w-full'
+        >
+          <p className='text-2xl font-semibold text-center'>{prompt.text}</p>
+        </div>
+        
+        {/* Scroll indicator */}
+        {isScrollable && !isAtBottom && (
+          <div className='absolute inset-x-0 bottom-0 flex justify-center items-end py-2 pointer-events-none'>
+            <svg
+              className='w-6 h-6 text-white bg-black/50 dark:bg-gray-500/50 rounded-full animate-bounce'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M19 9l-7 7-7-7'
+              />
+            </svg>
+          </div>
+        )}
       </div>
 
       {/* Privacy notice */}
@@ -49,7 +104,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
         <p className='text-sm text-gray-600 dark:text-gray-400 text-center max-w-md'>
           {prompt.private
             ? 'Your answer will only be visible to event organizers.'
-            : 'Your answer may be displayed to others'}
+            : 'Your answer will be visible to everyone'}
         </p>
       )}
 
@@ -69,7 +124,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
               className='w-4 h-4 cursor-pointer accent-purple-600'
             />
             <span className='text-lg font-medium text-gray-700 dark:text-gray-300'>
-              I understand
+              Click to continue
             </span>
           </label>
         ) : (

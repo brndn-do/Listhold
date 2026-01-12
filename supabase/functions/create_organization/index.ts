@@ -1,4 +1,4 @@
-import { supabase } from './supabase.ts';
+import { supabase } from '../_shared/supabase.ts';
 import { z } from 'zod';
 import type { Database } from '../../../types/supabaseTypes.ts';
 
