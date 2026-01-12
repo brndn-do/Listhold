@@ -1,151 +1,120 @@
 # Listhold
 
-An event management and sign-up platform built with Next.js + Supabase.
+A real-time event management platform designed to make managing event lists, waitlists, and signups effortless for organizers and attendees.
+
+## Demo
+Check out the app at **[https://listhold.com](https://listhold.com)**
 
 ## Features
 
-#### Implemented
+### Event Management
+- **Create & Organize:** Create events with specific capacities, descriptions, times, and locations.
+- **Custom Questionnaires:** Organizers can attach custom questionnaires (e.g., "Do you need parking?", "Are you a new member of our club?") to the signup process.
 
-- **User Authentication**
-  - Google OAuth sign-in
+### Real-Time Rosters and Automated Waitlists
+- **Live Updates:** Rosters update globally in real-time. Users can see exactly how many spots are left and who else has signed up without refreshing the page.
+- **Smart Waitlists:** When an event fills up, users can join a waitlist.
+- **Auto-Promotion:** If a confirmed attendee cancels via the app, the system automatically confirms the next person on the waitlist and sends them an email notification.
 
-- **Event Management**
-  - Create events with custom or auto-generated slugs
-  - Define event capacity, location, start/end times, and optional descriptions
-  - Real-time tracking of available spots
-
-- **Real-time Rosters & Waitlists**
-  - Users can see a live roster of signups and waitlisted people, and their respective spots, for each event.
-  - Automatic waitlist when events reach capacity
-  - Automatic promotion: When a spot opens, the next person on the waitlist (if any) is instantly moved to the main list
-  - Email notifications sent to promoted users
-
-- **Interactive Prompts**
-  - Sequential signup flow with custom prompts
-  - Two prompt types supported: `'yes/no'` (boolean questions) and `'notice'` (acknowledgment)
-  - Public visibility control: users can see others' answers to public prompts
-  - Prompt answers stored and displayed with signups
-
-- **Signup/Leave Flow**
-  - Join event (main list if space available, otherwise waitlist)
-  - Answer custom prompts during signup
-  - Leave event or waitlist at any time
-  - View your own signup status with visual highlighting
-
-#### Planned Features
-
-- **Advanced Organization Management**
-  - Invite and manage multiple admins per organization
-  - Organization logos, websites, and contact information
-  - Public/private organization visibility settings
-
-- **Enhanced Event Features**
-  - Edit and delete events
-  - Cross-event signup restrictions (prevent users from signing up for overlapping events)
-  - Configurable waitlist response time windows (day vs. night notifications)
-  - Domain-based access restrictions per event (e.g., `@northwestern.edu` only)
-  - Recurring events
-  - Public/private event visibility
-
-- **Extended Prompt System**
-  - Additional prompt types: free-text, single-select, multi-select
-  - Prompt validation with required correct answers
-  - Custom error messages for validation failures
-  - Ability to edit prompt answers after signup
-
-- **User Dashboard**
-  - Personal profile page showing all events signed up for
-  - Event history and attendance tracking
-
-- **Admin Features**
-  - Detailed roster view with contact information and all prompt answers
-  - Export signup data
-  - Waitlist status tracking (pending, notified timestamps)
-
-- **Enhanced Waitlist**
-  - Manual confirmation flow for promoted users
-  - Time-limited responses with automatic re-queuing
-
-- **Real-time Presence**
-  - Show who else is currently viewing an event page (Google Docs-style)
-
-## Documentation
-
-For design and implementation details see:
-
-- [docs/SCENARIO.md](docs/SCENARIO.md) — Usage scenario and user journeys.
-- [docs/DB_SCHEMA.md](docs/DB_SCHEMA.md) — Database schema.
-- [docs/ROUTING_SCHEMA.md](docs/ROUTING_SCHEMA.md) — App Router layout.
+### Security & Access
+- **Google Authentication:** Secure sign-in via Google OAuth.
+- **Data Privacy:** Uses **Row Level Security (RLS)** to enforce granular access control:
+    - **Example:** Sensitive answers to questions marked as "private" are only visible to the event organizer and the attendee themselves.
 
 ## Tech Stack
 
-- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Zod
-- **Backend:** Supabase
-- **Hosting:** Vercel, Supabase
-- **Email:** SendGrid
-- **Tooling:** Git, npm, Supabase CLI, ESLint, Prettier, Jest, React Testing Library
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, Lucide React
+- **Backend:** Supabase (PostgreSQL, Auth, Deno Edge Functions)
+- **Database:** PostgreSQL (with RLS, Triggers, Functions)
+- **Email:** SMTP2GO
+- **Hosting:** Vercel
+
+## Project Structure
+
+- **`/src`**: Frontend source code (Next.js App Router, components, styling, hooks).
+- **`/supabase`**: Backend infrastructure (Edge Functions, SQL migrations, local configuration).
 
 ## Getting Started
 
-#### Prerequisites
+To get this app running locally, follow these instructions:
 
-- Node.js v20 or higher
-- Docker Desktop (for local Supabase)
+### Prerequisites
 
-#### Installation
+- Node.js v20+
+- Docker (for local Supabase development)
 
-1.  Clone the repository:
+### Installation
+
+1.  **Clone the repository**
 
     ```bash
     git clone https://github.com/brndn-do/listhold.git
     cd listhold
     ```
 
-2.  Install dependencies:
+2.  **Install dependencies**
+
     ```bash
     npm install
     ```
 
-#### Environment Variables
+3.  **Start local Supabase**
+    Make sure Docker is running, then:
+    ```bash
+    npx supabase start
+    ```
+    This will print out your API URL and keys. You can also view the local dashboard at `http://127.0.0.1:54323`.
 
-This project uses environment variables for configuration. First, run the following command:
+4.  **Configure Environment Variables**
 
-```bash
-cp .env.example .env.local # .env will be ignored by git
-```
+    Copy the example file:
+    ```bash
+    cp .env.example .env
+    ```
+    Open `.env` and fill in the values:
+    - **Supabase Keys:** Copy `API URL` and `anon key` from the output of the previous step (or run `npx supabase status`).
+    - **Google Keys:** Provide your Google Cloud OAuth Client ID and Secret.
 
-Then, fill in the variables from your local Supabase configuration and Google OAuth credentials from your Google Cloud Project.
+    *(Optional) To enable email notifications:*
+    ```bash
+    cp ./supabase/functions/.env.example ./supabase/functions/.env
+    ```
+    Open `./supabase/functions/.env` and fill in your `SMTP2GO_API_KEY` and `FROM_EMAIL`.
 
-#### Running the Project
+5.  **Initialize Database & Functions**
 
-1. Start Supabase:
+    In a separate terminal window, run:
+    ```bash
+    # Apply database migrations
+    npx supabase migration up
 
-```bash
-npx supabase start
-```
+    # Generate TypeScript types from your schema
+    npm run types
 
-2.  Start the NextJS development server:
+    # Start Edge Functions (keep this terminal running)
+    npx supabase functions serve
+    ```
 
-```bash
-npm run dev
-```
+6.  **Run the Frontend**
 
-The application will be available at `http://localhost:3000` (or another port if 3000 is in use).
+    In another terminal window:
+    ```bash
+    npm run dev
+    ```
+    Visit `http://localhost:3000` to see the app.
 
-#### Scripts
+## Documentation
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Builds the application for production.
-- `npm run start`: Starts the production server.
-- `npm run lint`: Lints the code using ESLint.
-- `npm run format`: Formats the code using Prettier.
-- `npm run test`: Runs tests using Jest.
-- `npm run deploy:next`: Executes the automated release script `./deploy-next.sh` for pushing changes to `origin main`, triggering the build and deployment of our NextJS project on Vercel.
-- `npm run types`: Automatically generates types based on your local Supabase's Postgres schema and writes it to `supabaseTypes.ts`.
+For deeper insight into the design decisions:
 
-## Contributing
+- [**API Documentation**](docs/API.md) - API reference for serverless Edge Functions.
+- [**Database Schema**](docs/DB_SCHEMA.md) - Detailed Entity-Relationship breakdown and RLS policies.
+- [**Routing Architecture**](docs/ROUTING_SCHEMA.md) - App Router layout, navigation structure, and component map.
+- [**User Scenarios**](docs/SCENARIO.md) - Comprehensive user journey maps and persona definitions.
 
-Please email dobrandon05@gmail.com if you are interested in contributing.
+## Contribution and Inquiries
+
+If you are interested in contributing, or have any inquiries, please contact: **dobrandon05@gmail.com**
 
 ## License
 

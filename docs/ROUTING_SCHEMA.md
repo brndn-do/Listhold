@@ -1,36 +1,17 @@
 # Routing Schema
 
----
+Next.js App Router structure.
 
-### Home
+## Structure
 
-- **`/`**
-  - **Description:** Landing page with a brief introduction to Listhold and a link to create an organization.
-
-### Dashboard
-
-- **`/dashboard`**
-  - **Description:** A dashboard summarizing the user's involved organizations and events.
-  - **Authentication:** Required to view.
-
-### Organization Routes
-
-- **`/organizations/new`**
-  - **Description:** Form for creating a new organization.
-  - **Authentication:** Required to create.
-
-- **`/organizations/[organizationId]`**
-  - **Description:** Home page for an organization.
-  - **Authentication:** Not required for viewing
-
-- **`/organizations/[organizationId]/events/new`**
-  - **Description:** Form for creating a new event within an organization. Only accessible to the organization owner.
-  - **Authentication:** Required to create.
-
-### Event Routes
-
-- **`/events/[eventId]`**
-  - **Description:** The main event page displaying event details, real-time signup list, and waitlist. Users can sign up, answer custom prompts, and leave the event from this page.
-  - **Authentication:** Not required for viewing; required for signing up/leaving
-
----
+- **`/`**: Landing page (Public).
+- **`/auth/callback`**: OAuth redirect handler.
+- **`/dashboard`**: **(WIP)** User's personal dashboard (Private - Requires Auth).
+- **`/events`**:
+    - **`/new`**: Event creation page (Private - Requires Auth).
+    - **`/[eventSlug]`**: Dynamic public event page.
+        - Uses `[eventSlug]` to fetch event data by its unique slug.
+- **`/organizations` (not in use currently)**:
+    - **`/new`**: Organization creation wizard (Private - Requires Auth).
+    - **`/[orgSlug]`**: Dynamic public organization page.
+        - Uses `[orgSlug]` to fetch org data.

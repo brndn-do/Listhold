@@ -1,5 +1,7 @@
 # Usage Scenario: Northwestern Archery Club
 
+This document describes a detailed usage scenario for Listhold. **Not all features described has been implemented yet.**
+
 ### Personas
 
 - **Brandon (The Organizer):** President of the Northwestern Archery Club. He needs to create an organization, publish events, and manage attendance.
@@ -10,7 +12,7 @@
 
 ### The Organizer's Journey: Organization and Event Setup
 
-1. **Create Organization:** Brandon signs up and creates the "Northwestern Archery Club" organization. He configures basic organization details (name, logo) and invites other executives to join as admins.
+1. **Create Organization:** Brandon signs up and creates the "Northwestern Archery Club" organization in order to created events under his organization. He configures basic organization details (name, logo) and invites other executives to join as admins.
 
 2. **Organization Home:** Brandon views the organization home page, which lists upcoming events, a brief roster summary, and links to manage settings and members.
 

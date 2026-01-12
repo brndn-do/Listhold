@@ -11,10 +11,7 @@
     "format": "prettier --write .",
     "test": "TZ=UTC jest",
     "test:watch": "TZ=UTC jest --watch",
-    "deploy:firebase": "./deploy-firebase.sh",
-    "deploy:next": "./deploy-next.sh",
-    "types": "npx supabase start && npx supabase gen types --local > types/supabaseTypes.ts",
-    "issues": "gh issue list --repo brndn-do/listhold --state all --limit 1000 --json number,title,body,state,labels,assignees,createdAt,updatedAt > issues.json"
+    "types": "npx supabase start && npx supabase gen types --local > types/supabaseTypes.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
