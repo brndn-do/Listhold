@@ -3,6 +3,7 @@
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
 import { SignupData } from '@/services/fetchList';
+import { Lock } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
@@ -89,8 +90,11 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
                   key={promptId}
                   className='bg-gray-100 dark:bg-gray-500/25 rounded-lg px-2.5 py-1 text-sm text-gray-600 dark:text-gray-300 flex justify-between gap-4'
                 >
-                  <span className='flex-1 text-gray-800 dark:text-gray-200 mr-1 whitespace-nowrap overflow-hidden text-ellipsis'>
-                    {prompt.text}
+                  <span className='flex-1 text-gray-800 dark:text-gray-200 mr-1 flex items-center gap-1.5 min-w-0'>
+                    {prompt.private && (
+                      <Lock className='w-3 h-3 text-purple-600 dark:text-purple-400 shrink-0' />
+                    )}
+                    <span className='truncate'>{prompt.text}</span>
                   </span>
                   <span className='max-w-[75%]'>
                     {typeof answer === 'boolean' ? (answer ? 'Yes' : 'No') : answer}

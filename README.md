@@ -1,6 +1,6 @@
 # Listhold
 
-A full-stack, serverless event management and sign-up platform built with Next.js + Supabase.
+An event management and sign-up platform built with Next.js + Supabase.
 
 ## Features
 
@@ -9,13 +9,8 @@ A full-stack, serverless event management and sign-up platform built with Next.j
 - **User Authentication**
   - Google OAuth sign-in
 
-- **Organization Management**
-  - Create organizations with customizable, URL-safe IDs (or auto-generated)
-  - View organization details and owner information
-  - Owner can create an event under the organization
-
 - **Event Management**
-  - Create events with custom or auto-generated IDs
+  - Create events with custom or auto-generated slugs
   - Define event capacity, location, start/end times, and optional descriptions
   - Real-time tracking of available spots
 
