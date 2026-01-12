@@ -5,6 +5,21 @@ A real-time event management platform designed to make managing event lists, wai
 ## Demo
 Check out the app at **[https://listhold.com](https://listhold.com)**
 
+### Creating an event:
+![Demo](docs/create_event.gif)
+
+### Signing up for an event:
+![Demo](docs/signup.gif)
+
+### Real-time event list:
+![Demo](docs/realtime.gif)
+
+### Joining a waitlist when event is full:
+![Demo](docs/waitlist.gif)
+
+### Automatic waitlist promotion + email notification:
+![Demo](docs/auto_promote.gif)
+
 ## Features
 
 ### Event Management
@@ -59,11 +74,13 @@ To get this app running locally, follow these instructions:
     ```
 
 3.  **Start local Supabase**
+
     Make sure Docker is running, then:
     ```bash
-    npx supabase start
+    npx supabase start 
+    npx supabase status # this will print API keys
     ```
-    This will print out your API URL and keys. You can also view the local dashboard at `http://127.0.0.1:54323`.
+    You can also view the local dashboard at `http://127.0.0.1:54323`.
 
 4.  **Configure Environment Variables**
 
@@ -109,7 +126,7 @@ For deeper insight into the design decisions:
 
 - [**API Documentation**](docs/API.md) - API reference for serverless Edge Functions.
 - [**Database Schema**](docs/DB_SCHEMA.md) - Detailed Entity-Relationship breakdown and RLS policies.
-- [**Routing Architecture**](docs/ROUTING_SCHEMA.md) - App Router layout, navigation structure, and component map.
+- [**Routing Architecture**](docs/ROUTING_SCHEMA.md) - App Router layout.
 - [**User Scenarios**](docs/SCENARIO.md) - Comprehensive user journey maps and persona definitions.
 
 ## Contribution and Inquiries
