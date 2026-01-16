@@ -3,7 +3,15 @@
 import { Prompt } from '@/components/event/signup/PromptView';
 import { fetchList, SignupData } from '@/services/fetchList';
 import { subscribeToList } from '@/services/subscribeToList';
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 /**
  * Shape of the Event context, providing all relevant data for a single event.
@@ -53,8 +61,14 @@ interface EventContextType {
   /** Whether at least one successful fetch was made. */
   readonly successfulFetch: boolean;
 
+  /** Whether connected to realtime channel */
+  readonly realtimeConnected: boolean;
+
   /** True if not connected to realtime channel or a fetch fails after a successful fetch */
   readonly disconnected: boolean;
+
+  /** Refresh callback */
+  readonly refreshList: () => Promise<void>;
 }
 
 /** React context for providing event data throughout the app */
@@ -73,6 +87,8 @@ export interface EventProviderProps {
   prompts: Prompt[];
   children: ReactNode;
 }
+
+const POLL_INTERVAL = 5000;
 
 /**
  * Provides event-related data (event, signups, waitlist, prompts) via context.
@@ -98,49 +114,54 @@ export const EventProvider = ({
   const [fetchError, setFetchError] = useState<Error | null>(null);
   const [realtimeConnected, setRealtimeConnected] = useState(false);
   // true if there was at least one successful fetch. Used to display outdated data.
-  const [successfulFetch, setSuccessfulFetch] = useState(true);
+  const [successfulFetch, setSuccessfulFetch] = useState(false);
 
   const disconnected = useMemo(() => {
-    // if the list is still loading, we don't say the client has been "disconnected"
     if (listLoading || !successfulFetch) {
+      // we are "connecting" rather than "disconnected"
       return false;
     }
-    // if there hasn't been a successful fetch in the first place,
-    // we don't say the client has been "disconnected"
-    if (!successfulFetch) {
-      return false;
-    }
-    if (!realtimeConnected || fetchError) {
-      return true;
-    }
-    return false;
-  }, [listLoading, realtimeConnected, fetchError, successfulFetch]);
+    return !!fetchError;
+  }, [listLoading, fetchError, successfulFetch]);
 
+  const refreshList = useCallback(async () => {
+    try {
+      const result = await fetchList(eventId);
+
+      setConfirmedList(result.filter((val) => val.status === 'confirmed'));
+      setWaitlist(result.filter((val) => val.status === 'waitlisted'));
+      setSuccessfulFetch(true);
+      setFetchError(null);
+    } catch (err) {
+      setFetchError(err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      setListLoading(false);
+    }
+  }, [eventId]);
+
+  // 1. Initial load: fetch on mount
   useEffect(() => {
-    const setListState = async () => {
-      try {
-        const result = await fetchList(eventId);
-
-        setConfirmedList(result.filter((val) => val.status === 'confirmed'));
-        setWaitlist(result.filter((val) => val.status === 'waitlisted'));
-        setSuccessfulFetch(true);
-      } catch (err) {
-        if (err instanceof Error) {
-          setFetchError(err);
-        } else {
-          setFetchError(new Error(String(err)));
-        }
-      } finally {
-        setListLoading(false);
-      }
-    };
-
-    const unsub = subscribeToList(eventId, setListState, setRealtimeConnected);
-
+    refreshList();
+  }, [refreshList]);
+  
+  // 2. Realtime subscription
+  useEffect(() => {
+    const unsub = subscribeToList(eventId, refreshList, setRealtimeConnected);
     return () => {
       unsub();
     };
-  }, [eventId]);
+  }, [eventId, refreshList]);
+
+  // 3. Polling fallback: if realtime disconnected, poll every 5 seconds
+  useEffect(() => {
+    if (realtimeConnected || listLoading) return;
+
+    const intervalId = setInterval(() => {
+      refreshList();
+    }, POLL_INTERVAL)
+
+    return () => clearInterval(intervalId);
+  }, [realtimeConnected, listLoading, refreshList]);
 
   const confirmedUserIds: Set<string> = useMemo(() => {
     return new Set(confirmedList.map((s) => s.userId));
@@ -169,7 +190,9 @@ export const EventProvider = ({
       listLoading,
       fetchError,
       successfulFetch,
+      realtimeConnected,
       disconnected,
+      refreshList,
     };
   }, [
     eventId,
@@ -189,7 +212,9 @@ export const EventProvider = ({
     listLoading,
     fetchError,
     successfulFetch,
+    realtimeConnected,
     disconnected,
+    refreshList,
   ]);
   return <EventContext.Provider value={value}>{children}</EventContext.Provider>;
 };

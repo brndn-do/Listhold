@@ -20,7 +20,7 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
   const content = () => {
     if (listLoading) {
       return (
-        <div className='pl-[3px] pt-[2px]'>
+        <div className='pl-1 pt-1'>
           <Dots size={1} />
         </div>
       );

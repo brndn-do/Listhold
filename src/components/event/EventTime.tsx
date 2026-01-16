@@ -16,10 +16,15 @@ const EventTime = ({ start, end }: EventTimeProps) => {
     setMounted(true);
   }, []);
 
+  if (!mounted) {
+    return <div className='pl-1 pt-1'>
+      <Dots size={1} />
+    </div>
+  }
+
   return (
     <div className='w-full flex items-center pt-1'>
-      {!mounted && <Dots size={1} />}
-      {mounted && <p>{`${formatEventTiming(start, end)}`}</p>}
+      <p>{`${formatEventTiming(start, end)}`}</p>
     </div>
   );
 };

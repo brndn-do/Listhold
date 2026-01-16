@@ -18,7 +18,8 @@ const ERROR_TIME = 5000; // how long to display error before allowing retries
 
 const EventPage = () => {
   const { user } = useAuth();
-  const { eventId, listLoading, fetchError, disconnected } = useEvent();
+  const { eventId, listLoading, fetchError, disconnected, realtimeConnected, refreshList } =
+    useEvent();
   const userId = user?.uid;
 
   const [responseMessage, setResponseMessage] = useState<string | null>(null);
@@ -80,6 +81,10 @@ const EventPage = () => {
     setRequestLoading(true);
     try {
       const res = await addUserToEvent(eventId, userId, answers);
+      if (!realtimeConnected) {
+        // refresh list to reflect changes
+        refreshList();
+      }
       // set a cooldown to make sure users can't spam
       setResponseMessage(res === 'confirmed' ? 'You joined the list!' : 'You joined the waitlist!');
       setTimeout(() => {
@@ -102,6 +107,10 @@ const EventPage = () => {
     setRequestLoading(true);
     try {
       const res = await removeUserFromEvent(eventId, userId);
+      if (!realtimeConnected) {
+        // refresh list to reflect changes
+        refreshList();
+      }
       // set a cooldown to make sure users can't spam
       setResponseMessage(res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.');
       setTimeout(() => {
