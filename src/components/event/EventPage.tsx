@@ -130,7 +130,7 @@ const EventPage = () => {
     <div className='mx-auto mb-4 md:mb-0 flex flex-col lg:flex-row lg:justify-evenly w-full md:w-[60%] lg:w-[80%] gap-2 lg:gap-4'>
       <EventInfo />
 
-      <div className='border-t-1 border-dashed pt-4 lg:border-0 lg:pt-0 w-full xl:w-[80%] 2xl:w-[35%] h-full flex flex-col items-center'>
+      <div className='border-t-1 border-gray-500/50 pt-10 lg:border-0 lg:pt-0 w-full xl:w-[80%] 2xl:w-[35%] h-full flex flex-col items-center'>
         <div className='w-full mb-3'>
           {/* Header */}
           <h1 className='text-2xl font-bold text-center text-gray-900 dark:text-gray-100'>

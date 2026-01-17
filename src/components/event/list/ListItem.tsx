@@ -33,35 +33,39 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
   }, [signup.avatarURL]);
 
   return (
-    <li className='w-full flex flex-col gap-2 w-full px-2 border-b mb-1 border-dashed border-gray-700 dark:border-gray-500'>
+    <li className='mb-1 w-full flex flex-col gap-2 w-full px-2 border-b border-dashed border-gray-700 dark:border-gray-500'>
       <div className='w-full flex items-center justify-between gap-2'>
-        <div className='max-w-[80%] flex items-center gap-2'>
+        <div className='max-w-[90%] flex items-center'>
           <Image
             alt={`${signup.displayName}'s profile photo`}
             src={imgSrc}
             width={26}
             height={26}
-            className={`border-2 border-purple-700 dark:border-purple-600 h-[26px] w-[26px] rounded-full`}
+            className={`border-1 md:border-2 border-purple-700 dark:border-purple-600 h-[22px] w-[22px] md:h-[26px] md:w-[26px] rounded-full`}
             onError={() => setImgSrc('/default-avatar.jpg')} // Handle broken links
           ></Image>
-          <p
-            className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}
-          >
-            {signup.displayName}
-          </p>
+          {orderedAnswers.length === 0 && (
+            <p
+              className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}ml-1.5 md:ml-2 text-sm md:text-[1rem] flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}
+            >
+              {signup.displayName}
+            </p>
+          )}
           {orderedAnswers.length > 0 && (
             <div
               role='button'
               onClick={() => setShowAnswers(!showAnswers)}
-              className='flex w-25 overflow-hidden items-center ml-1 gap-1 hover:cursor-pointer'
+              className='ml-1 flex gap-1 items-center hover:cursor-pointer'
             >
-              <p className='text-xs whitespace-nowrap text-gray-600 dark:text-gray-400'>
-                {showAnswers ? 'Hide Answers' : 'Show Answers'}
+              <p
+                className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}ml-1.5 md:ml-2 text-sm md:text-[1rem] flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}
+              >
+                {signup.displayName}
               </p>
               <svg
-                className={`shrink-0 -translate-y-[1px] w-4 h-4 text-gray-500 transition-transform duration-200 ${
+                className={`shrink-0 w-4 h-4 md:w-4.5 md:h-4.5 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
                   showAnswers ? 'rotate-180' : ''
-                } group-hover:text-gray-700 dark:group-hover:text-gray-300`}
+                }`}
                 fill='none'
                 stroke='currentColor'
                 viewBox='0 0 24 24'
@@ -76,7 +80,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
             </div>
           )}
         </div>
-        <span className='text-purple-600 dark:text-purple-400 text-xs font-semibold'>
+        <span className='text-purple-600 dark:text-purple-400 text-[0.7rem] md:text-xs font-semibold'>
           {isWaitlist ? idx + 1 : `${idx + 1}/${capacity}`}
         </span>
       </div>
@@ -94,7 +98,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
               return (
                 <li
                   key={promptId}
-                  className='bg-gray-100 dark:bg-gray-500/25 rounded-lg px-2.5 py-1 text-sm text-gray-600 dark:text-gray-300 flex justify-between gap-4'
+                  className='bg-gray-100 dark:bg-gray-500/25 rounded-lg px-2.5 py-1 text-xs md:text-sm text-gray-600 dark:text-gray-300 flex justify-between gap-4'
                 >
                   <span className='flex-1 text-gray-800 dark:text-gray-200 mr-1 flex items-center gap-1.5 min-w-0'>
                     {prompt.private && (
