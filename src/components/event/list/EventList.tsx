@@ -1,10 +1,11 @@
 'use client';
 
 import { useEvent } from '@/context/EventProvider';
+import { useScrollState } from '@/hooks/useScrollState';
 import ListItem from './ListItem';
 import Dots from '@/components/ui/Dots';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 
 interface EventListProps {
   viewingWaitlist: boolean;
@@ -14,62 +15,16 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   const { confirmedList, waitlist, listLoading, disconnected } = useEvent();
   const confirmedListRef = useRef<HTMLOListElement>(null);
   const waitlistRef = useRef<HTMLOListElement>(null);
-  const [isConfirmedScrollable, setIsConfirmedScrollable] = useState(false);
-  const [isWaitlistScrollable, setIsWaitlistScrollable] = useState(false);
-  const [isConfirmedAtBottom, setIsConfirmedAtBottom] = useState(false);
-  const [isWaitlistAtBottom, setIsWaitlistAtBottom] = useState(false);
 
-  // Check if confirmed list is scrollable and at bottom
-  useEffect(() => {
-    const checkScrollable: () => void = () => {
-      if (confirmedListRef.current) {
-        const { scrollHeight, clientHeight, scrollTop } = confirmedListRef.current;
-        setIsConfirmedScrollable(scrollHeight > clientHeight);
-        setIsConfirmedAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
-      }
-    };
+  // check if main list is scrollable via hook
+  const { isScrollable: isConfirmedScrollable, isAtBottom: isConfirmedAtBottom } =
+    useScrollState(confirmedListRef, confirmedList);
 
-    checkScrollable();
-
-    const listElement = confirmedListRef.current;
-    if (listElement) {
-      listElement.addEventListener('scroll', checkScrollable);
-    }
-    window.addEventListener('resize', checkScrollable);
-
-    return () => {
-      if (listElement) {
-        listElement.removeEventListener('scroll', checkScrollable);
-      }
-      window.removeEventListener('resize', checkScrollable);
-    };
-  }, [confirmedList]);
-
-  // Check if waitlist is scrollable and at bottom
-  useEffect(() => {
-    const checkScrollable: () => void = () => {
-      if (waitlistRef.current) {
-        const { scrollHeight, clientHeight, scrollTop } = waitlistRef.current;
-        setIsWaitlistScrollable(scrollHeight > clientHeight);
-        setIsWaitlistAtBottom(scrollTop + clientHeight >= scrollHeight - 1);
-      }
-    };
-
-    checkScrollable();
-
-    const listElement = waitlistRef.current;
-    if (listElement) {
-      listElement.addEventListener('scroll', checkScrollable);
-    }
-    window.addEventListener('resize', checkScrollable);
-
-    return () => {
-      if (listElement) {
-        listElement.removeEventListener('scroll', checkScrollable);
-      }
-      window.removeEventListener('resize', checkScrollable);
-    };
-  }, [waitlist]);
+  // check if waitlist is scrollable via hook
+  const { isScrollable: isWaitlistScrollable, isAtBottom: isWaitlistAtBottom } = useScrollState(
+    waitlistRef,
+    waitlist,
+  );
 
   // helper for rendering a list (confirmed or waitlist)
   const renderList = (
