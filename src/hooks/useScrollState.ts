@@ -19,11 +19,6 @@ export const useScrollState = (
   const [isAtBottom, setIsAtBottom] = useState(false);
 
   useEffect(() => {
-    console.log('scrollable?', isScrollable);
-    console.log('is at bottom?:', isAtBottom);
-  }, [isScrollable, isAtBottom]);
-
-  useEffect(() => {
     const checkScrollable = () => {
       if (ref.current) {
         const { scrollHeight, clientHeight, scrollTop } = ref.current;

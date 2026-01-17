@@ -1,6 +1,6 @@
 'use client';
 
-import { subscribeToAuthState } from '@/services/authService';
+import { getSession, subscribeToAuthState } from '@/services/authService';
 import { ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    getSession();
     const unsubAuthState = subscribeToAuthState(async (data) => {
       if (data) {
         try {

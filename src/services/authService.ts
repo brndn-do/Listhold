@@ -27,9 +27,12 @@ export const signInWithGoogle = (): void => {
  */
 export const signOut = async (): Promise<void> => {
   const { error } = await supabase.auth.signOut();
-  if (error) {
+  if (error && !error.message.includes('session missing')) {
     throw new ServiceError('misc');
   }
+  // Manually clear all Supabase auth storage keys
+  const keysToRemove = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
+  keysToRemove.forEach(key => localStorage.removeItem(key));
 };
 
 /**
