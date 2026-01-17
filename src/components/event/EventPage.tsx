@@ -127,7 +127,7 @@ const EventPage = () => {
   };
 
   return (
-    <div className='mx-auto flex flex-col lg:flex-row lg:justify-evenly w-full md:w-[60%] lg:w-[80%] gap-2 lg:gap-4'>
+    <div className='mx-auto mb-4 md:mb-0 flex flex-col lg:flex-row lg:justify-evenly w-full md:w-[60%] lg:w-[80%] gap-2 lg:gap-4'>
       <EventInfo />
 
       <div className='border-t-1 border-dashed pt-4 lg:border-0 lg:pt-0 w-full xl:w-[80%] 2xl:w-[35%] h-full flex flex-col items-center'>
@@ -194,7 +194,7 @@ const EventPage = () => {
 
         {/* Mobile fixed action button */}
         <div className='w-full fixed bottom-0 lg:hidden z-50'>
-          <div className='w-full flex gap-4 justify-end pb-6 pr-6'>
+          <div className='w-full flex gap-4 justify-end pb-8 pr-6'>
             <Button
               onClick={handleShare}
               content={
