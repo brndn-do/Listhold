@@ -143,7 +143,7 @@ const OrgForm = () => {
           </label>
           <textarea
             {...register('description', { required: false })}
-            className='h-48 w-full border border-gray-500 rounded-lg px-3 py-2 scrollbar scrollbar-thin resize-none'
+            className='h-48 w-full border border-gray-500 rounded-lg px-3 py-2 resize-none'
             spellCheck={false}
             autoComplete='off'
           />

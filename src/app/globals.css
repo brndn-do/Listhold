@@ -1,7 +1,5 @@
 @import 'tailwindcss';
 
-@plugin 'tailwind-scrollbar';
-
 /* Define base variables for light mode */
 :root {
   --background: #ffffff; /* Light mode background */
@@ -45,7 +43,22 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.scrollbar-thin {
+body * {
   scrollbar-width: thin;
-  scrollbar-color: gray var(--background); /* thumb | track */
+  scrollbar-color: gray var(--background); /* Firefox */
+}
+
+/* Chrome, Safari, Edge */
+body *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+body *::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 4px;
+}
+
+body *::-webkit-scrollbar-track {
+  background-color: var(--background);
 }

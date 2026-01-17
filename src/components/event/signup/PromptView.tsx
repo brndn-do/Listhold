@@ -72,7 +72,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
     <div className='flex flex-col items-center gap-2 w-full'>
       {/* Question text */}
       <div className='relative w-full'>
-        <div ref={textRef} className='max-h-48 overflow-y-auto scrollbar-thin w-full'>
+        <div ref={textRef} className='max-h-48 overflow-y-auto w-full'>
           <p className='text-lg md:text-2xl font-semibold text-center'>{prompt.text}</p>
         </div>
 

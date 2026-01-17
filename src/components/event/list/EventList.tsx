@@ -99,7 +99,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
       <>
         <ol
           ref={listRef}
-          className='flex-1 flex flex-col items-center w-full overflow-y-auto scrollbar scrollbar-thin gap-1'
+          className='flex-1 flex flex-col items-center w-full overflow-y-auto gap-1'
         >
           {list.map((signup, idx) => (
             <ListItem signup={signup} idx={idx} isWaitlist={isWaitlist} key={signup.id} />

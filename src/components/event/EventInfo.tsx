@@ -102,7 +102,7 @@ const EventInfo = () => {
 
         {/* Description Section */}
         {description && description.length > 0 && (
-          <div className='mt-4 flex max-h-80 overflow-y-auto scrollbar-thin'>
+          <div className='mt-4 flex max-h-80 overflow-y-auto'>
             <p className='text-gray-800 dark:text-gray-300'>{description}</p>
           </div>
         )}
