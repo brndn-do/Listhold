@@ -58,10 +58,10 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
     };
   }, [prompt.text]);
 
-  // Update local state when navigating back to a previously answered question
+  // Update local state if the answer from parent changes
   useEffect(() => {
     setSelectedAnswer(currentAnswer ?? null);
-  }, [currentAnswer, prompt.id]);
+  }, [currentAnswer]);
 
   // Notify parent of answer changes
   useEffect(() => {
@@ -71,14 +71,11 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
   return (
     <div className='flex flex-col items-center gap-2 w-full'>
       {/* Question text */}
-      <div className='relative w-full max-h-48'>
-        <div 
-          ref={textRef}
-          className='max-h-48 overflow-y-auto scrollbar-thin w-full'
-        >
-          <p className='text-2xl font-semibold text-center'>{prompt.text}</p>
+      <div className='relative w-full'>
+        <div ref={textRef} className='max-h-48 overflow-y-auto scrollbar-thin w-full'>
+          <p className='text-lg md:text-2xl font-semibold text-center'>{prompt.text}</p>
         </div>
-        
+
         {/* Scroll indicator */}
         {isScrollable && !isAtBottom && (
           <div className='absolute inset-x-0 bottom-0 flex justify-center items-end py-2 pointer-events-none'>
@@ -114,7 +111,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       )}
 
       {/* Answer options */}
-      <div className='mt-2 w-full flex flex-col items-center gap-4'>
+      <div className='mt-1 w-full flex flex-col items-center gap-4'>
         {prompt.type === 'notice' ? (
           <label className='flex items-center gap-2 cursor-pointer group'>
             <input
@@ -123,7 +120,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
               onChange={(e) => setSelectedAnswer(e.target.checked ? true : null)}
               className='w-4 h-4 cursor-pointer accent-purple-600'
             />
-            <span className='text-lg font-medium text-gray-700 dark:text-gray-300'>
+            <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300'>
               Click to continue
             </span>
           </label>
@@ -139,7 +136,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
                   onChange={() => setSelectedAnswer(true)}
                   className='w-5 h-5 cursor-pointer accent-purple-600'
                 />
-                <span className='text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
                   Yes
                 </span>
               </label>
@@ -152,7 +149,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
                   onChange={() => setSelectedAnswer(false)}
                   className='w-5 h-5 cursor-pointer accent-purple-600'
                 />
-                <span className='text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
                   No
                 </span>
               </label>
@@ -160,6 +157,16 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
           </>
         )}
       </div>
+
+      {/* Option to clear answer for questions that are not required */}
+      {selectedAnswer !== null && !prompt.required && prompt.type !== 'notice' && (
+        <button
+          onClick={() => setSelectedAnswer(null)}
+          className='mt-2 mb-[-16] text-sm text-purple-600 dark:text-purple-400 underline hover:cursor-pointer'
+        >
+          Clear answer
+        </button>
+      )}
     </div>
   );
 };

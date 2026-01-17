@@ -21,6 +21,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
     setIsVisible(true);
   }, []);
 
+
   const handleNext = () => {
     // Store user's answer if not notice
     const curPrompt = prompts[curIndex];
@@ -40,6 +41,14 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
   };
 
   const handleBack = () => {
+    // Store user's answer if not notice
+    const curPrompt = prompts[curIndex];
+
+    if (curPrompt.type !== 'notice') {
+      const updatedAnswers = { ...answers, [curPrompt.id]: currentAnswer };
+      setAnswers(updatedAnswers);
+    }
+
     if (curIndex > 0) {
       setCurIndex(curIndex - 1);
     }
@@ -54,7 +63,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
       }`}
     >
       <div
-        className={`bg-gray-200/50 dark:bg-background/70 rounded-4xl w-full max-w-2xl p-8 transition-all duration-200 ease-in ${
+        className={`w-full max-w-2xl p-8 bg-gray-200/50 dark:bg-background/70 rounded-4xl transition-all duration-200 ease-in ${
           isVisible ? 'scale-100 opacity-100' : 'scale-25 opacity-0'
         }`}
       >
@@ -86,6 +95,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
 
         {/* Prompt content */}
         <PromptView
+          key={prompts[curIndex].id}
           prompt={prompts[curIndex]}
           currentAnswer={answers[prompts[curIndex].id]}
           onAnswerChange={setCurrentAnswer}

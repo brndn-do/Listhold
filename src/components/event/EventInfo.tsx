@@ -13,7 +13,7 @@ const EventInfo = () => {
       <div className='flex flex-col gap-2 pb-2 px-2'>
         {/* Header Section */}
         <div>
-          <h1 className='text-5xl text-gray-800 dark:text-foreground font-bold mb-2'>{name}</h1>
+          <h1 className='text-4xl md:text-5xl xl:text-6xl text-gray-800 dark:text-foreground font-bold mb-2'>{name}</h1>
           {orgSlug && (
             <div className='flex'>
               <Link
