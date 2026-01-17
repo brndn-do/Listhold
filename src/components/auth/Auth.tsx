@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { signInWithGoogle, signOut } from '@/services/authService';
 import Image from 'next/image';
@@ -13,6 +13,12 @@ const Auth = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  const [imgSrc, setImgSrc] = useState(user?.avatarURL || '/default-avatar.jpg');
+
+  useEffect(() => {
+    setImgSrc(user?.avatarURL || '/default-avatar.jpg');
+  }, [user]);
 
   const handleSignIn = () => {
     signInWithGoogle();
@@ -45,10 +51,11 @@ const Auth = () => {
       {user && (
         <Image
           alt='Your profile photo'
-          src={user.avatarURL || '/default-avatar.jpg'}
+          src={imgSrc}
           width={32}
           height={32}
           className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
+          onError={() => setImgSrc('/default-avatar.jpg')} // Handle broken links
         ></Image>
       )}
     </div>

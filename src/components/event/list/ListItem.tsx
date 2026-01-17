@@ -5,7 +5,7 @@ import { useEvent } from '@/context/EventProvider';
 import { SignupData } from '@/services/fetchList';
 import { Lock } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ListItemProps {
   signup: SignupData;
@@ -18,6 +18,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
   const { capacity, prompts } = useEvent();
 
   const [showAnswers, setShowAnswers] = useState(false);
+  const [imgSrc, setImgSrc] = useState(signup.avatarURL || '/default-avatar.jpg');
 
   const getDisplayOrder = (id: string) => {
     return prompts.findIndex((p) => p.id === id);
@@ -27,16 +28,21 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
     (a, b) => getDisplayOrder(a[0]) - getDisplayOrder(b[0]),
   );
 
+  useEffect(() => {
+    setImgSrc(signup.avatarURL || '/default-avatar.jpg');
+  }, [signup.avatarURL]);
+
   return (
     <li className='w-full flex flex-col gap-2 w-full px-2 border-b mb-1 border-dashed border-gray-700 dark:border-gray-500'>
       <div className='w-full flex items-center justify-between gap-2'>
         <div className='max-w-[80%] flex items-center gap-2'>
           <Image
             alt={`${signup.displayName}'s profile photo`}
-            src={signup.avatarURL || '/default-avatar.jpg'}
+            src={imgSrc}
             width={26}
             height={26}
             className={`border-2 border-purple-700 dark:border-purple-600 h-[26px] w-[26px] rounded-full`}
+            onError={() => setImgSrc('/default-avatar.jpg')} // Handle broken links
           ></Image>
           <p
             className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}
