@@ -5,12 +5,13 @@ export interface ProfileData {
   uid: string;
   displayName: string | null;
   avatarURL: string | null;
+  profileCompletedAt: Date | null;
 }
 
-export const fetchProfile = async (uid: string): Promise<ProfileData> => {
+export const fetchProfile = async (uid: string): Promise<ProfileData | null> => {
   const { data, error } = await supabase
     .from('profiles')
-    .select('display_name, avatar_url')
+    .select('display_name, avatar_url, profile_completed_at')
     .eq('id', uid)
     .single();
 
@@ -19,12 +20,13 @@ export const fetchProfile = async (uid: string): Promise<ProfileData> => {
   }
 
   if (!data) {
-    throw new ServiceError('not-found');
+    return null;
   }
 
   return {
     uid,
     displayName: data.display_name,
     avatarURL: data.avatar_url,
+    profileCompletedAt: data.profile_completed_at ? new Date(data.profile_completed_at) : null,
   };
 };

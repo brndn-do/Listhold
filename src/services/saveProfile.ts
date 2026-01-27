@@ -11,6 +11,7 @@ export const saveProfile = async (user: ProfileData): Promise<void> => {
       id: user.uid,
       display_name: user.displayName,
       avatar_url: user.avatarURL,
+      profile_completed_at: user.profileCompletedAt?.toISOString() ?? null,
     },
   ]);
 };
