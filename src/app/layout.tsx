@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/AuthProvider';
 import Auth from '@/components/auth/Auth';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -62,6 +63,7 @@ const RootLayout = ({
           <footer className='p-2 flex flex-col text-xs'>
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
+          <Analytics />
         </body>
       </AuthProvider>
     </html>
