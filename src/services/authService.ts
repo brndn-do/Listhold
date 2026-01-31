@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase';
-import { ProfileData } from '@/services/fetchProfile';
 import { ServiceError } from '@/types/serviceError';
 
 /**
@@ -31,9 +30,15 @@ export const signOut = async (): Promise<void> => {
     throw new ServiceError('misc');
   }
   // Manually clear all Supabase auth storage keys
-  const keysToRemove = Object.keys(localStorage).filter(key => key.startsWith('sb-'));
-  keysToRemove.forEach(key => localStorage.removeItem(key));
+  const keysToRemove = Object.keys(localStorage).filter((key) => key.startsWith('sb-'));
+  keysToRemove.forEach((key) => localStorage.removeItem(key));
 };
+
+interface AuthUser {
+  uid: string;
+  displayName?: string;
+  avatarURL?: string;
+}
 
 /**
  * Subscribes to authentication state changes.
@@ -42,19 +47,21 @@ export const signOut = async (): Promise<void> => {
  * @returns Unsubscribe function to stop listening
  */
 export const subscribeToAuthState = (
-  callback: (user: ProfileData | null) => void,
+  callback: (data: AuthUser | null) => Promise<void>,
 ): (() => void) => {
-  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+  const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
     if (!session) {
       callback(null);
-    } else {
-      const user: ProfileData = {
-        uid: session?.user.id,
-        displayName: session?.user.user_metadata.full_name ?? null,
-        avatarURL: session?.user.user_metadata.avatar_url ?? null,
-      };
-      callback(user);
+      return;
     }
+
+    const authUser: AuthUser = {
+      uid: session.user.id,
+      displayName: session.user.user_metadata.full_name ?? undefined,
+      avatarURL: session.user.user_metadata.avatar_url ?? undefined,
+    };
+
+    callback(authUser);
   });
 
   return () => {

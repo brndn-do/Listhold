@@ -1,7 +1,7 @@
 'use client';
 
 import { getSession, subscribeToAuthState } from '@/services/authService';
-import { ProfileData } from '@/services/fetchProfile';
+import { fetchProfile, ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -27,18 +27,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     getSession();
+
     const unsubAuthState = subscribeToAuthState(async (data) => {
-      if (data) {
-        try {
-          await saveProfile(data);
-          setUser(data);
-        } catch(err) {
-          setUser(null);
-        }
-      } else {
+      if (!data) {
         setUser(null);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      setLoading(true);
+
+      try {
+        const profile = await fetchProfile(data.uid);
+        if (!profile) {
+          const defaultProfile: ProfileData = {
+            uid: data.uid,
+            displayName: data.displayName ?? null,
+            avatarURL: data.avatarURL ?? null,
+            profileCompletedAt: null,
+          };
+          await saveProfile(defaultProfile);
+          setUser(defaultProfile);
+        } else {
+          setUser(profile);
+        }
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => {
@@ -47,7 +64,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const value = useMemo(() => ({ user, loading }), [user, loading]);
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 /**

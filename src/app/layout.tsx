@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/AuthProvider';
 import Auth from '@/components/auth/Auth';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import ProfileCompletionObserver from '@/components/auth/ProfileCompletionObserver';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,9 +29,10 @@ const RootLayout = ({
 }>) => {
   return (
     <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <AuthProvider>
-        {/* body should always take the entire viewport height */}
-        <body className='min-h-[100dvh] m-0 flex flex-col'>
+      {/* body should always take the entire viewport height */}
+      <body className='min-h-[100dvh] m-0 flex flex-col'>
+        <AuthProvider>
+          <ProfileCompletionObserver />
           <header className='pt-4 pr-6 lg:pr-12'>
             <nav className='flex justify-end items-center gap-4'>
               <Link href={'/events/new'}>
@@ -62,8 +64,8 @@ const RootLayout = ({
           <footer className='p-2 flex flex-col text-xs'>
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
-        </body>
-      </AuthProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 };

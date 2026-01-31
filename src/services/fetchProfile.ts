@@ -13,7 +13,7 @@ export const fetchProfile = async (uid: string): Promise<ProfileData | null> => 
     .from('profiles')
     .select('display_name, avatar_url, profile_completed_at')
     .eq('id', uid)
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw new ServiceError('internal');
