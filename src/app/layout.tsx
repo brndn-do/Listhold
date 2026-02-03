@@ -67,7 +67,7 @@ const RootLayout = ({
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
         </AuthProvider>
-        
+
         {/* Analytics */}
         <Analytics />
       </body>
