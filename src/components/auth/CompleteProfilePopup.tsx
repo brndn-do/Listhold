@@ -34,7 +34,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   };
 
   return (
-    <div className='p-4 fixed z-50 w-full h-full flex items-center justify-center dark:border-purple-600 bg-white/60 dark:bg-black/60 backdrop-blur rounded-xl'>
+    <div className='p-4 fixed z-100 w-full h-full flex items-center justify-center dark:border-purple-600 bg-white/60 dark:bg-black/60 backdrop-blur rounded-xl'>
       <div className='p-8 w-full max-w-md flex flex-col bg-gray-200/50 dark:bg-background/70 rounded-4xl'>
         <div className='mb-3 flex flex-col items-center gap-4'>
           <Avatar
