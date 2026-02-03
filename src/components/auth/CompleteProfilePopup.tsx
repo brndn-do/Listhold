@@ -4,6 +4,7 @@ import { ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
 import { useState } from 'react';
 import Avatar from '@/components/ui/Avatar';
+import { useRouter } from 'next/navigation';
 
 interface CompleteProfilePopupProps {
   user: ProfileData | null;
@@ -11,6 +12,7 @@ interface CompleteProfilePopupProps {
 }
 
 const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   if (!user) {
@@ -64,7 +66,12 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
               onClick={markProfileCompleted}
               disabled={loading}
             />
-            <Button content='No, edit my profile' onClick={() => {}} />
+            <Button
+              content='No, edit my profile'
+              onClick={() => {
+                router.push('/profile');
+              }}
+            />
           </div>
           <button
             className='text-sm underline text-gray-600 dark:text-gray-400 hover:cursor-pointer'

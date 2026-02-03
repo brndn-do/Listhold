@@ -5,7 +5,7 @@ import { AuthProvider } from '@/context/AuthProvider';
 import Auth from '@/components/auth/Auth';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
-// import ProfileCompletionObserver from '@/components/auth/ProfileCompletionObserver';
+import ProfileCompletionObserver from '@/components/auth/ProfileCompletionObserver';
 import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
@@ -34,7 +34,7 @@ const RootLayout = ({
       <body className='min-h-[100dvh] m-0 flex flex-col'>
         {/* Application State */}
         <AuthProvider>
-          {/* <ProfileCompletionObserver /> */}
+          <ProfileCompletionObserver />
           <header className='pt-4 pr-6 lg:pr-12'>
             <nav className='flex justify-end items-center gap-4'>
               <Link href={'/events/new'}>
@@ -62,7 +62,7 @@ const RootLayout = ({
               <Auth />
             </nav>
           </header>
-          <main className='flex-1 flex flex-col pt-12 lg:pt-18 px-4'>{children}</main>
+          <main className='flex-1 flex flex-col items-center pt-12 lg:pt-18 px-4'>{children}</main>
           <footer className='p-2 flex flex-col text-xs'>
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
