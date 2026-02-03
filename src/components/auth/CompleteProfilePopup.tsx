@@ -2,8 +2,8 @@ import Button from '@/components/ui/Button';
 import Spinner from '@/components/ui/Spinner';
 import { ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
-import Image from 'next/image';
 import { useState } from 'react';
+import Avatar from '@/components/ui/Avatar';
 
 interface CompleteProfilePopupProps {
   user: ProfileData | null;
@@ -11,7 +11,6 @@ interface CompleteProfilePopupProps {
 }
 
 const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
-  const [imgSrc, setImgSrc] = useState(user?.avatarURL || '/default-avatar.jpg');
   const [loading, setLoading] = useState(false);
 
   if (!user) {
@@ -36,13 +35,11 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
     <div className='p-4 fixed z-50 w-full h-full flex items-center justify-center dark:border-purple-600 bg-white/60 dark:bg-black/60 backdrop-blur rounded-xl'>
       <div className='p-8 w-full max-w-md flex flex-col bg-gray-200/50 dark:bg-background/70 rounded-4xl'>
         <div className='mb-3 flex items-center gap-4'>
-          <Image
-            src={imgSrc}
+          <Avatar
+            src={user.avatarURL}
             alt={user.displayName || 'Profile'}
-            width={48}
-            height={48}
-            className='rounded-full border-2 border-purple-700 dark:border-purple-600'
-            onError={() => setImgSrc('/default-avatar.jpg')}
+            size={48}
+            className='border-2'
           />
           <p className='text-2xl font-semibold text-purple-600 dark:text-purple-400 truncate'>
             {user.displayName || 'Unknown'}

@@ -4,8 +4,8 @@ import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
 import { SignupData } from '@/services/fetchList';
 import { Lock } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Avatar from '@/components/ui/Avatar';
 
 interface ListItemProps {
   signup: SignupData;
@@ -17,33 +17,26 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
   const { user } = useAuth();
   const { capacity, prompts } = useEvent();
 
-  const [showAnswers, setShowAnswers] = useState(false);
-  const [imgSrc, setImgSrc] = useState(signup.avatarURL || '/default-avatar.jpg');
-
   const getDisplayOrder = (id: string) => {
     return prompts.findIndex((p) => p.id === id);
   };
+
+  const [showAnswers, setShowAnswers] = useState(false);
 
   const orderedAnswers = Object.entries(signup.answers).sort(
     (a, b) => getDisplayOrder(a[0]) - getDisplayOrder(b[0]),
   );
 
-  useEffect(() => {
-    setImgSrc(signup.avatarURL || '/default-avatar.jpg');
-  }, [signup.avatarURL]);
-
   return (
     <li className='mb-1 w-full flex flex-col gap-2 w-full px-2 border-b border-dashed border-gray-700 dark:border-gray-500'>
       <div className='w-full flex items-center justify-between gap-2'>
         <div className='max-w-[90%] flex items-center'>
-          <Image
+          <Avatar
             alt={`${signup.displayName}'s profile photo`}
-            src={imgSrc}
-            width={26}
-            height={26}
-            className={`border-1 md:border-2 border-purple-700 dark:border-purple-600 h-[22px] w-[22px] md:h-[26px] md:w-[26px] rounded-full`}
-            onError={() => setImgSrc('/default-avatar.jpg')} // Handle broken links
-          ></Image>
+            src={signup.avatarURL}
+            size={26}
+            className={`border-1 md:border-2 h-[22px] w-[22px] md:h-[26px] md:w-[26px]`}
+          />
           {orderedAnswers.length === 0 && (
             <p
               className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400 ' : ''}ml-1.5 md:ml-2 text-sm md:text-[1rem] flex-1 whitespace-nowrap overflow-hidden text-ellipsis`}

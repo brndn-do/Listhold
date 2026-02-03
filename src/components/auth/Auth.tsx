@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthProvider';
 import { signInWithGoogle, signOut } from '@/services/authService';
-import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
+import Avatar from '@/components/ui/Avatar';
 
 const ERROR_TIME = 3000;
 
@@ -13,12 +13,6 @@ const Auth = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  const [imgSrc, setImgSrc] = useState(user?.avatarURL || '/default-avatar.jpg');
-
-  useEffect(() => {
-    setImgSrc(user?.avatarURL || '/default-avatar.jpg');
-  }, [user]);
 
   const handleSignIn = () => {
     signInWithGoogle();
@@ -49,14 +43,12 @@ const Auth = () => {
       )}
       {error && <ErrorMessage content={'Try again.'} />}
       {user && (
-        <Image
+        <Avatar
           alt='Your profile photo'
-          src={imgSrc}
-          width={32}
-          height={32}
-          className='h-8 w-8 rounded-full border-2 border-purple-700 dark:border-purple-600'
-          onError={() => setImgSrc('/default-avatar.jpg')} // Handle broken links
-        ></Image>
+          src={user.avatarURL}
+          size={32}
+          className='h-8 w-8 border-2'
+        />
       )}
     </div>
   );
