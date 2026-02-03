@@ -3,7 +3,7 @@
 import { getSession, subscribeToAuthState } from '@/services/authService';
 import { fetchProfile, ProfileData } from '@/services/fetchProfile';
 import { saveProfile } from '@/services/saveProfile';
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState, useRef } from 'react';
 
 /**
  * Defines the shape of the authentication context.
@@ -24,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastUid = useRef<string | null>(null);
 
   useEffect(() => {
     getSession();
@@ -31,10 +32,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const unsubAuthState = subscribeToAuthState(async (data) => {
       if (!data) {
         setUser(null);
+        lastUid.current = null;
         setLoading(false);
         return;
       }
 
+      if (data.uid === lastUid.current) {
+        return;
+      }
+
+      lastUid.current = data.uid;
       setLoading(true);
 
       try {
@@ -53,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
       } catch (err) {
         setUser(null);
+        lastUid.current = null;
       } finally {
         setLoading(false);
       }
