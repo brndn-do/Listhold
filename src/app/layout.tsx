@@ -35,8 +35,8 @@ const RootLayout = ({
         {/* Application State */}
         <AuthProvider>
           <ProfileCompletionObserver />
-          <header className='pt-4 pr-6 lg:pr-12'>
-            <nav className='flex justify-end items-center gap-4'>
+          <header className='pt-4 pr-4 lg:pr-12'>
+            <nav className='flex justify-end items-center gap-4 lg:gap-6'>
               <Link href={'/events/new'}>
                 <Button
                   content={

@@ -35,7 +35,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
             alt={`${signup.displayName}'s profile photo`}
             src={signup.avatarURL}
             size={26}
-            className={`border-1 md:border-2 h-[22px] w-[22px] md:h-[26px] md:w-[26px]`}
+            className={`border-1 md:border-[1.5px] h-[22px] w-[22px] md:h-[26px] md:w-[26px]`}
           />
           {orderedAnswers.length === 0 && (
             <p
