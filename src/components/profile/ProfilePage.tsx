@@ -29,7 +29,7 @@ const SUCCESS_TIME = 3000;
 const ERROR_TIME = 5000;
 
 const ProfilePage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, updateUser } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -72,6 +72,7 @@ const ProfilePage = () => {
       };
 
       await saveProfile(updatedUser);
+      updateUser(updatedUser);
       setSaveSuccess(true);
 
       reset({ displayName: data.displayName });

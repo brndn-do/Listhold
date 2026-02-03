@@ -5,6 +5,7 @@ import { saveProfile } from '@/services/saveProfile';
 import { useState } from 'react';
 import Avatar from '@/components/ui/Avatar';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthProvider';
 
 interface CompleteProfilePopupProps {
   user: ProfileData | null;
@@ -13,6 +14,7 @@ interface CompleteProfilePopupProps {
 
 const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   const router = useRouter();
+  const { updateUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
   if (!user) {
@@ -22,10 +24,12 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   const markProfileCompleted = async () => {
     setLoading(true);
     try {
-      await saveProfile({
+      const updatedUser = {
         ...user,
         profileCompletedAt: new Date(),
-      });
+      };
+      await saveProfile(updatedUser);
+      updateUser(updatedUser);
       onClose();
     } catch (err) {
       console.error(err);

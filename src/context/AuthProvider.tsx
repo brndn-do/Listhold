@@ -9,10 +9,12 @@ import { createContext, ReactNode, useContext, useEffect, useMemo, useState, use
  * Defines the shape of the authentication context.
  * - `user`: The current authenticated user, or null/undefined if not signed in or not yet loaded.
  * - `loading`: Whether the authentication state is still loading.
+ * - `updateUser`: Function to manually update the user profile in context (e.g. after editing).
  */
 interface AuthContextType {
   readonly user: ProfileData | null;
   readonly loading: boolean;
+  readonly updateUser: (data: ProfileData) => void;
 }
 
 // Create a react context for authentication state
@@ -25,6 +27,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const lastUid = useRef<string | null>(null);
+
+  const updateUser = (data: ProfileData) => {
+    setUser(data);
+  };
 
   useEffect(() => {
     getSession();
@@ -71,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
-  const value = useMemo(() => ({ user, loading }), [user, loading]);
+  const value = useMemo(() => ({ user, loading, updateUser }), [user, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
