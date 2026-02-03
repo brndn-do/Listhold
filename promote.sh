@@ -78,7 +78,7 @@ git checkout main
 git pull origin main
 
 # Merge origin/develop (Merging remote guarantees we merge exactly what was tested)
-git merge origin/develop -m "chore: promote develop to main"
+git merge origin/develop --ff-only
 
 # Push
 git push origin main
