@@ -69,6 +69,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             <Button
               content='No, edit my profile'
               onClick={() => {
+                onClose();
                 router.push('/profile');
               }}
             />
