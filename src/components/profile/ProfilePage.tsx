@@ -12,6 +12,7 @@ import Avatar from '@/components/ui/Avatar';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { saveProfile } from '@/services/saveProfile';
 import Spinner from '@/components/ui/Spinner';
+import { ProfileData } from '@/services/fetchProfile';
 
 // Schema for profile validation
 const profileSchema = z.object({
@@ -64,9 +65,10 @@ const ProfilePage = () => {
     setSaveSuccess(false);
 
     try {
-      const updatedUser = {
+      const updatedUser: ProfileData = {
         ...user,
         displayName: data.displayName,
+        profileCompletedAt: new Date(),
       };
 
       await saveProfile(updatedUser);
