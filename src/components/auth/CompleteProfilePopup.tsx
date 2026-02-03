@@ -36,38 +36,43 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   return (
     <div className='p-4 fixed z-50 w-full h-full flex items-center justify-center dark:border-purple-600 bg-white/60 dark:bg-black/60 backdrop-blur rounded-xl'>
       <div className='p-8 w-full max-w-md flex flex-col bg-gray-200/50 dark:bg-background/70 rounded-4xl'>
-        <div className='mb-3 flex items-center gap-4'>
+        <div className='mb-3 flex flex-col items-center gap-4'>
           <Avatar
             src={user.avatarURL}
             alt={user.displayName || 'Profile'}
-            size={48}
-            className='border-2'
+            size={96}
+            className='border-4'
           />
-          <p className='text-2xl font-semibold text-purple-600 dark:text-purple-400 truncate'>
+          <p className='text-2xl font-semibold text-purple-600 dark:text-purple-400'>
             {user.displayName || 'Unknown'}
           </p>
         </div>
 
-        <h3 className='mb-4 text-lg font-semibold'>Does this profile information look okay?</h3>
+        <h3 className='mb-4 text-center text-lg font-semibold'>
+          Does this profile information look okay?
+        </h3>
 
-        <div className='flex gap-4 flex-col items-center w-full'>
-          <div className='mb-2 flex items-center gap-4 w-full'>
+        <div className='mx-auto w-[90%] flex gap-4 flex-col items-center'>
+          <div className='w-full mb-2 flex flex-col gap-4'>
             <Button
               content={
                 loading ? (
-                  <>
+                  <div className='py-1 w-full justify-center'>
                     <Spinner />
-                    <p>Yes, continue</p>
-                  </>
+                    Yes, continue
+                  </div>
                 ) : (
-                  <p>Yes, continue</p>
+                  <div className='py-1 w-full justify-center'>Yes, continue</div>
                 )
               }
               onClick={markProfileCompleted}
               disabled={loading}
+              semibold={true}
             />
             <Button
-              content='No, edit my profile'
+              content={<div className='py-1 w-full justify-center'>No, edit my profile</div>}
+              inverted={true}
+              semibold={true}
               onClick={() => {
                 onClose();
                 router.push('/profile');
