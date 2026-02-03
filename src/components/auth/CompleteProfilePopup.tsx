@@ -57,9 +57,8 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             <Button
               content={
                 loading ? (
-                  <div className='py-1 w-full justify-center'>
+                  <div className='py-1 w-full inline-flex justify-center'>
                     <Spinner />
-                    Yes, continue
                   </div>
                 ) : (
                   <div className='py-1 w-full justify-center'>Yes, continue</div>
