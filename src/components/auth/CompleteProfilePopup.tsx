@@ -66,7 +66,10 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             />
             <Button content='No, edit my profile' onClick={() => {}} />
           </div>
-          <button className='text-sm underline text-gray-600 dark:text-gray-400 hover:cursor-pointer' onClick={onClose}>
+          <button
+            className='text-sm underline text-gray-600 dark:text-gray-400 hover:cursor-pointer'
+            onClick={onClose}
+          >
             Remind me later
           </button>
         </div>

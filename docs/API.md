@@ -5,17 +5,20 @@ Documentation for Deno Edge Functions.
 ---
 
 ## 1. Create Organization
+
 **Endpoint:** `POST /create_organization`
 
 Creates a new organization owned by the authenticated user.
 
 ### Headers
-| Key | Value |
-| :--- | :--- |
+
+| Key             | Value                 |
+| :-------------- | :-------------------- |
 | `Authorization` | `Bearer <user_token>` |
-| `Content-Type` | `application/json` |
+| `Content-Type`  | `application/json`    |
 
 ### Body
+
 ```json
 {
   "name": "Archery Club",
@@ -25,6 +28,7 @@ Creates a new organization owned by the authenticated user.
 ```
 
 ### Responses
+
 - **201 Created**:
   ```json
   { "success": true, "slug": "archery-club" }
@@ -37,17 +41,20 @@ Creates a new organization owned by the authenticated user.
 ---
 
 ## 2. Create Event
+
 **Endpoint:** `POST /create_event`
 
 Creates an event, optionally linked to an organization.
 
 ### Headers
-| Key | Value |
-| :--- | :--- |
+
+| Key             | Value                 |
+| :-------------- | :-------------------- |
 | `Authorization` | `Bearer <user_token>` |
-| `Content-Type` | `application/json` |
+| `Content-Type`  | `application/json`    |
 
 ### Body
+
 ```json
 {
   "name": "Friday Practice",
@@ -60,17 +67,18 @@ Creates an event, optionally linked to an organization.
   "description": "Regular practice.",
   "prompts": [
     {
-       "displayOrder": 1,
-       "promptType": "yes/no",
-       "promptText": "Have you signed the waiver?",
-       "isRequired": true,
-       "isPrivate": true
+      "displayOrder": 1,
+      "promptType": "yes/no",
+      "promptText": "Have you signed the waiver?",
+      "isRequired": true,
+      "isPrivate": true
     }
   ]
 }
 ```
 
 ### Responses
+
 - **201 Created**:
   ```json
   { "success": true, "slug": "morning-practice" }
@@ -83,27 +91,31 @@ Creates an event, optionally linked to an organization.
 ---
 
 ## 3. Add User To Event
+
 **Endpoint:** `POST /add_user_to_event`
 
 Signs up a user (or themselves) for an event. Handles waitlisting automatically.
 
 ### Logic
+
 - **Authorization:** Authenticated user must be the `userId` in the body OR the event owner.
 - **Waitlist:** Automatic if capacity is full.
 
 ### Body
+
 ```json
 {
   "userId": "uuid-here",
   "eventId": "uuid-here",
   "answers": {
     "prompt-uuid": true,
-    "prompt-uuid-2": false,
+    "prompt-uuid-2": false
   }
 }
 ```
 
 ### Responses
+
 - **201 Created**:
   ```json
   { "success": true, "signupId": "uuid", "status": "confirmed" } // or "waitlisted"
@@ -117,17 +129,20 @@ Signs up a user (or themselves) for an event. Handles waitlisting automatically.
 ---
 
 ## 4. Remove User From Event
+
 **Endpoint:** `POST /remove_user_from_event`
 
 Cancels a signup.  
 **Critical:** Triggers the auto-promotion logic if a spot opens up.
 
 ### Logic
+
 1. Removes the `userId` from the event.
 2. If the user was `confirmed` and the event is full, promotes the top waitlisted user.
 3. Sends an email notification to the promoted user.
 
 ### Body
+
 ```json
 {
   "userId": "uuid-here",
@@ -136,6 +151,7 @@ Cancels a signup.
 ```
 
 ### Responses
+
 - **200 OK**:
   ```json
   { "success": true }

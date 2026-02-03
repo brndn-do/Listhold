@@ -17,9 +17,11 @@ const EventTime = ({ start, end }: EventTimeProps) => {
   }, []);
 
   if (!mounted) {
-    return <div className='pl-1 pt-1'>
-      <Dots size={1} />
-    </div>
+    return (
+      <div className='pl-1 pt-1'>
+        <Dots size={1} />
+      </div>
+    );
   }
 
   return (

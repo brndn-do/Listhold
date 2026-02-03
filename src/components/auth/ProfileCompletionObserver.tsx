@@ -31,10 +31,5 @@ export default function ProfileCompletionObserver() {
     return null;
   }
 
-  return (
-    <CompleteProfilePopup 
-      user={user} 
-      onClose={handleClose}
-    />
-  );
+  return <CompleteProfilePopup user={user} onClose={handleClose} />;
 }

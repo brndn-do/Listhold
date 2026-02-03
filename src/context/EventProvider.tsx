@@ -143,7 +143,7 @@ export const EventProvider = ({
   useEffect(() => {
     refreshList();
   }, [refreshList]);
-  
+
   // 2. Realtime subscription
   useEffect(() => {
     const unsub = subscribeToList(eventId, refreshList, setRealtimeConnected);
@@ -158,7 +158,7 @@ export const EventProvider = ({
 
     const intervalId = setInterval(() => {
       refreshList();
-    }, POLL_INTERVAL)
+    }, POLL_INTERVAL);
 
     return () => clearInterval(intervalId);
   }, [realtimeConnected, listLoading, refreshList]);

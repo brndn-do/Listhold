@@ -7,7 +7,6 @@ export const subscribeToList = (
   setListState: () => void,
   setConnectionState: (connected: boolean) => void,
 ) => {
-
   // If there is a burst of db writes, prevent re-fetching too aggressively
   // by having it run at most once every 500ms
   const throttledSetListState = throttle(setListState, 500);

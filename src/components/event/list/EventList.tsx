@@ -17,8 +17,10 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   const waitlistRef = useRef<HTMLOListElement>(null);
 
   // check if main list is scrollable via hook
-  const { isScrollable: isConfirmedScrollable, isAtBottom: isConfirmedAtBottom } =
-    useScrollState(confirmedListRef, confirmedList);
+  const { isScrollable: isConfirmedScrollable, isAtBottom: isConfirmedAtBottom } = useScrollState(
+    confirmedListRef,
+    confirmedList,
+  );
 
   // check if waitlist is scrollable via hook
   const { isScrollable: isWaitlistScrollable, isAtBottom: isWaitlistAtBottom } = useScrollState(

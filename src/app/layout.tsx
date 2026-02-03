@@ -6,6 +6,7 @@ import Auth from '@/components/auth/Auth';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 // import ProfileCompletionObserver from '@/components/auth/ProfileCompletionObserver';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,6 +32,7 @@ const RootLayout = ({
     <html lang='en' className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       {/* body should always take the entire viewport height */}
       <body className='min-h-[100dvh] m-0 flex flex-col'>
+        {/* Application State */}
         <AuthProvider>
           {/* <ProfileCompletionObserver /> */}
           <header className='pt-4 pr-6 lg:pr-12'>
@@ -65,6 +67,9 @@ const RootLayout = ({
             <p className='opacity-70 mt-8 ml-4'>&copy; 2026 Listhold</p>
           </footer>
         </AuthProvider>
+        
+        {/* Analytics */}
+        <Analytics />
       </body>
     </html>
   );

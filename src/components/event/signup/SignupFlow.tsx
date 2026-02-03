@@ -21,7 +21,6 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
     setIsVisible(true);
   }, []);
 
-
   const handleNext = () => {
     // Store user's answer if not notice
     const curPrompt = prompts[curIndex];
