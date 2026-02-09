@@ -1,5 +1,11 @@
-import { supabase } from '../_shared/supabase.ts';
-import { z } from 'zod';
+import { supabase } from '../_shared/lib/supabase.ts';
+import {
+  handleCorsPreflight,
+  errorResponse,
+  successResponse,
+} from '../_shared/utils/responseUtils.ts';
+import { getCallerId } from '../_shared/utils/authUtils.ts';
+import { z } from 'jsr:@zod/zod@4.3.6';
 import type { Database } from '../../../types/supabaseTypes.ts';
 
 const createOrgSchema = z.object({
@@ -16,29 +22,22 @@ const createOrgSchema = z.object({
 
 type OrganizationInsert = Database['public']['Tables']['organizations']['Insert'];
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 Deno.serve(async (req): Promise<Response> => {
-  // Handle CORS Preflight Request
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const preflightResponse = handleCorsPreflight(req);
+  if (preflightResponse) return preflightResponse;
 
   let reqData;
 
   try {
     reqData = await req.json();
   } catch {
-    return new Response('Invalid JSON body', { status: 400, headers: corsHeaders });
+    return errorResponse('Invalid JSON body', 400);
   }
 
   const parsed = createOrgSchema.safeParse(reqData);
 
   if (!parsed.success) {
-    return new Response('Invalid form data', { status: 400, headers: corsHeaders });
+    return errorResponse('Invalid form data', 400);
   }
 
   const { name, slug, description } = parsed.data;
@@ -46,21 +45,14 @@ Deno.serve(async (req): Promise<Response> => {
   // generate random slug if not specified
   const finalSlug = slug ?? crypto.randomUUID();
 
-  // check auth
-  const authHeader = req.headers.get('Authorization') || '';
-  const token = authHeader.replace('Bearer ', '');
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    return new Response('Unauthorized', { status: 401, headers: corsHeaders });
+  const callerId = await getCallerId(req);
+  if (!callerId) {
+    return errorResponse('Unauthorized', 401);
   }
 
   const toInsert: OrganizationInsert = {
     organization_name: name,
-    owner_id: user.id,
+    owner_id: callerId,
     slug: finalSlug,
     description: description,
   };
@@ -75,21 +67,21 @@ Deno.serve(async (req): Promise<Response> => {
   if (error) {
     console.error('ERROR INSERTING: ', error.message);
     if (error.code === '23505') {
-      return new Response(`An organization with slug ${finalSlug} already exists`, { status: 409 });
+      return errorResponse(`An organization with slug ${finalSlug} already exists`, 409);
     }
-    return new Response('Internal', { status: 500, headers: corsHeaders });
+    return errorResponse('Internal Server Error', 500);
   }
 
   if (!data) {
     console.error('ERROR INSERTING: row was not returned');
-    return new Response('Internal', { status: 500, headers: corsHeaders });
+    return errorResponse('Internal Server Error', 500);
   }
 
-  return new Response(
-    JSON.stringify({
+  return successResponse(
+    {
       success: true,
       slug: data.slug,
-    }),
-    { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    },
+    201,
   );
 });

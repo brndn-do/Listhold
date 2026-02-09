@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '../../../types/supabaseTypes.ts';
+import { createClient } from 'jsr:@supabase/supabase-js@2.95.3';
+import { Database } from '../../../../types/supabaseTypes.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');

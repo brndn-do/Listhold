@@ -1,6 +1,12 @@
-import { supabase } from '../_shared/supabase.ts';
-import { z } from 'zod';
+import { supabase } from '../_shared/lib/supabase.ts';
+import { getCallerId } from '../_shared/utils/authUtils.ts';
+import {
+  handleCorsPreflight,
+  errorResponse,
+  successResponse,
+} from '../_shared/utils/responseUtils.ts';
 import type { Database } from '../../../types/supabaseTypes.ts';
+import { z } from 'jsr:@zod/zod@4.3.6';
 
 const promptSchema = z.object({
   displayOrder: z.number().min(1),
@@ -46,29 +52,22 @@ const createEventSchema = z
 type EventsInsert = Database['public']['Tables']['events']['Insert'];
 type PromptsInsert = Database['public']['Tables']['prompts']['Insert'];
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 Deno.serve(async (req): Promise<Response> => {
-  // Handle CORS Preflight Request
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const preflightResponse = handleCorsPreflight(req);
+  if (preflightResponse) return preflightResponse;
 
   let reqData;
 
   try {
     reqData = await req.json();
   } catch {
-    return new Response('Invalid JSON body', { status: 400, headers: corsHeaders });
+    return errorResponse('Invalid JSON body', 400);
   }
 
   const parsed = createEventSchema.safeParse(reqData);
 
   if (!parsed.success) {
-    return new Response('Invalid form data', { status: 400, headers: corsHeaders });
+    return errorResponse('Invalid form data', 400);
   }
 
   const { name, orgSlug, slug, description, location, capacity, start, end, prompts } = parsed.data;
@@ -76,17 +75,12 @@ Deno.serve(async (req): Promise<Response> => {
   // generate random event slug if not specified
   const finalSlug = slug ?? crypto.randomUUID();
 
-  // check auth
-  const authHeader = req.headers.get('Authorization') || '';
-  const token = authHeader.replace('Bearer ', '');
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser(token);
-
-  if (authError || !user) {
-    return new Response('Unauthorized', { status: 401, headers: corsHeaders });
+  const callerId = await getCallerId(req);
+  if (!callerId) {
+    return errorResponse('Unauthorized', 401);
   }
+
+  console.log(callerId);
 
   let orgId: string | null = null;
   if (orgSlug) {
@@ -99,7 +93,7 @@ Deno.serve(async (req): Promise<Response> => {
 
     if (orgError || !orgData) {
       console.error('ERROR FETCHING ORG ID FROM SLUG:', orgError.message);
-      return new Response('Internal', { status: 500, headers: corsHeaders });
+      return errorResponse('Internal Server Error', 500);
     }
     orgId = orgData.id;
   }
@@ -107,7 +101,7 @@ Deno.serve(async (req): Promise<Response> => {
   const toInsert: EventsInsert = {
     event_name: name,
     organization_id: orgId,
-    owner_id: user.id,
+    owner_id: callerId,
     slug: finalSlug,
     description,
     capacity,
@@ -126,17 +120,17 @@ Deno.serve(async (req): Promise<Response> => {
   if (error) {
     console.error('ERROR INSERTING:', error.code, error.message);
     if (error.code === '23505') {
-      return new Response(`An event with slug ${finalSlug} already exists`, { status: 409 });
+      return errorResponse(`An event with slug ${finalSlug} already exists`, 409);
     }
     if (error.code === '23514') {
-      return new Response(`Slug ${finalSlug} is reserved`, { status: 409 });
+      return errorResponse(`Slug ${finalSlug} is reserved`, 409);
     }
-    return new Response('Internal', { status: 500, headers: corsHeaders });
+    return errorResponse('Internal Server Error', 500);
   }
 
   if (!data) {
     console.error('ERROR INSERTING: row was not returned');
-    return new Response('Internal', { status: 500, headers: corsHeaders });
+    return errorResponse('Internal Server Error', 500);
   }
 
   // Insert prompts if provided
@@ -156,18 +150,15 @@ Deno.serve(async (req): Promise<Response> => {
       console.error('ERROR INSERTING PROMPTS:', promptsError.message);
       // Delete the event to maintain consistency
       await supabase.from('events').delete().eq('id', data.id);
-      return new Response('Failed to create event with prompts', {
-        status: 500,
-        headers: corsHeaders,
-      });
+      return errorResponse('Failed to create event with prompts', 500);
     }
   }
 
-  return new Response(
-    JSON.stringify({
+  return successResponse(
+    {
       success: true,
       slug: data.slug,
-    }),
-    { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    },
+    201,
   );
 });

@@ -383,8 +383,8 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.create_organization]
 enabled = true
-verify_jwt = true
-import_map = "./functions/create_organization/deno.json"
+verify_jwt = false
+# import_map = "./functions/create_organization/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create_organization/index.ts"
@@ -394,8 +394,8 @@ entrypoint = "./functions/create_organization/index.ts"
 
 [functions.create_event]
 enabled = true
-verify_jwt = true
-import_map = "./functions/create_event/deno.json"
+verify_jwt = false
+# import_map = "./functions/create_event/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create_event/index.ts"
@@ -405,8 +405,8 @@ entrypoint = "./functions/create_event/index.ts"
 
 [functions.add_user_to_event]
 enabled = true
-verify_jwt = true
-import_map = "./functions/add_user_to_event/deno.json"
+verify_jwt = false
+# import_map = "./functions/add_user_to_event/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/add_user_to_event/index.ts"
@@ -416,8 +416,8 @@ entrypoint = "./functions/add_user_to_event/index.ts"
 
 [functions.remove_user_from_event]
 enabled = true
-verify_jwt = true
-import_map = "./functions/remove_user_from_event/deno.json"
+verify_jwt = false
+# import_map = "./functions/remove_user_from_event/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/remove_user_from_event/index.ts"

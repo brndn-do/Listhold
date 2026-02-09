@@ -1,43 +1,28 @@
-import { supabase } from '../_shared/supabase.ts';
-
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-const errorResponse = (message: string, status: number) => {
-  return new Response(message, {
-    status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-};
+import { getCallerId } from '../_shared/utils/authUtils.ts';
+import { supabase } from '../_shared/lib/supabase.ts';
+import {
+  handleCorsPreflight,
+  errorResponse,
+  successResponse,
+} from '../_shared/utils/responseUtils.ts';
 
 Deno.serve(async (req): Promise<Response> => {
-  // Handle CORS Preflight Request
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const preflightResponse = handleCorsPreflight(req);
+  if (preflightResponse) return preflightResponse;
 
   let reqData;
 
   try {
     reqData = await req.json();
   } catch {
-    return new Response('Invalid JSON body', { status: 400, headers: corsHeaders });
+    return errorResponse('Invalid JSON body', 400);
   }
 
   const { userId, eventId, answers } = reqData;
 
   try {
-    // check auth
-    const authHeader = req.headers.get('Authorization') || '';
-    const token = authHeader.replace('Bearer ', '');
-    const {
-      data: { user: caller },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !caller) {
+    const callerId = await getCallerId(req);
+    if (!callerId) {
       return errorResponse('Unauthorized', 401);
     }
 
@@ -49,7 +34,8 @@ Deno.serve(async (req): Promise<Response> => {
       .maybeSingle();
 
     if (eventError) {
-      return errorResponse('Internal', 500);
+      console.error('Error fetching event owner:', eventError);
+      return errorResponse('Internal Server Error', 500);
     }
 
     if (!eventData) {
@@ -59,7 +45,7 @@ Deno.serve(async (req): Promise<Response> => {
     const ownerId = eventData.owner_id;
 
     // If the caller is not the user being added nor the creator of the event
-    if (caller.id !== userId && caller.id !== ownerId) {
+    if (callerId !== userId && callerId !== ownerId) {
       return errorResponse('Unauthorized', 403);
     }
 
@@ -72,7 +58,7 @@ Deno.serve(async (req): Promise<Response> => {
 
     if (error) {
       console.error('POSTGRES FUNCTION ERROR: ', error.message);
-      return errorResponse('Internal', 500);
+      return errorResponse('Internal Server Error', 500);
     }
 
     const data = rawData as {
@@ -81,19 +67,20 @@ Deno.serve(async (req): Promise<Response> => {
     };
 
     if (!data || !data.id) {
-      return errorResponse('Internal', 500);
+      console.error('Unexpected RPC response:', data);
+      return errorResponse('Internal Server Error', 500);
     }
 
-    return new Response(
-      JSON.stringify({
+    return successResponse(
+      {
         success: true,
         signupId: data.id,
         status: data.status,
-      }),
-      { status: 201, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      },
+      201,
     );
   } catch (err) {
     console.error('Unexpected error:', err);
-    return errorResponse('Internal', 500);
+    return errorResponse('Internal Server Error', 500);
   }
 });

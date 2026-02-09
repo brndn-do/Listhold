@@ -15,23 +15,29 @@ interface AvatarProps {
 const Avatar = ({ src, alt, size, className = '', priority = false }: AvatarProps) => {
   // Determine best size to request (2x for retina)
   const requestSize = size * 2;
-  const [imgSrc, setImgSrc] = useState(processAvatarUrl(src, requestSize));
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
 
   useEffect(() => {
     setImgSrc(processAvatarUrl(src, requestSize));
   }, [src, requestSize]);
 
+  if (!imgSrc) {
+    return null;
+  }
+
   return (
-    <Image
-      alt={alt}
-      src={imgSrc}
-      width={size}
-      height={size}
-      priority={priority}
-      unoptimized={imgSrc.includes('googleusercontent.com') || imgSrc === '/default-avatar.jpg'}
-      className={`rounded-full border-purple-700 dark:border-purple-600 ${className}`}
-      onError={() => setImgSrc('/default-avatar.jpg')}
-    />
+    <>
+      <Image
+        alt={alt}
+        src={imgSrc}
+        width={size}
+        height={size}
+        priority={priority}
+        unoptimized={imgSrc.includes('googleusercontent.com') || imgSrc === '/default-avatar.jpg'}
+        className={`rounded-full border-purple-700 dark:border-purple-600 ${className}`}
+        onError={() => setImgSrc('/default-avatar.jpg')}
+      />
+    </>
   );
 };
 
