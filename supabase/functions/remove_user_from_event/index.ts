@@ -96,9 +96,9 @@ Deno.serve(async (req): Promise<Response> => {
 
             const subject = `You're off the waitlist for ${eventName}!`;
             const html = `
-              <p>Good news! A spot opened up for the event: <b>${eventName}</b> and you have been moved to the main list!</p>
+              <p>Good news! A spot opened up for the event: <b>${eventName}</b> and you are now on the main list!</p>
               <p>No further action is needed.</p>
-              <p>You can view the event details <a href="${appDomain}/events/${eventSlug}">here</a>.</p>
+              <p>You can remove your name or view the event details <a href="${appDomain}/events/${eventSlug}">here</a>.</p>
               <br/>
               <hr/>
               <p style="font-size: 12px; color: #666;">
