@@ -24,7 +24,14 @@ const getCachedEvent = (slug: string) =>
         .maybeSingle();
 
       if (error) {
-        throw new Error(`Failed to fetch event ${slug}`);
+        console.error('getEventBySlug: Supabase error', {
+          slug,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
+        throw new Error(`Failed to fetch event ${slug}`, { cause: error });
       }
 
       return data;
