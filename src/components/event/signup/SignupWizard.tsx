@@ -86,7 +86,7 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
           </div>
           <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
             <div
-              className='h-2 rounded-full bg-pink-400 transition-all duration-300'
+              className='h-2 rounded-full bg-pink-500/90 transition-all duration-300'
               style={{ width: `${((curIndex + 1) / prompts.length) * 100}%` }}
             />
           </div>
