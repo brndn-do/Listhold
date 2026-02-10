@@ -24,6 +24,13 @@ const getCachedEvent = (slug: string) =>
         .maybeSingle();
 
       if (error) {
+        console.error('getEventBySlug error', {
+          slug,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code,
+        });
         throw new Error(`Failed to fetch event ${slug}`, { cause: error });
       }
 
