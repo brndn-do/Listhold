@@ -39,7 +39,9 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
           />
           {orderedAnswers.length === 0 && (
             <p
-              className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''}ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem]`}
+              className={`ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem] ${
+                user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''
+              }`}
             >
               {signup.displayName}
             </p>
@@ -51,7 +53,9 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
               className='ml-1 flex items-center gap-1 hover:cursor-pointer'
             >
               <p
-                className={`${user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''}ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem]`}
+                className={`ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem] ${
+                  user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''
+                }`}
               >
                 {signup.displayName}
               </p>

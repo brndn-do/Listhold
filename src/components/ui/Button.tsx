@@ -31,7 +31,9 @@ const Button = ({
         type={type}
         onClick={onClick}
         disabled={!!disabled}
-        className={`${semibold ? 'font-semibold' : ''}text-purple-700 hover:bg-foreground/3 inline-flex rounded-xl border-[1.5px] border-purple-700 px-3.5 py-1.75 text-sm hover:cursor-pointer dark:border-purple-600 dark:text-purple-400`}
+        className={`hover:bg-foreground/3 inline-flex rounded-xl border-[1.5px] border-purple-700 px-3.5 py-1.75 text-sm text-purple-600 hover:cursor-pointer dark:border-purple-600 dark:text-purple-400 ${
+          semibold ? 'font-semibold' : ''
+        }`}
       >
         {content}
       </button>

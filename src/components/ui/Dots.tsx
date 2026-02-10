@@ -15,12 +15,12 @@ const Dots = ({ size = 1 }: DotsProps) => {
   return (
     <div className={`flex ${gap}`}>
       <div
-        className={`${dim} animate-bounce rounded-full bg-purple-600 [animation-delay:-0.5s] dark:bg-purple-400`}
+        className={`animate-bounce rounded-full bg-purple-600 [animation-delay:-0.5s] dark:bg-purple-400 ${dim}`}
       />
       <div
-        className={`${dim} animate-bounce rounded-full bg-purple-600 [animation-delay:-0.25s] dark:bg-purple-400`}
+        className={`animate-bounce rounded-full bg-purple-600 [animation-delay:-0.25s] dark:bg-purple-400 ${dim}`}
       />
-      <div className={`${dim} animate-bounce rounded-full bg-purple-600 dark:bg-purple-400`} />
+      <div className={`animate-bounce rounded-full bg-purple-600 dark:bg-purple-400 ${dim}`} />
     </div>
   );
 };

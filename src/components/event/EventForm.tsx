@@ -503,7 +503,7 @@ const EventForm = () => {
             <button
               type='button'
               onClick={addPrompt}
-              className='text-purple-700 hover:cursor-pointer dark:text-purple-500'
+              className='text-purple-600 hover:cursor-pointer dark:text-purple-400'
             >
               + Add Prompt
             </button>
