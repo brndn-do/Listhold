@@ -99,62 +99,62 @@ const OrgForm = () => {
     >
       <div>
         {/* Name */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='name' className='block mb-2.5 font-medium text-heading'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='name' className='text-heading mb-2.5 block font-medium'>
             Organization Name
           </label>
           <input
             {...register('name', { required: true })}
             placeholder='My Organization'
-            className='w-full border border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border border-gray-500 px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
           {errors.name && (
-            <div className='w-full pl-2 mt-1'>
+            <div className='mt-1 w-full pl-2'>
               <ErrorMessage size='xs' justify='start' content={errors.name.message} />
             </div>
           )}
         </div>
 
         {/* Slug */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='slug' className='block mb-2.5 font-medium text-heading'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='slug' className='text-heading mb-2.5 block font-medium'>
             A unique slug (optional)
           </label>
           <input
             {...register('slug', { required: false })}
             placeholder='my-org-123'
-            className='w-full border border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border border-gray-500 px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
           {errors.slug && (
-            <div className='w-full pl-2 mt-1'>
+            <div className='mt-1 w-full pl-2'>
               <ErrorMessage size='xs' justify='start' content={errors.slug.message} />
             </div>
           )}
         </div>
 
         {/* Description */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='description' className='block mb-2.5 font-medium text-heading'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='description' className='text-heading mb-2.5 block font-medium'>
             Description (optional)
           </label>
           <textarea
             {...register('description', { required: false })}
-            className='h-48 w-full border border-gray-500 rounded-lg px-3 py-2 resize-none'
+            className='h-48 w-full resize-none rounded-lg border border-gray-500 px-3 py-2'
             spellCheck={false}
             autoComplete='off'
           />
           {errors.description && (
-            <div className='w-full pl-2 mt-1'>
+            <div className='mt-1 w-full pl-2'>
               <ErrorMessage size='xs' justify='start' content={errors.description.message} />
             </div>
           )}
         </div>
       </div>
-      <div className='max-w-full flex flex-col gap-4'>
+      <div className='flex max-w-full flex-col gap-4'>
         {createError && <ErrorMessage justify={'start'} content={createError} />}
         {!createError && (
           <div>

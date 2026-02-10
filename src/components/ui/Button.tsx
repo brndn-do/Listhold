@@ -31,7 +31,7 @@ const Button = ({
         type={type}
         onClick={onClick}
         disabled={!!disabled}
-        className={`${semibold ? 'font-semibold ' : ''}text-purple-700 dark:text-purple-400 border-[1.5px] border-purple-700 dark:border-purple-600 hover:bg-foreground/3 hover:cursor-pointer inline-flex text-sm rounded-xl px-3.5 py-1.75`}
+        className={`${semibold ? 'font-semibold' : ''}text-purple-700 hover:bg-foreground/3 inline-flex rounded-xl border-[1.5px] border-purple-700 px-3.5 py-1.75 text-sm hover:cursor-pointer dark:border-purple-600 dark:text-purple-400`}
       >
         {content}
       </button>
@@ -43,7 +43,7 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={!!disabled}
-      className={`${disabled ? 'bg-purple-800/50 dark:bg-purple-600/50 text-gray-100 dark:text-gray-400 backdrop-blur' : 'text-white bg-purple-700 dark:bg-purple-600 hover:cursor-pointer hover:bg-purple-800 dark:hover:bg-purple-700'} ${semibold ? 'font-semibold ' : ''}inline-flex text-sm rounded-xl px-3.5 py-1.75`}
+      className={`${disabled ? 'bg-purple-800/50 text-gray-100 backdrop-blur dark:bg-purple-600/50 dark:text-gray-400' : 'bg-purple-700 text-white hover:cursor-pointer hover:bg-purple-800 dark:bg-purple-600 dark:hover:bg-purple-700'} ${semibold ? 'font-semibold' : ''}inline-flex rounded-xl px-3.5 py-1.75 text-sm`}
     >
       {content}
     </button>

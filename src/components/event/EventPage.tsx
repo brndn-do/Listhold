@@ -115,34 +115,34 @@ const EventPage = () => {
   };
 
   return (
-    <div className='mx-auto mb-4 md:mb-0 flex flex-col lg:flex-row lg:justify-evenly w-full md:w-[60%] lg:w-[80%] gap-2 lg:gap-4'>
+    <div className='mx-auto mb-4 flex w-full flex-col gap-2 md:mb-0 md:w-[60%] lg:w-[80%] lg:flex-row lg:justify-evenly lg:gap-4'>
       <EventInfo />
 
-      <div className='border-t-1 border-gray-500/50 pt-10 lg:border-0 lg:pt-0 w-full xl:w-[80%] 2xl:w-[35%] h-full flex flex-col items-center'>
-        <div className='w-full mb-3'>
+      <div className='flex h-full w-full flex-col items-center border-t-1 border-gray-500/50 pt-10 lg:border-0 lg:pt-0 xl:w-[80%] 2xl:w-[35%]'>
+        <div className='mb-3 w-full'>
           {/* Header */}
-          <h1 className='text-2xl font-bold text-center text-gray-900 dark:text-gray-100'>
+          <h1 className='text-center text-2xl font-bold text-gray-900 dark:text-gray-100'>
             Signups
           </h1>
 
           {/* Tabs */}
-          <div className='flex w-[90%] mx-auto'>
+          <div className='mx-auto flex w-[90%]'>
             <button
               onClick={() => setViewingWaitlist(false)}
-              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background transition-color duration-200 ${
+              className={`border-background transition-color flex-1 border-b-2 px-6 py-2 text-sm font-semibold duration-200 ${
                 !viewingWaitlist
-                  ? 'text-purple-600 dark:text-purple-400 border-purple-600 dark:border-purple-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:cursor-pointer'
+                  ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400'
+                  : 'text-gray-600 hover:cursor-pointer hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
               Confirmed
             </button>
             <button
               onClick={() => setViewingWaitlist(true)}
-              className={`flex-1 px-6 py-2 text-sm font-semibold border-b-2 border-background transition-color duration-200 ${
+              className={`border-background transition-color flex-1 border-b-2 px-6 py-2 text-sm font-semibold duration-200 ${
                 viewingWaitlist
-                  ? 'text-purple-600 dark:text-purple-400 border-purple-600 dark:border-purple-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:cursor-pointer'
+                  ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400'
+                  : 'text-gray-600 hover:cursor-pointer hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
               Waitlist
@@ -156,7 +156,7 @@ const EventPage = () => {
         </div>
 
         {/* Desktop Action Button */}
-        <div className='hidden lg:flex w-full gap-4 justify-end pr-6'>
+        <div className='hidden w-full justify-end gap-4 pr-6 lg:flex'>
           <ShareButton onShare={handleShare} />
           <EventButton
             disabled={disableButton}
@@ -167,8 +167,8 @@ const EventPage = () => {
         </div>
 
         {/* Mobile fixed action button */}
-        <div className='w-full fixed bottom-0 lg:hidden z-50'>
-          <div className='w-full flex gap-4 justify-end pb-8 pr-6'>
+        <div className='fixed bottom-0 z-50 w-full lg:hidden'>
+          <div className='flex w-full justify-end gap-4 pr-6 pb-8'>
             <ShareButton onShare={handleShare} />
             <EventButton
               disabled={disableButton}
@@ -184,17 +184,17 @@ const EventPage = () => {
 
         {/* Full-screen Overlays */}
         {loading && (
-          <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur dark:bg-black/60'>
             <Dots size={4} />
           </div>
         )}
         {error && (
-          <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur dark:bg-black/60'>
             <ErrorMessage size={'xl'} content={error} />
           </div>
         )}
         {successMessage && (
-          <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
+          <div className='fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur dark:bg-black/60'>
             <p className='text-2xl font-bold'>{successMessage}</p>
           </div>
         )}
@@ -206,7 +206,7 @@ const EventPage = () => {
       )}
 
       {confirmLeave && (
-        <div className='fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
+        <div className='fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-white/60 backdrop-blur dark:bg-black/60'>
           <p className='text-2xl font-bold'>Are you sure?</p>
           <div className='flex gap-4'>
             <Button

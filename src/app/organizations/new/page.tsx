@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 
 const CreateOrganizationPage = async () => {
   return (
-    <div className='w-full flex flex-col items-center gap-8'>
-      <h1 className='text-2xl font-bold text-center'>Create New Organization</h1>
+    <div className='flex w-full flex-col items-center gap-8'>
+      <h1 className='text-center text-2xl font-bold'>Create New Organization</h1>
       <OrgForm />
     </div>
   );

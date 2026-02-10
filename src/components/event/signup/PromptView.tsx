@@ -69,18 +69,18 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
   }, [selectedAnswer, onAnswerChange]);
 
   return (
-    <div className='flex flex-col items-center gap-2 w-full'>
+    <div className='flex w-full flex-col items-center gap-2'>
       {/* Question text */}
       <div className='relative w-full'>
-        <div ref={textRef} className='max-h-48 overflow-y-auto w-full'>
-          <p className='text-lg md:text-2xl font-semibold text-center'>{prompt.text}</p>
+        <div ref={textRef} className='max-h-48 w-full overflow-y-auto'>
+          <p className='text-center text-lg font-semibold md:text-2xl'>{prompt.text}</p>
         </div>
 
         {/* Scroll indicator */}
         {isScrollable && !isAtBottom && (
-          <div className='absolute inset-x-0 bottom-0 flex justify-center items-end py-2 pointer-events-none'>
+          <div className='pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center py-2'>
             <svg
-              className='w-6 h-6 text-white bg-black/50 dark:bg-gray-500/50 rounded-full animate-bounce'
+              className='h-6 w-6 animate-bounce rounded-full bg-black/50 text-white dark:bg-gray-500/50'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -98,7 +98,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
 
       {/* Privacy notice */}
       {prompt.type !== 'notice' && (
-        <p className='text-sm text-gray-600 dark:text-gray-400 text-center max-w-md'>
+        <p className='max-w-md text-center text-sm text-gray-600 dark:text-gray-400'>
           {prompt.private
             ? 'Your answer will only be visible to event organizers.'
             : 'Your answer will be visible to everyone'}
@@ -111,16 +111,16 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       )}
 
       {/* Answer options */}
-      <div className='mt-1 w-full flex flex-col items-center gap-4'>
+      <div className='mt-1 flex w-full flex-col items-center gap-4'>
         {prompt.type === 'notice' ? (
-          <label className='flex items-center gap-2 cursor-pointer group'>
+          <label className='group flex cursor-pointer items-center gap-2'>
             <input
               type='checkbox'
               checked={selectedAnswer === true}
               onChange={(e) => setSelectedAnswer(e.target.checked ? true : null)}
-              className='w-4 h-4 cursor-pointer accent-purple-600'
+              className='h-4 w-4 cursor-pointer accent-purple-600'
             />
-            <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300'>
+            <span className='text-md font-medium text-gray-700 md:text-lg dark:text-gray-300'>
               Click to continue
             </span>
           </label>
@@ -128,28 +128,28 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
           <>
             {/* Yes/No radio buttons */}
             <div className='flex gap-8'>
-              <label className='flex items-center gap-3 cursor-pointer group'>
+              <label className='group flex cursor-pointer items-center gap-3'>
                 <input
                   type='radio'
                   name='answer'
                   checked={selectedAnswer === true}
                   onChange={() => setSelectedAnswer(true)}
-                  className='w-5 h-5 cursor-pointer accent-purple-600'
+                  className='h-5 w-5 cursor-pointer accent-purple-600'
                 />
-                <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-purple-600 md:text-lg dark:text-gray-300 dark:group-hover:text-purple-400'>
                   Yes
                 </span>
               </label>
 
-              <label className='flex items-center gap-3 cursor-pointer group'>
+              <label className='group flex cursor-pointer items-center gap-3'>
                 <input
                   type='radio'
                   name='answer'
                   checked={selectedAnswer === false}
                   onChange={() => setSelectedAnswer(false)}
-                  className='w-5 h-5 cursor-pointer accent-purple-600'
+                  className='h-5 w-5 cursor-pointer accent-purple-600'
                 />
-                <span className='text-md md:text-lg font-medium text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors'>
+                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-purple-600 md:text-lg dark:text-gray-300 dark:group-hover:text-purple-400'>
                   No
                 </span>
               </label>
@@ -162,7 +162,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       {selectedAnswer !== null && !prompt.required && prompt.type !== 'notice' && (
         <button
           onClick={() => setSelectedAnswer(null)}
-          className='mt-2 mb-[-16] text-sm text-purple-600 dark:text-purple-400 underline hover:cursor-pointer'
+          className='mt-2 mb-[-16] text-sm text-purple-600 underline hover:cursor-pointer dark:text-purple-400'
         >
           Clear answer
         </button>

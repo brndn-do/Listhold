@@ -15,9 +15,9 @@ const CreateEventPage = () => {
 
   if (!user) {
     return (
-      <div className='w-full flex flex-col items-center gap-4'>
+      <div className='flex w-full flex-col items-center gap-4'>
         <h1 className='text-2xl font-bold'>Create Event</h1>
-        <p className='text-gray-600 dark:text-gray-400 text-center max-w-md'>
+        <p className='max-w-md text-center text-gray-600 dark:text-gray-400'>
           Sign in to create an event
         </p>
         <Button onClick={signInWithGoogle} content='Sign In With Google' />
@@ -26,8 +26,8 @@ const CreateEventPage = () => {
   }
 
   return (
-    <div className='w-full flex flex-col items-center gap-8'>
-      <h1 className='text-2xl font-bold max-w-full text-center'>Create Event</h1>
+    <div className='flex w-full flex-col items-center gap-8'>
+      <h1 className='max-w-full text-center text-2xl font-bold'>Create Event</h1>
       <EventForm />
     </div>
   );

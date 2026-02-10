@@ -217,93 +217,93 @@ const EventForm = () => {
     >
       <div>
         {/* Name */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='name' className='flex gap-1 mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='name' className='mb-2.5 flex gap-1'>
             Event Name
             <div className='text-red-600 dark:text-red-400'>{'*'}</div>
           </label>
           <input
             {...register('name', { required: true })}
             placeholder='My Event'
-            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
             spellCheck={false}
             autoComplete='off'
           />
           {errors.name && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.name.message} />
             </div>
           )}
         </div>
 
         {/* Slug */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='slug' className='block mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='slug' className='mb-2.5 block'>
             A unique slug (optional, random if blank)
           </label>
           <input
             {...register('slug', { required: false })}
             placeholder='my-event-123'
-            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
             spellCheck={false}
             autoComplete='off'
           />
-          <p className='px-2 text-purple-600 dark:text-purple-400 mt-1'>{`listhold.com/events/${watch('slug') ? watch('slug') : '...'}`}</p>
+          <p className='mt-1 px-2 text-purple-600 dark:text-purple-400'>{`listhold.com/events/${watch('slug') ? watch('slug') : '...'}`}</p>
           {errors.slug && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.slug.message} />
             </div>
           )}
         </div>
 
         {/* Location */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='location' className='flex gap-1 mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='location' className='mb-2.5 flex gap-1'>
             Location
             <div className='text-red-600 dark:text-red-400'>{'*'}</div>
           </label>
           <input
             {...register('location', { required: true })}
             placeholder='123 Example St'
-            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
             spellCheck={false}
             autoComplete='off'
           />
           {errors.location && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.location.message} />
             </div>
           )}
         </div>
 
         {/* Start Date & Time */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label className='flex gap-1 mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label className='mb-2.5 flex gap-1'>
             Start Date & Time <div className='text-red-600 dark:text-red-400'>{'*'}</div>
           </label>
           <div className='flex gap-2'>
-            <div className='flex-1 min-w-0'>
+            <div className='min-w-0 flex-1'>
               <input
                 type='date'
                 {...register('startDate', { required: true })}
-                className=' min-w-0 w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+                className='w-full min-w-0 rounded-lg border px-3 py-2 dark:border-gray-500'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startDate && (
-                <div className='w-full px-2 mt-1'>
+                <div className='mt-1 w-full px-2'>
                   <ErrorMessage size='sm' justify='start' content={errors.startDate.message} />
                 </div>
               )}
             </div>
-            <div className='flex-1 min-w-0'>
+            <div className='min-w-0 flex-1'>
               <input
                 type='time'
                 {...register('startTime', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
+                className='w-full min-w-0 rounded-lg border px-3 py-2 dark:border-gray-500'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.startTime && (
-                <div className='w-full px-2 mt-1'>
+                <div className='mt-1 w-full px-2'>
                   <ErrorMessage size='sm' justify='start' content={errors.startTime.message} />
                 </div>
               )}
@@ -312,107 +312,107 @@ const EventForm = () => {
         </div>
 
         {/* End Date & Time */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label className='flex gap-1 mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label className='mb-2.5 flex gap-1'>
             End Date & Time <div className='text-red-600 dark:text-red-400'>{'*'}</div>
           </label>
           <div className='flex gap-2'>
-            <div className='flex-1 min-w-0'>
+            <div className='min-w-0 flex-1'>
               <input
                 type='date'
                 {...register('endDate', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
+                className='w-full min-w-0 rounded-lg border px-3 py-2 dark:border-gray-500'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endDate && (
-                <div className='w-full px-2 mt-1'>
+                <div className='mt-1 w-full px-2'>
                   <ErrorMessage size='sm' justify='start' content={errors.endDate.message} />
                 </div>
               )}
             </div>
-            <div className='flex-1 min-w-0'>
+            <div className='min-w-0 flex-1'>
               <input
                 type='time'
                 {...register('endTime', { required: true })}
-                className='w-full min-w-0 border dark:border-gray-500 rounded-lg px-3 py-2'
+                className='w-full min-w-0 rounded-lg border px-3 py-2 dark:border-gray-500'
                 style={{ WebkitAppearance: 'none' }}
               />
               {errors.endTime && (
-                <div className='w-full px-2 mt-1'>
+                <div className='mt-1 w-full px-2'>
                   <ErrorMessage size='sm' justify='start' content={errors.endTime.message} />
                 </div>
               )}
             </div>
           </div>
           {customError && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={customError} />
             </div>
           )}
         </div>
 
         {/* Capacity */}
-        <div className='relative z-0 w-full mb-3 group '>
-          <label htmlFor='capacity' className='flex gap-1 mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='capacity' className='mb-2.5 flex gap-1'>
             Capacity <div className='text-red-600 dark:text-red-400'>{'*'}</div>
           </label>
           <input
             type='number'
             {...register('capacity', { required: true })}
             placeholder='20'
-            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
             spellCheck={false}
             autoComplete='off'
           />
-          <p className='text-sm text-gray-600 dark:text-gray-400 mt-2 px-2'>
+          <p className='mt-2 px-2 text-sm text-gray-600 dark:text-gray-400'>
             The maximum number of confirmed attendees. Once full, users will be able to join a
             waitlist. If a confirmed attendee leaves the event while there is a waitlist, the next
             person on the waitlist is automatically confirmed, and an email will be sent to them.
           </p>
           {errors.capacity && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.capacity.message} />
             </div>
           )}
         </div>
 
         {/* Description */}
-        <div className='relative z-0 w-full mb-3 group'>
-          <label htmlFor='description' className='block mb-2.5'>
+        <div className='group relative z-0 mb-3 w-full'>
+          <label htmlFor='description' className='mb-2.5 block'>
             Description (optional)
           </label>
           <textarea
             {...register('description', { required: false })}
             placeholder='Event description...'
-            className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+            className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
             rows={4}
             spellCheck={false}
             autoComplete='off'
           />
           {errors.description && (
-            <div className='w-full px-2 mt-1'>
+            <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.description.message} />
             </div>
           )}
         </div>
 
         {/* Prompts Section */}
-        <div className='mt-3 pt-3 border-t border-gray-300'>
+        <div className='mt-3 border-t border-gray-300 pt-3'>
           <h3 className='mb-2'>Signup Prompts (Optional)</h3>
-          <p className='text-sm text-gray-600 dark:text-gray-400 mb-4'>
+          <p className='mb-4 text-sm text-gray-600 dark:text-gray-400'>
             Add custom questions or notices for attendees when they sign up.
           </p>
 
           {fields.length > 0 && (
-            <div className='space-y-4 mb-2'>
+            <div className='mb-2 space-y-4'>
               {fields.map((field, index) => (
-                <div key={field.id} className='p-4 border dark:border-gray-500 rounded-lg'>
-                  <div className='flex justify-between items-center mb-3'>
+                <div key={field.id} className='rounded-lg border p-4 dark:border-gray-500'>
+                  <div className='mb-3 flex items-center justify-between'>
                     <h4 className='font-medium'>Prompt {index + 1}</h4>
                     <button
                       type='button'
                       onClick={() => remove(index)}
-                      className='text-red-600 dark:text-red-400 hover:cursor-pointer'
+                      className='text-red-600 hover:cursor-pointer dark:text-red-400'
                     >
                       Remove
                     </button>
@@ -420,16 +420,16 @@ const EventForm = () => {
 
                   {/* Prompt Type */}
                   <div className='mb-2'>
-                    <label className='block mb-2'>Type</label>
+                    <label className='mb-2 block'>Type</label>
                     <select
                       {...register(`prompts.${index}.promptType`)}
-                      className='w-full border dark:border-gray-500 rounded-lg px-3 py-2 bg-background text-foreground'
+                      className='bg-background text-foreground w-full rounded-lg border px-3 py-2 dark:border-gray-500'
                     >
                       <option value='yes/no'>Yes/No Question</option>
                       <option value='notice'>Notice (users must acknowledge)</option>
                     </select>
                     {errors.prompts?.[index]?.promptType && (
-                      <div className='w-full px-2 mt-1'>
+                      <div className='mt-1 w-full px-2'>
                         <ErrorMessage
                           size='xs'
                           justify='start'
@@ -441,7 +441,7 @@ const EventForm = () => {
 
                   {/* Prompt Text */}
                   <div className='mb-4'>
-                    <label className='block mb-2'>Text</label>
+                    <label className='mb-2 block'>Text</label>
                     <textarea
                       {...register(`prompts.${index}.promptText`)}
                       placeholder={
@@ -449,13 +449,13 @@ const EventForm = () => {
                           ? 'e.g., By continuing, you agree to the community guidelines.'
                           : 'e.g., Will you need parking?'
                       }
-                      className='w-full border dark:border-gray-500 rounded-lg px-3 py-2'
+                      className='w-full rounded-lg border px-3 py-2 dark:border-gray-500'
                       rows={4}
                       spellCheck={false}
                       autoComplete='off'
                     />
                     {errors.prompts?.[index]?.promptText && (
-                      <div className='w-full px-2 mt-1'>
+                      <div className='mt-1 w-full px-2'>
                         <ErrorMessage
                           size='xs'
                           justify='start'
@@ -468,19 +468,19 @@ const EventForm = () => {
                   {/* Checkboxes */}
                   {watch(`prompts.${index}.promptType`) !== 'notice' && (
                     <div className='flex gap-4'>
-                      <label className='flex items-center gap-2 cursor-pointer'>
+                      <label className='flex cursor-pointer items-center gap-2'>
                         <input
                           type='checkbox'
                           {...register(`prompts.${index}.isRequired`)}
-                          className='w-4 h-4 cursor-pointer'
+                          className='h-4 w-4 cursor-pointer'
                         />
                         <span className='text-sm'>Required</span>
                       </label>
-                      <label className='flex items-center gap-2 cursor-pointer'>
+                      <label className='flex cursor-pointer items-center gap-2'>
                         <input
                           type='checkbox'
                           {...register(`prompts.${index}.isPrivate`)}
-                          className='w-4 h-4 cursor-pointer'
+                          className='h-4 w-4 cursor-pointer'
                         />
                         <span className='text-sm'>
                           Private (only you and admins can see responses)
@@ -503,14 +503,14 @@ const EventForm = () => {
             <button
               type='button'
               onClick={addPrompt}
-              className='text-purple-700 dark:text-purple-500 hover:cursor-pointer'
+              className='text-purple-700 hover:cursor-pointer dark:text-purple-500'
             >
               + Add Prompt
             </button>
           </div>
         </div>
       </div>
-      <div className='flex max-w-full justify-end mt-4'>
+      <div className='mt-4 flex max-w-full justify-end'>
         {createError && <p className='text-red-600'>{createError}</p>}
         {!createError && (
           <Button

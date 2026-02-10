@@ -7,4 +7,5 @@ export default {
   tabWidth: 2,
   bracketSpacing: true,
   arrowParens: 'always',
+  plugins: ['prettier-plugin-tailwindcss'],
 };

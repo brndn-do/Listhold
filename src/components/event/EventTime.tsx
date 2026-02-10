@@ -18,14 +18,14 @@ const EventTime = ({ start, end }: EventTimeProps) => {
 
   if (!mounted) {
     return (
-      <div className='pl-1 pt-1'>
+      <div className='pt-1 pl-1'>
         <Dots size={1} />
       </div>
     );
   }
 
   return (
-    <div className='w-full flex items-center pt-1'>
+    <div className='flex w-full items-center pt-1'>
       <p>{`${formatEventTiming(start, end)}`}</p>
     </div>
   );

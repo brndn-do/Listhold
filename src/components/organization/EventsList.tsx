@@ -18,8 +18,8 @@ const EventsList = ({ events }: EventsListProps) => {
   }
 
   return (
-    <div className='flex flex-col gap-4 items-center'>
-      <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+    <div className='flex flex-col items-center gap-4'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
         {events.map((event) => (
           <Link
             href={`/events/${encodeURI(event.slug)}`}
@@ -28,11 +28,11 @@ const EventsList = ({ events }: EventsListProps) => {
           >
             <div className='flex flex-col gap-1'>
               <h2 className='text-md text-center font-bold'>{event.name}</h2>
-              <p className='text-xs text-center'>{`📅 ${formatDate(event.start).formattedDate}`}</p>
-              <p className='text-xs text-center'>{`📍 ${event.location}`}</p>
+              <p className='text-center text-xs'>{`📅 ${formatDate(event.start).formattedDate}`}</p>
+              <p className='text-center text-xs'>{`📍 ${event.location}`}</p>
             </div>
 
-            <p className='md:hidden mt-auto self-end text-center text-xs font-medium text-purple-600 dark:text-purple-400'>
+            <p className='mt-auto self-end text-center text-xs font-medium text-purple-600 md:hidden dark:text-purple-400'>
               Tap to view →
             </p>
           </Link>

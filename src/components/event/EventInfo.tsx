@@ -10,20 +10,20 @@ const EventInfo = () => {
 
   return (
     <div className='w-full lg:max-w-[50%]'>
-      <div className='flex flex-col gap-2 pb-2 px-2'>
+      <div className='flex flex-col gap-2 px-2 pb-2'>
         {/* Header Section */}
         <div>
-          <h1 className='text-4xl md:text-5xl xl:text-6xl text-gray-800 dark:text-foreground font-bold mb-2'>
+          <h1 className='dark:text-foreground mb-2 text-4xl font-bold text-gray-800 md:text-5xl xl:text-6xl'>
             {name}
           </h1>
           {orgSlug && (
             <div className='flex'>
               <Link
                 href={`/organizations/${orgSlug}`}
-                className='inline-flex items-center gap-1 font-semibold text-purple-600 dark:text-purple-400 hover:translate-y-[-2px] transition-all duration-300'
+                className='inline-flex items-center gap-1 font-semibold text-purple-600 transition-all duration-300 hover:translate-y-[-2px] dark:text-purple-400'
               >
                 <span className='underline'>{orgName}</span>
-                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
@@ -40,7 +40,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2 text-gray-800 dark:text-gray-300'>
             <svg
-              className='w-5 h-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
+              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -60,7 +60,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2 text-gray-800 dark:text-gray-300'>
             <svg
-              className='w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0'
+              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -86,7 +86,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2'>
             <svg
-              className='w-5 h-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
+              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'

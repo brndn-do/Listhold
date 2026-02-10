@@ -38,7 +38,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   ) => {
     if (listLoading) {
       return (
-        <div className='w-full flex justify-center mt-16'>
+        <div className='mt-16 flex w-full justify-center'>
           <Dots size={3} />
         </div>
       );
@@ -46,7 +46,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
     if (list?.length === 0) {
       return (
-        <div className='w-full flex justify-center mt-16'>
+        <div className='mt-16 flex w-full justify-center'>
           <p className='font-bold'>No one yet...</p>
         </div>
       );
@@ -56,7 +56,7 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
       <>
         <ol
           ref={listRef}
-          className='flex-1 flex flex-col items-center w-full overflow-y-auto gap-1'
+          className='flex w-full flex-1 flex-col items-center gap-1 overflow-y-auto'
         >
           {list.map((signup, idx) => (
             <ListItem signup={signup} idx={idx} isWaitlist={isWaitlist} key={signup.id} />
@@ -64,9 +64,9 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
         </ol>
         {/* Down arrow indicator, conditionally rendered if the list is scrollable and not at bottom*/}
         {isScrollable && !isAtBottom && (
-          <div className='absolute inset-0 flex flex-col justify-end items-center z-5 pb-4 pointer-events-none'>
+          <div className='pointer-events-none absolute inset-0 z-5 flex flex-col items-center justify-end pb-4'>
             <svg
-              className='w-6 h-6 text-white bg-black/50 dark:bg-gray-500/50 rounded-full animate-bounce scale-125'
+              className='h-6 w-6 scale-125 animate-bounce rounded-full bg-black/50 text-white dark:bg-gray-500/50'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -85,15 +85,15 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
   };
 
   return (
-    <div className='relative flex flex-col items-center w-full h-[60vh] border-1 border-gray-500 rounded-2xl py-2 px-1'>
+    <div className='relative flex h-[60vh] w-full flex-col items-center rounded-2xl border-1 border-gray-500 px-1 py-2'>
       {/* Confirmed List */}
       <div
-        className={`absolute inset-0 flex flex-col items-center py-2 px-1 transition-opacity duration-200 ${
+        className={`absolute inset-0 flex flex-col items-center px-1 py-2 transition-opacity duration-200 ${
           !viewingWaitlist
             ? disconnected
-              ? 'opacity-30 z-10'
-              : 'opacity-100 z-10'
-            : 'opacity-0 z-0'
+              ? 'z-10 opacity-30'
+              : 'z-10 opacity-100'
+            : 'z-0 opacity-0'
         }`}
       >
         {renderList(
@@ -107,12 +107,12 @@ const EventList = ({ viewingWaitlist }: EventListProps) => {
 
       {/* Waitlist */}
       <div
-        className={`absolute inset-0 flex flex-col items-center py-2 px-1 transition-opacity duration-200 ${
+        className={`absolute inset-0 flex flex-col items-center px-1 py-2 transition-opacity duration-200 ${
           viewingWaitlist
             ? disconnected
-              ? 'opacity-30 z-10'
-              : 'opacity-100 z-10'
-            : 'opacity-0 z-0'
+              ? 'z-10 opacity-30'
+              : 'z-10 opacity-100'
+            : 'z-0 opacity-0'
         }`}
       >
         {renderList(waitlist, waitlistRef, true, isWaitlistScrollable, isWaitlistAtBottom)}

@@ -20,7 +20,7 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
   const content = () => {
     if (listLoading) {
       return (
-        <div className='pl-1 pt-1'>
+        <div className='pt-1 pl-1'>
           <Dots size={1} />
         </div>
       );
@@ -37,7 +37,7 @@ const SpotsCounter = ({ capacity }: SpotsCounterProps) => {
     );
   };
 
-  return <div className='h-4 flex items-center'>{content()}</div>;
+  return <div className='flex h-4 items-center'>{content()}</div>;
 };
 
 export default SpotsCounter;

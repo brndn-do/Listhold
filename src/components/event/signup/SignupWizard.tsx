@@ -57,18 +57,18 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
     <div
       role='dialog'
       aria-modal='true'
-      className={`fixed inset-0 bg-white/60 dark:bg-black/60 backdrop-blur flex items-center justify-center z-50 p-4 transition-opacity duration-200 ease-in ${
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-white/60 p-4 backdrop-blur transition-opacity duration-200 ease-in dark:bg-black/60 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
       <div
-        className={`w-full max-w-2xl p-8 bg-gray-200/50 dark:bg-background/70 rounded-4xl transition-all duration-200 ease-in ${
+        className={`dark:bg-background/70 w-full max-w-2xl rounded-4xl bg-gray-200/50 p-8 transition-all duration-200 ease-in ${
           isVisible ? 'scale-100 opacity-100' : 'scale-25 opacity-0'
         }`}
       >
         {/* Progress indicator */}
         <div className='mb-6'>
-          <div className='flex justify-between text-sm text-gray-800 dark:text-gray-400 mb-4'>
+          <div className='mb-4 flex justify-between text-sm text-gray-800 dark:text-gray-400'>
             <span>
               {curIndex + 1} of {prompts.length}
             </span>
@@ -79,14 +79,14 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
                   handleCancel();
                 }, 300);
               }}
-              className='text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:cursor-pointer'
+              className='text-gray-500 hover:cursor-pointer hover:text-gray-700 dark:hover:text-gray-300'
             >
               Cancel
             </button>
           </div>
-          <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
+          <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
             <div
-              className='bg-purple-600 h-2 rounded-full transition-all duration-300'
+              className='h-2 rounded-full bg-purple-600 transition-all duration-300'
               style={{ width: `${((curIndex + 1) / prompts.length) * 100}%` }}
             />
           </div>
@@ -101,18 +101,18 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
         />
 
         {/* Navigation buttons */}
-        <div className='flex justify-between mt-8'>
+        <div className='mt-8 flex justify-between'>
           <button
             onClick={handleBack}
             disabled={curIndex === 0}
-            className='px-6 py-2 font-bold text-purple-600 dark:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
+            className='px-6 py-2 font-bold text-purple-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-purple-400'
           >
             ← Back
           </button>
           <button
             onClick={handleNext}
             disabled={prompts[curIndex].required && currentAnswer === null}
-            className='px-6 py-2 font-bold text-purple-600 dark:text-purple-400 disabled:opacity-30 disabled:cursor-not-allowed hover:cursor-pointer transition-colors'
+            className='px-6 py-2 font-bold text-purple-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-purple-400'
           >
             {curIndex === prompts.length - 1 ? 'Submit' : 'Next'} →
           </button>

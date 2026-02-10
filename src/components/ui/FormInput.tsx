@@ -31,15 +31,15 @@ const FormInput = ({
 }: FormInputProps) => {
   const { register } = useForm();
   return (
-    <div className='relative z-0 w-full mb-5 group'>
-      <label htmlFor={id} className='block mb-2.5 text-sm font-medium text-heading'>
+    <div className='group relative z-0 mb-5 w-full'>
+      <label htmlFor={id} className='text-heading mb-2.5 block text-sm font-medium'>
         {label}
       </label>
       <input
         type={type}
         {...register(id, { required })}
         placeholder={placeholder}
-        className='border border-gray-500 text-heading text-sm rounded-lg focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body'
+        className='text-heading focus:ring-brand focus:border-brand placeholder:text-body block w-full rounded-lg border border-gray-500 px-3 py-2 text-sm shadow-xs'
         spellCheck={spellCheck}
         autoComplete={autoComplete ? 'on' : 'off'}
       />

@@ -98,9 +98,9 @@ const ProfilePage = () => {
 
   if (!user) {
     return (
-      <div className='flex flex-col gap-4 items-center pt-20'>
+      <div className='flex flex-col items-center gap-4 pt-20'>
         <h1 className='text-xl font-bold'>Sign in to view your profile.</h1>
-        <Link href='/' className='text-purple-600 dark:text-purple-400 underline'>
+        <Link href='/' className='text-purple-600 underline dark:text-purple-400'>
           Back to Home
         </Link>
       </div>
@@ -108,11 +108,11 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className='w-full max-w-md flex flex-col items-center'>
-      <h1 className='text-2xl font-bold mb-6'>Edit Profile</h1>
+    <div className='flex w-full max-w-md flex-col items-center'>
+      <h1 className='mb-6 text-2xl font-bold'>Edit Profile</h1>
 
-      <div className='w-full rounded-2xl p-6 border-2 border-purple-700 dark:border-purple-600'>
-        <div className='flex flex-col items-center mb-8'>
+      <div className='w-full rounded-2xl border-2 border-purple-700 p-6 dark:border-purple-600'>
+        <div className='mb-8 flex flex-col items-center'>
           <div className='relative mb-4'>
             <Avatar
               src={user.avatarURL}
@@ -138,14 +138,14 @@ const ProfilePage = () => {
             <input
               id='displayName'
               {...register('displayName')}
-              className='w-full border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 bg-transparent focus:ring-2 focus:ring-purple-600 focus:border-transparent outline-none transition-all'
+              className='w-full rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-purple-600 dark:border-gray-700'
               placeholder='Your Name'
               autoComplete='name'
             />
             {errors.displayName && <ErrorMessage size='sm' content={errors.displayName.message} />}
           </div>
 
-          <div className='mb-4 px-4 h-4 flex items-center justify-end gap-4'>
+          <div className='mb-4 flex h-4 items-center justify-end gap-4 px-4'>
             {!saveSuccess && !saveError && (
               <Button
                 type='submit'

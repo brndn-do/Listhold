@@ -53,7 +53,7 @@ const Auth = () => {
   };
 
   return (
-    <div className='flex items-center gap-4 h-8 relative' ref={dropdownRef}>
+    <div className='relative flex h-8 items-center gap-4' ref={dropdownRef}>
       {!user && !error && (
         <Button onClick={handleSignIn} content={'Sign in with Google'} disabled={loading} />
       )}
@@ -62,7 +62,7 @@ const Auth = () => {
         <>
           <div
             onClick={() => setIsOpen(!isOpen)}
-            className='relative cursor-pointer hover:opacity-70 transition-opacity'
+            className='relative cursor-pointer transition-opacity hover:opacity-70'
             role='button'
           >
             <Avatar
@@ -71,17 +71,17 @@ const Auth = () => {
               size={32}
               className='h-10 w-10 border-2'
             />
-            <div className='absolute -bottom-1 -right-1.5 bg-gray-100 border border-purple-700 dark:border-0 rounded-full'>
-              <ChevronDown className='w-5 h-5 text-purple-700' strokeWidth={2} />
+            <div className='absolute -right-1.5 -bottom-1 rounded-full border border-purple-700 bg-gray-100 dark:border-0'>
+              <ChevronDown className='h-5 w-5 text-purple-700' strokeWidth={2} />
             </div>
           </div>
 
           {isOpen && (
-            <div className='absolute top-12 right-0 w-48 rounded-xl bg-background border-2 border-gray-200 dark:border-gray-700 py-1 overflow-hidden z-50 flex flex-col'>
+            <div className='bg-background absolute top-12 right-0 z-50 flex w-48 flex-col overflow-hidden rounded-xl border-2 border-gray-200 py-1 dark:border-gray-700'>
               {pathname != '/profile' && (
                 <Link
                   href='/profile'
-                  className='px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border-b border-gray-200 dark:border-gray-800 transition-colors text-left'
+                  className='border-b border-gray-200 px-4 py-2.5 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-800 dark:text-gray-200 dark:hover:bg-gray-800'
                   onClick={() => setIsOpen(false)}
                 >
                   Edit Profile
@@ -93,7 +93,7 @@ const Auth = () => {
                   handleSignOut();
                 }}
                 disabled={loading}
-                className='px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left w-full hover:cursor-pointer'
+                className='w-full px-4 py-2.5 text-left text-sm text-red-600 transition-colors hover:cursor-pointer hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
               >
                 Sign out
               </button>

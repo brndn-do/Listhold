@@ -20,15 +20,15 @@ export interface OrgPageProps {
 
 const OrgPage = ({ name, description, events }: OrgPageProps) => {
   return (
-    <div className='w-full flex flex-col gap-4 items-center'>
-      <div className='flex flex-col gap-1 items-center'>
-        <h1 className='text-3xl text-center font-bold'>{name}</h1>
+    <div className='flex w-full flex-col items-center gap-4'>
+      <div className='flex flex-col items-center gap-1'>
+        <h1 className='text-center text-3xl font-bold'>{name}</h1>
         {description && <p className='text-md text-center'>{description}</p>}
       </div>
 
       <Line />
 
-      <div className='flex flex-col gap-2 items-center'>
+      <div className='flex flex-col items-center gap-2'>
         <h1 className='text-xl font-bold'>Upcoming Events:</h1>
         <EventsList events={events} />
       </div>

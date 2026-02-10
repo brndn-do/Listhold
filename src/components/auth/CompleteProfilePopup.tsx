@@ -38,8 +38,8 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   };
 
   return (
-    <div className='p-4 fixed z-100 w-full h-full flex items-center justify-center dark:border-purple-600 bg-white/60 dark:bg-black/60 backdrop-blur rounded-xl'>
-      <div className='p-8 w-full max-w-md flex flex-col bg-gray-200/50 dark:bg-background/70 rounded-4xl'>
+    <div className='fixed z-100 flex h-full w-full items-center justify-center rounded-xl bg-white/60 p-4 backdrop-blur dark:border-purple-600 dark:bg-black/60'>
+      <div className='dark:bg-background/70 flex w-full max-w-md flex-col rounded-4xl bg-gray-200/50 p-8'>
         <div className='mb-3 flex flex-col items-center gap-4'>
           <Avatar
             src={user.avatarURL}
@@ -56,16 +56,16 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
           Does this profile information look okay?
         </h3>
 
-        <div className='mx-auto w-[90%] flex gap-4 flex-col items-center'>
-          <div className='w-full mb-2 flex flex-col gap-4'>
+        <div className='mx-auto flex w-[90%] flex-col items-center gap-4'>
+          <div className='mb-2 flex w-full flex-col gap-4'>
             <Button
               content={
                 loading ? (
-                  <div className='py-1 w-full inline-flex justify-center'>
+                  <div className='inline-flex w-full justify-center py-1'>
                     <Spinner />
                   </div>
                 ) : (
-                  <div className='py-1 w-full justify-center'>Yes, continue</div>
+                  <div className='w-full justify-center py-1'>Yes, continue</div>
                 )
               }
               onClick={markProfileCompleted}
@@ -73,7 +73,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
               semibold={true}
             />
             <Button
-              content={<div className='py-1 w-full justify-center'>No, edit my profile</div>}
+              content={<div className='w-full justify-center py-1'>No, edit my profile</div>}
               inverted={true}
               semibold={true}
               onClick={() => {
@@ -83,7 +83,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             />
           </div>
           <button
-            className='text-sm underline text-gray-600 dark:text-gray-400 hover:cursor-pointer'
+            className='text-sm text-gray-600 underline hover:cursor-pointer dark:text-gray-400'
             onClick={onClose}
           >
             Remind me later
