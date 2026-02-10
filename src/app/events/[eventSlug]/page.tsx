@@ -45,7 +45,7 @@ const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => 
       </EventProvider>
     );
   } catch (err: unknown) {
-    return <ErrorMessage />;
+    return <ErrorMessage content='An unexpected error occurred. Please try again.' />;
   }
 };
 

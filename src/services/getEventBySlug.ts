@@ -9,7 +9,7 @@ import { cache } from 'react';
 const getCachedEvent = (slug: string) =>
   unstable_cache(
     async () => {
-      return await supabaseAdmin
+      const { data, error } = await supabaseAdmin
         .from('events')
         .select(
           `
@@ -22,6 +22,12 @@ const getCachedEvent = (slug: string) =>
         .eq('slug', slug)
         .order('display_order', { referencedTable: 'prompts', ascending: true })
         .maybeSingle();
+
+      if (error) {
+        throw new Error(`Failed to fetch event ${slug}`);
+      }
+
+      return data;
     },
     ['event-details', slug],
     {
@@ -43,9 +49,8 @@ const getCachedEvent = (slug: string) =>
  */
 export const getEventBySlug = cache(
   async (slug: string): Promise<Omit<EventProviderProps, 'children'> | null> => {
-    const { data, error } = await getCachedEvent(slug);
-
-    if (error || !data) return null;
+    const data = await getCachedEvent(slug);
+    if (!data) return null;
 
     return {
       eventId: data.id,
