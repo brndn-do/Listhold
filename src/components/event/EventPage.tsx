@@ -3,32 +3,47 @@
 import EventInfo from './EventInfo';
 import { useAuth } from '@/context/AuthProvider';
 import { useEvent } from '@/context/EventProvider';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import EventList from '@/components/event/list/EventList';
 import EventButton from '@/components/event/EventButton';
-import SignupFlow from '@/components/event/signup/SignupFlow';
+import SignupFlow from '@/components/event/signup/SignupWizard';
 import { addUserToEvent } from '@/services/addUserToEvent';
 import { removeUserFromEvent } from '@/services/removeUserFromEvent';
 import Dots from '@/components/ui/Dots';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import Button from '@/components/ui/Button';
+import ShareButton from '@/components/event/ShareButton';
+import ShareFeedbackMessage from '@/components/event/ShareFeedbackMessage';
 
-const COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
-const ERROR_TIME = 5000; // how long to display error before allowing retries
+const SUCCESS_COOLDOWN_TIME = 2500; // how long to disable button after successful join/leave
+const ERROR_COOLDOWN_TIME = 5000; // how long to display error before allowing retries
 
 const EventPage = () => {
   const { user } = useAuth();
+
   const { eventId, listLoading, fetchError, disconnected, realtimeConnected, refreshList } =
     useEvent();
-  const userId = user?.uid;
 
-  const [responseMessage, setResponseMessage] = useState<string | null>(null);
-  const [requestLoading, setRequestLoading] = useState(false); // whether the request to join/leave is loading
-  const [requestError, setRequestError] = useState<string | null>(null); // whether the request to join/leave errored
+  // whether we are polling or not (if there's an issue with realtime, we are polling)
+  const polling = !realtimeConnected;
+
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false); // whether the request to join/leave is loading
+  const [error, setError] = useState<string | null>(null); // whether the request to join/leave errored
   const [viewingWaitlist, setViewingWaitlist] = useState(false); // is the user viewing waitlist or the main list?
-  const [showFlow, setShowFlow] = useState(false); // whether to display the sign-up wizard/flow
-  const [shareMessage, setShareMessage] = useState<string | null>(null);
+  const [showWizard, setShowWizard] = useState(false); // whether to display the sign-up wizard
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const [shareMessage, setShareMessage] = useState<string | null>(null);
+
+  const disableButton = !!(
+    listLoading ||
+    fetchError ||
+    disconnected ||
+    successMessage ||
+    loading ||
+    error ||
+    showWizard
+  );
 
   const handleShare = async () => {
     await navigator.clipboard.writeText(window.location.href);
@@ -38,91 +53,64 @@ const EventPage = () => {
     }, 2000);
   };
 
-  const disableButton = useMemo(() => {
-    if (
-      listLoading ||
-      fetchError ||
-      disconnected ||
-      responseMessage ||
-      requestLoading ||
-      requestError ||
-      showFlow
-    ) {
-      return true;
-    }
-    return false;
-  }, [
-    listLoading,
-    fetchError,
-    disconnected,
-    responseMessage,
-    requestLoading,
-    requestError,
-    showFlow,
-  ]);
-
-  const handleFlowOpen = () => {
-    setShowFlow(true);
+  const displaySuccessWithTimeout = async (message: string) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, SUCCESS_COOLDOWN_TIME);
   };
 
-  const handleSubmit = (answers: Record<string, boolean | null>) => {
-    setShowFlow(false);
-    handleSignup(answers);
+  const displayErrorWithTimeout = async (message: string) => {
+    setError(message);
+    setTimeout(() => {
+      setError(null);
+    }, ERROR_COOLDOWN_TIME);
   };
 
-  const handleCancel = () => {
-    setShowFlow(false);
+  const displayLoading = () => {
+    setLoading(true);
+    setConfirmLeave(false);
+    setShowWizard(false);
+    setSuccessMessage(null);
+    setError(null);
   };
 
   const handleSignup = async (answers: Record<string, boolean | null>) => {
-    if (!eventId || !userId) {
-      return;
-    }
-    setRequestLoading(true);
+    if (!user?.uid) return;
+    displayLoading();
     try {
-      const res = await addUserToEvent(eventId, userId, answers);
-      if (!realtimeConnected) {
-        // refresh list to reflect changes
+      const res = await addUserToEvent(eventId, user.uid, answers);
+      if (polling) {
+        // refresh immediately to reflect changes
         refreshList();
       }
       // set a cooldown to make sure users can't spam
-      setResponseMessage(res === 'confirmed' ? 'You joined the list!' : 'You joined the waitlist!');
-      setTimeout(() => {
-        setResponseMessage(null);
-      }, COOLDOWN_TIME);
+      displaySuccessWithTimeout(
+        res === 'confirmed' ? 'You joined the list!' : 'You joined the waitlist!',
+      );
     } catch (err: unknown) {
-      setRequestError('An unexpected error occured. Try again in a bit.');
-      setTimeout(() => {
-        setRequestError(null);
-      }, ERROR_TIME);
+      displayErrorWithTimeout('An unexpected error occured. Try again in a bit.');
     } finally {
-      setRequestLoading(false);
+      setLoading(false);
     }
   };
 
   const handleLeave = async () => {
-    if (!eventId || !userId) {
-      return;
-    }
-    setRequestLoading(true);
+    if (!user?.uid) return;
+    displayLoading();
     try {
-      const res = await removeUserFromEvent(eventId, userId);
-      if (!realtimeConnected) {
-        // refresh list to reflect changes
+      const res = await removeUserFromEvent(eventId, user.uid);
+      if (polling) {
+        // refresh immediately to reflect changes
         refreshList();
       }
-      // set a cooldown to make sure users can't spam
-      setResponseMessage(res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.');
-      setTimeout(() => {
-        setResponseMessage(null);
-      }, COOLDOWN_TIME);
+      displaySuccessWithTimeout(
+        res === 'confirmed' ? 'You left the list.' : 'You left the waitlist.',
+      );
     } catch (err: unknown) {
-      setRequestError('An unexpected error occured. Try again in a bit.');
-      setTimeout(() => {
-        setRequestError(null);
-      }, ERROR_TIME);
+      displayErrorWithTimeout('An unexpected error occured. Try again in a bit.');
     } finally {
-      setRequestLoading(false);
+      setLoading(false);
     }
   };
 
@@ -169,24 +157,10 @@ const EventPage = () => {
 
         {/* Desktop Action Button */}
         <div className='hidden lg:flex w-full gap-4 justify-end pr-6'>
-          <Button
-            onClick={handleShare}
-            content={
-              <div className='flex gap-2'>
-                <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
-                  />
-                </svg>
-              </div>
-            }
-          />
+          <ShareButton onShare={handleShare} />
           <EventButton
             disabled={disableButton}
-            handleFlowOpen={handleFlowOpen}
+            handleFlowOpen={() => setShowWizard(true)}
             handleSignup={handleSignup}
             handleLeave={() => setConfirmLeave(true)}
           />
@@ -195,24 +169,10 @@ const EventPage = () => {
         {/* Mobile fixed action button */}
         <div className='w-full fixed bottom-0 lg:hidden z-50'>
           <div className='w-full flex gap-4 justify-end pb-8 pr-6'>
-            <Button
-              onClick={handleShare}
-              content={
-                <div className='flex gap-2'>
-                  <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth={2}
-                      d='M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1'
-                    />
-                  </svg>
-                </div>
-              }
-            />
+            <ShareButton onShare={handleShare} />
             <EventButton
               disabled={disableButton}
-              handleFlowOpen={handleFlowOpen}
+              handleFlowOpen={() => setShowWizard(true)}
               handleSignup={handleSignup}
               handleLeave={() => setConfirmLeave(true)}
             />
@@ -220,32 +180,30 @@ const EventPage = () => {
         </div>
 
         {/* Share feedback message */}
-        {shareMessage && (
-          <div className='fixed bottom-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-lg shadow-lg text-sm'>
-            {shareMessage}
-          </div>
-        )}
+        <ShareFeedbackMessage message={shareMessage} />
 
         {/* Full-screen Overlays */}
-        {requestLoading && (
+        {loading && (
           <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
             <Dots size={4} />
           </div>
         )}
-        {requestError && (
+        {error && (
           <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
-            <ErrorMessage size={'xl'} content={requestError} />
+            <ErrorMessage size={'xl'} content={error} />
           </div>
         )}
-        {responseMessage && (
+        {successMessage && (
           <div className='fixed inset-0 flex items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>
-            <p className='text-2xl font-bold'>{responseMessage}</p>
+            <p className='text-2xl font-bold'>{successMessage}</p>
           </div>
         )}
       </div>
 
       {/* Dialog for sign-up flow */}
-      {showFlow && <SignupFlow handleSubmit={handleSubmit} handleCancel={handleCancel} />}
+      {showWizard && (
+        <SignupFlow handleSignup={handleSignup} handleCancel={() => setShowWizard(false)} />
+      )}
 
       {confirmLeave && (
         <div className='fixed inset-0 flex flex-col gap-4 items-center justify-center z-50 bg-white/60 dark:bg-black/60 backdrop-blur'>

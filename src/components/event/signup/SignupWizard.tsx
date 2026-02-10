@@ -4,12 +4,12 @@ import { useEvent } from '@/context/EventProvider';
 import PromptView from './PromptView';
 import { useState, useEffect } from 'react';
 
-interface SignupFlowProps {
-  handleSubmit: (answers: Record<string, boolean | null>) => void;
+interface SignupWizardProps {
+  handleSignup: (answers: Record<string, boolean | null>) => void;
   handleCancel: () => void;
 }
 
-const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
+const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
   const { prompts } = useEvent();
   const [curIndex, setCurIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, boolean | null>>({});
@@ -35,7 +35,7 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
       setCurIndex(curIndex + 1);
     } else {
       // Submit user's answers
-      handleSubmit(updatedAnswers);
+      handleSignup(updatedAnswers);
     }
   };
 
@@ -122,4 +122,4 @@ const SignupFlow = ({ handleSubmit, handleCancel }: SignupFlowProps) => {
   );
 };
 
-export default SignupFlow;
+export default SignupWizard;
