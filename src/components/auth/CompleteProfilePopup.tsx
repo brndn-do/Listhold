@@ -47,7 +47,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             size={96}
             className='border-4'
           />
-          <p className='text-2xl font-semibold text-pink-600 dark:text-pink-400'>
+          <p className='text-2xl font-semibold text-pink-600 dark:text-pink-500'>
             {user.displayName || 'Unknown'}
           </p>
         </div>
