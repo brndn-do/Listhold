@@ -86,7 +86,7 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
           </div>
           <div className='h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700'>
             <div
-              className='h-2 rounded-full bg-purple-600 transition-all duration-300'
+              className='h-2 rounded-full bg-pink-400 transition-all duration-300'
               style={{ width: `${((curIndex + 1) / prompts.length) * 100}%` }}
             />
           </div>
@@ -105,14 +105,14 @@ const SignupWizard = ({ handleSignup, handleCancel }: SignupWizardProps) => {
           <button
             onClick={handleBack}
             disabled={curIndex === 0}
-            className='px-6 py-2 font-bold text-purple-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-purple-400'
+            className='px-6 py-2 font-bold text-pink-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-pink-400'
           >
             ← Back
           </button>
           <button
             onClick={handleNext}
             disabled={prompts[curIndex].required && currentAnswer === null}
-            className='px-6 py-2 font-bold text-purple-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-purple-400'
+            className='px-6 py-2 font-bold text-pink-600 transition-colors hover:cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 dark:text-pink-400'
           >
             {curIndex === prompts.length - 1 ? 'Submit' : 'Next'} →
           </button>

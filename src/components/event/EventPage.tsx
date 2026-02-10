@@ -131,7 +131,7 @@ const EventPage = () => {
               onClick={() => setViewingWaitlist(false)}
               className={`border-background transition-color flex-1 border-b-2 px-6 py-2 text-sm font-semibold duration-200 ${
                 !viewingWaitlist
-                  ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400'
+                  ? 'border-pink-500 text-pink-600 dark:border-pink-400 dark:text-pink-400'
                   : 'text-gray-600 hover:cursor-pointer hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >
@@ -141,7 +141,7 @@ const EventPage = () => {
               onClick={() => setViewingWaitlist(true)}
               className={`border-background transition-color flex-1 border-b-2 px-6 py-2 text-sm font-semibold duration-200 ${
                 viewingWaitlist
-                  ? 'border-purple-600 text-purple-600 dark:border-purple-400 dark:text-purple-400'
+                  ? 'border-pink-500 text-pink-600 dark:border-pink-400 dark:text-pink-400'
                   : 'text-gray-600 hover:cursor-pointer hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
               }`}
             >

@@ -38,7 +38,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
   };
 
   return (
-    <div className='fixed z-100 flex h-full w-full items-center justify-center rounded-xl bg-white/60 p-4 backdrop-blur dark:border-purple-600 dark:bg-black/60'>
+    <div className='fixed z-100 flex h-full w-full items-center justify-center rounded-xl bg-white/60 p-4 backdrop-blur dark:border-pink-500 dark:bg-black/60'>
       <div className='dark:bg-background/70 flex w-full max-w-md flex-col rounded-4xl bg-gray-200/50 p-8'>
         <div className='mb-3 flex flex-col items-center gap-4'>
           <Avatar
@@ -47,7 +47,7 @@ const CompleteProfilePopup = ({ user, onClose }: CompleteProfilePopupProps) => {
             size={96}
             className='border-4'
           />
-          <p className='text-2xl font-semibold text-purple-600 dark:text-purple-400'>
+          <p className='text-2xl font-semibold text-pink-600 dark:text-pink-400'>
             {user.displayName || 'Unknown'}
           </p>
         </div>

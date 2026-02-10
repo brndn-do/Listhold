@@ -34,7 +34,7 @@ const Avatar = ({ src, alt, size, className = '', priority = false }: AvatarProp
         height={size}
         priority={priority}
         unoptimized={imgSrc.includes('googleusercontent.com') || imgSrc === '/default-avatar.jpg'}
-        className={`rounded-full border-purple-700 dark:border-purple-600 ${className}`}
+        className={`rounded-full border-pink-500 dark:border-pink-500 ${className}`}
         onError={() => setImgSrc('/default-avatar.jpg')}
       />
     </>

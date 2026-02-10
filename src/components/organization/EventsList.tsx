@@ -24,7 +24,7 @@ const EventsList = ({ events }: EventsListProps) => {
           <Link
             href={`/events/${encodeURI(event.slug)}`}
             key={event.slug}
-            className='group flex flex-col gap-8 rounded-lg border p-3 transition-all duration-250 ease-in hover:scale-103 hover:border-purple-600 hover:text-purple-600 dark:hover:border-purple-500 dark:hover:text-purple-500'
+            className='group flex flex-col gap-8 rounded-lg border p-3 transition-all duration-250 ease-in hover:scale-103 hover:border-pink-500 hover:text-pink-600 dark:hover:border-pink-500 dark:hover:text-pink-500'
           >
             <div className='flex flex-col gap-1'>
               <h2 className='text-md text-center font-bold'>{event.name}</h2>
@@ -32,7 +32,7 @@ const EventsList = ({ events }: EventsListProps) => {
               <p className='text-center text-xs'>{`📍 ${event.location}`}</p>
             </div>
 
-            <p className='mt-auto self-end text-center text-xs font-medium text-purple-600 md:hidden dark:text-purple-400'>
+            <p className='mt-auto self-end text-center text-xs font-medium text-pink-600 md:hidden dark:text-pink-400'>
               Tap to view →
             </p>
           </Link>

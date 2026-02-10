@@ -71,8 +71,8 @@ const Auth = () => {
               size={32}
               className='h-10 w-10 border-2'
             />
-            <div className='absolute -right-1.5 -bottom-1 rounded-full border border-purple-700 bg-gray-100 dark:border-0'>
-              <ChevronDown className='h-5 w-5 text-purple-700' strokeWidth={2} />
+            <div className='absolute -right-1.5 -bottom-1 rounded-full border border-pink-500 bg-gray-100 dark:border-0'>
+              <ChevronDown className='h-5 w-5 text-pink-600' strokeWidth={2} />
             </div>
           </div>
 

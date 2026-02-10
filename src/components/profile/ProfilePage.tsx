@@ -100,7 +100,7 @@ const ProfilePage = () => {
     return (
       <div className='flex flex-col items-center gap-4 pt-20'>
         <h1 className='text-xl font-bold'>Sign in to view your profile.</h1>
-        <Link href='/' className='text-purple-600 underline dark:text-purple-400'>
+        <Link href='/' className='text-pink-600 underline dark:text-pink-400'>
           Back to Home
         </Link>
       </div>
@@ -111,7 +111,7 @@ const ProfilePage = () => {
     <div className='flex w-full max-w-md flex-col items-center'>
       <h1 className='mb-6 text-2xl font-bold'>Edit Profile</h1>
 
-      <div className='w-full rounded-2xl border-2 border-purple-700 p-6 dark:border-purple-600'>
+      <div className='w-full rounded-2xl border-2 border-pink-500 p-6 dark:border-pink-500'>
         <div className='mb-8 flex flex-col items-center'>
           <div className='relative mb-4'>
             <Avatar
@@ -138,7 +138,7 @@ const ProfilePage = () => {
             <input
               id='displayName'
               {...register('displayName')}
-              className='w-full rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-purple-600 dark:border-gray-700'
+              className='w-full rounded-xl border border-gray-300 bg-transparent px-4 py-2.5 transition-all outline-none focus:border-transparent focus:ring-2 focus:ring-pink-500 dark:border-gray-700'
               placeholder='Your Name'
               autoComplete='name'
             />

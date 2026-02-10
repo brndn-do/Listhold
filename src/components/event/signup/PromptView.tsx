@@ -118,7 +118,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
               type='checkbox'
               checked={selectedAnswer === true}
               onChange={(e) => setSelectedAnswer(e.target.checked ? true : null)}
-              className='h-4 w-4 cursor-pointer accent-purple-600'
+              className='h-4 w-4 cursor-pointer accent-pink-500'
             />
             <span className='text-md font-medium text-gray-700 md:text-lg dark:text-gray-300'>
               Click to continue
@@ -134,9 +134,9 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
                   name='answer'
                   checked={selectedAnswer === true}
                   onChange={() => setSelectedAnswer(true)}
-                  className='h-5 w-5 cursor-pointer accent-purple-600'
+                  className='h-5 w-5 cursor-pointer accent-pink-500'
                 />
-                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-purple-600 md:text-lg dark:text-gray-300 dark:group-hover:text-purple-400'>
+                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-pink-600 md:text-lg dark:text-gray-300 dark:group-hover:text-pink-400'>
                   Yes
                 </span>
               </label>
@@ -147,9 +147,9 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
                   name='answer'
                   checked={selectedAnswer === false}
                   onChange={() => setSelectedAnswer(false)}
-                  className='h-5 w-5 cursor-pointer accent-purple-600'
+                  className='h-5 w-5 cursor-pointer accent-pink-500'
                 />
-                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-purple-600 md:text-lg dark:text-gray-300 dark:group-hover:text-purple-400'>
+                <span className='text-md font-medium text-gray-700 transition-colors group-hover:text-pink-600 md:text-lg dark:text-gray-300 dark:group-hover:text-pink-400'>
                   No
                 </span>
               </label>
@@ -162,7 +162,7 @@ const PromptView = ({ prompt, currentAnswer, onAnswerChange }: PromptViewProps) 
       {selectedAnswer !== null && !prompt.required && prompt.type !== 'notice' && (
         <button
           onClick={() => setSelectedAnswer(null)}
-          className='mt-2 mb-[-16] text-sm text-purple-600 underline hover:cursor-pointer dark:text-purple-400'
+          className='mt-2 mb-[-16] text-sm text-pink-600 underline hover:cursor-pointer dark:text-pink-400'
         >
           Clear answer
         </button>

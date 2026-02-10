@@ -40,7 +40,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
           {orderedAnswers.length === 0 && (
             <p
               className={`ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem] ${
-                user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''
+                user?.uid === signup.userId ? 'text-pink-600 dark:text-pink-400' : ''
               }`}
             >
               {signup.displayName}
@@ -54,7 +54,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
             >
               <p
                 className={`ml-1.5 flex-1 overflow-hidden text-sm text-ellipsis whitespace-nowrap md:ml-2 md:text-[1rem] ${
-                  user?.uid === signup.userId ? 'text-purple-600 dark:text-purple-400' : ''
+                  user?.uid === signup.userId ? 'text-pink-600 dark:text-pink-400' : ''
                 }`}
               >
                 {signup.displayName}
@@ -77,7 +77,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
             </div>
           )}
         </div>
-        <span className='text-[0.7rem] font-semibold text-purple-600 md:text-xs dark:text-purple-400'>
+        <span className='text-[0.7rem] font-semibold text-pink-600 md:text-xs dark:text-pink-400'>
           {isWaitlist ? idx + 1 : `${idx + 1}/${capacity}`}
         </span>
       </div>
@@ -99,7 +99,7 @@ const ListItem = ({ signup, idx, isWaitlist }: ListItemProps) => {
                 >
                   <span className='mr-1 flex min-w-0 flex-1 items-center gap-1.5 text-gray-800 dark:text-gray-200'>
                     {prompt.private && (
-                      <Lock className='h-3 w-3 shrink-0 text-purple-600 dark:text-purple-400' />
+                      <Lock className='h-3 w-3 shrink-0 text-pink-600 dark:text-pink-400' />
                     )}
                     <span className='truncate'>{prompt.text}</span>
                   </span>

@@ -31,7 +31,7 @@ const Button = ({
         type={type}
         onClick={onClick}
         disabled={!!disabled}
-        className={`hover:bg-foreground/3 inline-flex rounded-xl border-[1.5px] border-purple-700 px-3.5 py-1.75 text-sm text-purple-600 hover:cursor-pointer dark:border-purple-600 dark:text-purple-400 ${
+        className={`hover:bg-foreground/3 inline-flex rounded-xl border-[1.5px] border-pink-500 px-3.5 py-1.75 text-sm text-pink-600 hover:cursor-pointer dark:border-pink-500 dark:text-pink-400 ${
           semibold ? 'font-semibold' : ''
         }`}
       >
@@ -45,7 +45,7 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={!!disabled}
-      className={`${disabled ? 'bg-purple-800/50 text-gray-100 backdrop-blur dark:bg-purple-600/50 dark:text-gray-400' : 'bg-purple-700 text-white hover:cursor-pointer hover:bg-purple-800 dark:bg-purple-600 dark:hover:bg-purple-700'} ${semibold ? 'font-semibold' : ''}inline-flex rounded-xl px-3.5 py-1.75 text-sm`}
+      className={`${disabled ? 'bg-pink-800/50 text-gray-100 backdrop-blur dark:bg-pink-500/50 dark:text-gray-400' : 'bg-pink-500 text-white hover:cursor-pointer hover:bg-pink-600/90 dark:bg-pink-500 dark:hover:bg-pink-500/80'} ${semibold ? 'font-semibold' : ''}inline-flex rounded-xl px-3.5 py-1.75 text-sm`}
     >
       {content}
     </button>

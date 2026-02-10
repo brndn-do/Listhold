@@ -248,7 +248,7 @@ const EventForm = () => {
             spellCheck={false}
             autoComplete='off'
           />
-          <p className='mt-1 px-2 text-purple-600 dark:text-purple-400'>{`listhold.com/events/${watch('slug') ? watch('slug') : '...'}`}</p>
+          <p className='mt-1 px-2 text-pink-600 dark:text-pink-400'>{`listhold.com/events/${watch('slug') ? watch('slug') : '...'}`}</p>
           {errors.slug && (
             <div className='mt-1 w-full px-2'>
               <ErrorMessage size='sm' justify='start' content={errors.slug.message} />
@@ -503,7 +503,7 @@ const EventForm = () => {
             <button
               type='button'
               onClick={addPrompt}
-              className='text-purple-600 hover:cursor-pointer dark:text-purple-400'
+              className='text-pink-600 hover:cursor-pointer dark:text-pink-400'
             >
               + Add Prompt
             </button>

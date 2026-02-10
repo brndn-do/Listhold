@@ -11,7 +11,7 @@ const NotFound = () => {
         </p>
         <Link
           href='/'
-          className='mt-2 inline-block rounded-xl bg-purple-700 px-6 py-[.5rem] text-white hover:cursor-pointer dark:bg-purple-600'
+          className='mt-2 inline-block rounded-xl bg-pink-500 px-6 py-[.5rem] text-white hover:cursor-pointer dark:bg-pink-500'
         >
           Go Home
         </Link>

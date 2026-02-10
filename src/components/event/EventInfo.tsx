@@ -20,7 +20,7 @@ const EventInfo = () => {
             <div className='flex'>
               <Link
                 href={`/organizations/${orgSlug}`}
-                className='inline-flex items-center gap-1 font-semibold text-purple-600 transition-all duration-300 hover:translate-y-[-2px] dark:text-purple-400'
+                className='inline-flex items-center gap-1 font-semibold text-pink-600 transition-all duration-300 hover:translate-y-[-2px] dark:text-pink-400'
               >
                 <span className='underline'>{orgName}</span>
                 <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -40,7 +40,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2 text-gray-800 dark:text-gray-300'>
             <svg
-              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
+              className='h-5 w-5 flex-shrink-0 text-pink-600 dark:text-pink-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -60,7 +60,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2 text-gray-800 dark:text-gray-300'>
             <svg
-              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
+              className='h-5 w-5 flex-shrink-0 text-pink-600 dark:text-pink-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -86,7 +86,7 @@ const EventInfo = () => {
         <div className='pl-1'>
           <div className='flex items-center gap-2'>
             <svg
-              className='h-5 w-5 flex-shrink-0 text-purple-600 dark:text-purple-400'
+              className='h-5 w-5 flex-shrink-0 text-pink-600 dark:text-pink-400'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
