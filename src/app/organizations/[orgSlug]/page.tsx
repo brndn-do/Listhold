@@ -1,8 +1,14 @@
 import NotFound from '@/app/not-found';
 import OrgPage from '@/components/organization/OrgPage';
 import ErrorMessage from '@/components/ui/ErrorMessage';
-import { getOrgPageProps } from '@/services/getOrgPageProps';
+import { getOrgBySlug } from '@/services/getOrgBySlug';
 import { Metadata } from 'next';
+import { cache } from 'react';
+
+export const dynamic = 'force-static';
+export const revalidate = 60;
+
+const cachedGetOrgBySlug = cache(getOrgBySlug);
 
 export const generateMetadata = async ({
   params,
@@ -11,7 +17,7 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { orgSlug } = await params;
   try {
-    const props = await getOrgPageProps(orgSlug);
+    const props = await cachedGetOrgBySlug(orgSlug);
     if (!props) {
       return {
         title: 'Organization Not Found — Listhold',
@@ -32,7 +38,7 @@ export const generateMetadata = async ({
 const Organization = async ({ params }: { params: Promise<{ orgSlug: string }> }) => {
   const { orgSlug } = await params;
   try {
-    const props = await getOrgPageProps(orgSlug);
+    const props = await cachedGetOrgBySlug(orgSlug);
     if (!props) {
       return <NotFound />;
     }

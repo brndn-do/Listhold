@@ -11,7 +11,7 @@ import { OrgPageProps } from '@/components/organization/OrgPage';
  * @param slug - The unique slug of the organization
  * @returns A Promise resolving to `OrgPageProps` or `null`
  */
-export const getOrgPageProps = async (slug: string): Promise<OrgPageProps | null> => {
+export const getOrgBySlug = async (slug: string): Promise<OrgPageProps | null> => {
   const { data, error } = await supabaseAdmin
     .from('organizations')
     .select(

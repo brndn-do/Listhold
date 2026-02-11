@@ -4,6 +4,12 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
 import { getEventBySlug } from '@/services/getEventBySlug';
 import { Metadata } from 'next';
+import { cache } from 'react';
+
+export const dynamic = 'force-static';
+export const revalidate = 60;
+
+const cachedGetEventBySlug = cache(getEventBySlug);
 
 export const generateMetadata = async ({
   params,
@@ -12,7 +18,7 @@ export const generateMetadata = async ({
 }): Promise<Metadata> => {
   const { eventSlug } = await params;
   try {
-    const props = await getEventBySlug(eventSlug);
+    const props = await cachedGetEventBySlug(eventSlug);
     if (!props) {
       return {
         title: 'Event Not Found — Listhold',
@@ -35,7 +41,7 @@ export const generateMetadata = async ({
 const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => {
   const { eventSlug } = await params;
   try {
-    const props = await getEventBySlug(eventSlug);
+    const props = await cachedGetEventBySlug(eventSlug);
     if (!props) {
       return <NotFound />;
     }
