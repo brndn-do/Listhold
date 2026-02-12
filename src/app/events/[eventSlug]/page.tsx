@@ -1,6 +1,5 @@
 import NotFound from '@/app/not-found';
 import EventPage from '@/components/event/EventPage';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import { EventProvider } from '@/context/EventProvider';
 import { getEventBySlug } from '@/services/getEventBySlug';
 import { Metadata } from 'next';
@@ -40,19 +39,15 @@ export const generateMetadata = async ({
 
 const Event = async ({ params }: { params: Promise<{ eventSlug: string }> }) => {
   const { eventSlug } = await params;
-  try {
-    const props = await cachedGetEventBySlug(eventSlug);
-    if (!props) {
-      return <NotFound />;
-    }
-    return (
-      <EventProvider {...props}>
-        <EventPage />
-      </EventProvider>
-    );
-  } catch (err: unknown) {
-    return <ErrorMessage content='An unexpected error occurred. Please try again.' />;
+  const props = await cachedGetEventBySlug(eventSlug);
+  if (!props) {
+    return <NotFound />;
   }
+  return (
+    <EventProvider {...props}>
+      <EventPage />
+    </EventProvider>
+  );
 };
 
 export default Event;

@@ -1,5 +1,7 @@
+import { JSX } from 'react';
+
 interface ErrorMessageProps {
-  content?: string;
+  content?: string | JSX.Element;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   justify?: 'center' | 'start' | 'end';
 }
