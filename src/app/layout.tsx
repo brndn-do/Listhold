@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Listhold',
-  description: 'Automate your event lists.',
+  description: 'Manage your event lists with ease.',
 };
 
 const RootLayout = ({

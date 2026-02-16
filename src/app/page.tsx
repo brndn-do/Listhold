@@ -1,10 +1,3 @@
-import { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Listhold',
-  description: "Automate your event's signup list.",
-};
-
 const Home = () => {
   return (
     <div className='flex flex-col items-center'>
