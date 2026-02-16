@@ -64,7 +64,7 @@ const RootLayout = ({
           </header>
           <main className='flex flex-1 flex-col items-center px-4 pt-12 lg:pt-18'>{children}</main>
           <footer className='flex flex-col p-2 text-xs'>
-            <p className='mt-8 ml-4 opacity-70'>&copy; 2026 Listhold</p>
+            <p className='mt-8 ml-4 opacity-70'>&copy; {new Date().getFullYear()} Listhold</p>
           </footer>
         </AuthProvider>
 
