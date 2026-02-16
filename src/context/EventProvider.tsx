@@ -42,7 +42,7 @@ interface EventContextType {
   /**
    * Array of waitlisted signups.
    * Each signup includes its ID.
-   * Sorted by `createdAt` in ascending order.
+   * Sorted by position in ascending order.
    */
   readonly waitlist: ReadonlyArray<SignupData>;
 

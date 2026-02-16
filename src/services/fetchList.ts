@@ -12,12 +12,30 @@ export interface SignupData {
 }
 
 export const fetchList = async (eventId: string): Promise<SignupData[]> => {
-  const { data, error } = await supabase
+  let query = await supabase
     .from('event_list_view')
     .select('*')
     .eq('event_id', eventId)
     .in('status', ['confirmed', 'waitlisted'])
-    .order('created_at');
+    .order('position');
+
+  const shouldFallback =
+    !!query.error && (query.error.code === 'PGRST204' || query.error.code === '42703');
+
+  if (query.error) {
+    console.log(`first query failed with code ${query.error.code}`);
+  }
+
+  if (shouldFallback) {
+    query = await supabase
+      .from('event_list_view')
+      .select('*')
+      .eq('event_id', eventId)
+      .in('status', ['confirmed', 'waitlisted'])
+      .order('created_at');
+  }
+
+  const { data, error } = query;
 
   if (error) {
     throw new ServiceError('internal');
