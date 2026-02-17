@@ -1,9 +1,9 @@
-import Dots from '@/components/ui/Dots';
+import LoadingDots from '@/features/_shared/components/ui/LoadingDots';
 
 const Loading = () => {
   return (
     <div className='flex min-h-[75vh] items-center justify-center'>
-      <Dots size={4} />
+      <LoadingDots size={4} />
     </div>
   );
 };

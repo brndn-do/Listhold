@@ -1,4 +1,4 @@
-import CreateEventPage from '@/components/event/CreateEventPage';
+import CreateEventPage from '@/features/events/components/CreateEventPage';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/context/AuthProvider';
-import Auth from '@/components/auth/Auth';
+import { AuthProvider } from '@/features/_shared/context/AuthProvider';
+import Auth from '@/features/auth/components/Auth';
 import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import ProfileCompletionObserver from '@/components/auth/ProfileCompletionObserver';
+import Button from '@/features/_shared/components/ui/Button';
+import ProfileCompletionObserver from '@/features/auth/components/ProfileCompletionObserver';
 import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = Geist({

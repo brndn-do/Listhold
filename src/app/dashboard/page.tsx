@@ -7,7 +7,7 @@
  * - Past events (attended primary, waitlisted secondary)
  */
 
-import DashboardPage from '@/components/dashboard/DashboardPage';
+import DashboardPage from '@/features/dashboard/components/DashboardPage';
 import { Metadata } from 'next';
 
 export const revalidate = false;

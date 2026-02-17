@@ -1,7 +1,7 @@
 import NotFound from '@/app/not-found';
-import OrgPage from '@/components/organization/OrgPage';
-import ErrorMessage from '@/components/ui/ErrorMessage';
-import { getOrgBySlug } from '@/services/getOrgBySlug';
+import OrgPage from '@/features/orgs/components/OrgPage';
+import InlineError from '@/features/_shared/components/ui/InlineError';
+import { getOrgBySlug } from '@/features/orgs/api/get-org-by-slug';
 import { Metadata } from 'next';
 import { cache } from 'react';
 
@@ -44,7 +44,7 @@ const Organization = async ({ params }: { params: Promise<{ orgSlug: string }> }
     }
     return <OrgPage {...props} />;
   } catch (err: unknown) {
-    return <ErrorMessage />;
+    return <InlineError />;
   }
 };
 

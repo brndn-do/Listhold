@@ -1,7 +1,7 @@
 import NotFound from '@/app/not-found';
-import EventPage from '@/components/event/EventPage';
-import { EventProvider } from '@/context/EventProvider';
-import { getEventBySlug } from '@/services/getEventBySlug';
+import EventPage from '@/features/events/components/EventPage';
+import { EventProvider } from '@/features/events/context/EventProvider';
+import { getEventBySlug } from '@/features/events/api/get-event-by-slug';
 import { Metadata } from 'next';
 import { cache } from 'react';
 

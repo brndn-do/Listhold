@@ -1,4 +1,4 @@
-import ProfilePage from '@/components/profile/ProfilePage';
+import ProfilePage from '@/features/profile/components/ProfilePage';
 import { Metadata } from 'next';
 
 export const revalidate = false;

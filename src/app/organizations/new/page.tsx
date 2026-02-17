@@ -1,4 +1,4 @@
-import OrgForm from '@/components/organization/OrgForm';
+import OrgForm from '@/features/orgs/components/OrgForm';
 import { Metadata } from 'next';
 
 export const dynamic = 'force-static';
