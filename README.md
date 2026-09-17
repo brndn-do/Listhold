@@ -146,6 +146,7 @@ For deeper insight into the design decisions:
 - [**Database Schema**](docs/DB_SCHEMA.md) - Detailed Entity-Relationship breakdown and RLS policies.
 - [**Routing Architecture**](docs/ROUTING_SCHEMA.md) - App Router layout.
 - [**User Scenarios**](docs/SCENARIO.md) - Comprehensive user journey maps and persona definitions.
+- [**v2 Rewrite Spec**](docs/REWRITE_SPEC.md) - Audit of the current implementation and product spec for a full rewrite.
 
 ## Contribution and Inquiries
 
