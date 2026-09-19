@@ -256,5 +256,25 @@ second request to the same instance.
 local numbers exclude image pull and sandbox creation. That gap is exactly what
 `wall − in-process` measures.
 
+**404 instead of 200.** First check who sent it:
+
+```bash
+curl -sI "$URL" | grep -i '^server:'
+```
+
+`Server: Kestrel` means your app started and routed the request but no route
+matched — a path problem. Valid paths are `/`, `/healthz`, `/probe/ping` and
+`/probe/query`; remember the leading slash in `-e /probe/query`. `Server: Google
+Frontend` means Cloud Run has no service at that URL — check the region, the
+project, and that the URL is current (deleting and recreating a service changes
+its hostname). A Kestrel 404 shows up in `gcloud run services logs read`; a
+Google Frontend 404 does not. Also confirm the deployed image is the one you
+expect:
+
+```bash
+gcloud run services describe "$SERVICE" --region="$REGION" \
+  --format='value(spec.template.spec.containers[0].image)'
+```
+
 **403 on every request.** The service is private. Re-run the deploy with
 `--allow-unauthenticated`, or check `gcloud run services get-iam-policy "$SERVICE" --region="$REGION"`.

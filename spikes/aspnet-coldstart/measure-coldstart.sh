@@ -123,6 +123,11 @@ print(f"  {label:<6} http={code}  wall={wall_ms:8.1f} ms   "
       f"[dns {m(dns):6.1f} | tcp {m(tcp-dns):6.1f} | tls {m(tls-tcp) if tls>0 else 0:6.1f} "
       f"| server-wait {server_wait:8.1f}]  {size}B{extra}")
 
+if code.startswith(("4", "5")):
+    print(f"         NOTE: HTTP {code} is not a successful response. If this is 404, check the")
+    print(f"               path (-e /probe/query) and whether 'Server:' says Kestrel (your app")
+    print(f"               routed it) or Google Frontend (Cloud Run has no service at that URL).")
+
 cold = "unknown"
 try:
     d = json.load(open(body_path))

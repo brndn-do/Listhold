@@ -105,8 +105,23 @@ public class ProbeController : ControllerBase
 }
 
 [ApiController]
-public class HealthController : ControllerBase
+public class RootController : ControllerBase
 {
+    // Without this, "/" returns 404 and looks like a broken deployment when it
+    // is really just an unrouted path. Make the service self-describing instead.
+    [HttpGet("/")]
+    public object Index() => new
+    {
+        service = "coldstart-probe",
+        endpoints = new[]
+        {
+            "/healthz     - liveness",
+            "/probe/ping  - ASP.NET Core + JSON only (no EF)",
+            "/probe/query - EF model build + query compile + JSON",
+        },
+        uptimeMs = Math.Round(StartupTimeline.ElapsedMs, 2),
+    };
+
     [HttpGet("/healthz")]
     public object Health() => new { ok = true, uptimeMs = Math.Round(StartupTimeline.ElapsedMs, 2) };
 }
