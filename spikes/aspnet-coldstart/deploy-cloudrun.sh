@@ -34,9 +34,11 @@ BOOST_FLAG="--no-cpu-boost"
 gcloud run deploy "$SERVICE" \
   --image "$IMAGE" \
   --region "$REGION" --project "$PROJECT" \
+  --platform=managed --port=8080 \
   --allow-unauthenticated \
   --min-instances=0 --max-instances=1 \
   --cpu="$CPU" --memory="$MEMORY" \
+  --execution-environment=gen2 \
   $BOOST_FLAG \
   --set-env-vars "DB_MODE=npgsql,WARM_EF=${WARM_EF:-0}"
 

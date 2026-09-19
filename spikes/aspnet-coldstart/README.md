@@ -87,11 +87,13 @@ first request (EF + JIT)        ~0.6–1.2 s← measured
                                 ~1.7–4 s
 ```
 
-**Treat the first two rows as estimates, not measurements.** Run
-`measure-cloudrun.sh` to get the real figure — it deploys a new revision per
-iteration, which guarantees a cold instance rather than waiting ~15 minutes for
-idle scale-down. `wall − inProcess` in its output is exactly the pull + sandbox
-time the app cannot observe.
+**Treat the first two rows as estimates, not measurements.** Run `measure-coldstart.sh`
+against a deployed service to get the real figure. `wall − in-process` in its
+output is exactly the pull + sandbox time the app cannot observe.
+
+**See [CLOUDRUN.md](CLOUDRUN.md)** for step-by-step setup: enabling APIs,
+pushing to Artifact Registry, deploying with `--min-instances=0` and
+`--allow-unauthenticated`, getting the URL, and measuring.
 
 ## Running it
 
@@ -107,9 +109,14 @@ docker build \
   --build-arg PUBLISH_ARGS="-r linux-x64 --self-contained false -p:PublishReadyToRun=true" \
   -t coldstart-probe:r2r .
 
-# Cloud Run
-PROJECT=my-project VARIANT=r2r ./deploy-cloudrun.sh
-PROJECT=my-project URL=https://... ./measure-cloudrun.sh
+# Cloud Run — see CLOUDRUN.md for the full walkthrough
+PROJECT=my-project VARIANT=r2r ./deploy-cloudrun.sh      # prints the URL
+
+./measure-coldstart.sh https://my-service.run.app -e /probe/query
+
+# 5 cold runs, forcing a cold instance between each instead of waiting 15 min
+SERVICE=coldstart-probe REGION=us-central1 PROJECT=my-project \
+  ./measure-coldstart.sh https://my-service.run.app -e /probe/query -n 5 -f
 ```
 
 Note: `RESTORE_ARGS` must carry both the RID **and** `PublishReadyToRun=true`,
